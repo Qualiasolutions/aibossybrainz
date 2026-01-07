@@ -1,0 +1,36 @@
+import Script from "next/script";
+import { AppSidebar } from "@/components/app-sidebar";
+import { DataStreamProvider } from "@/components/data-stream-provider";
+import { MobileSidebarProvider } from "@/components/mobile-sidebar-context";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TosPopup } from "@/components/tos-popup";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function Layout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	return (
+		<>
+			<Script
+				src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"
+				strategy="lazyOnload"
+			/>
+			<TosPopup />
+			<DataStreamProvider>
+				<MobileSidebarProvider>
+					<SidebarProvider defaultOpen={true}>
+						<AppSidebar user={user || undefined} />
+						<SidebarInset>{children}</SidebarInset>
+					</SidebarProvider>
+				</MobileSidebarProvider>
+			</DataStreamProvider>
+		</>
+	);
+}

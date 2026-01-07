@@ -1,0 +1,518 @@
+@import "tailwindcss";
+
+/* include utility classes in streamdown */
+@source '../node_modules/streamdown/dist/index.js';
+
+/* custom variant for setting dark mode programmatically */
+@custom-variant dark (&:is(.dark, .dark *));
+
+/* include plugins */
+@plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";
+
+/* Premium shimmer animation */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* define design tokens - PREMIUM DARK THEME */
+:root {
+  /* Dark premium as default */
+  --background: hsl(220 20% 6%);
+  --foreground: hsl(0 0% 95%);
+  --card: hsl(220 18% 10%);
+  --card-foreground: hsl(0 0% 95%);
+  --popover: hsl(220 20% 8%);
+  --popover-foreground: hsl(0 0% 95%);
+  --primary: hsl(45 90% 55%);
+  --primary-foreground: hsl(220 20% 6%);
+  --secondary: hsl(220 15% 15%);
+  --secondary-foreground: hsl(0 0% 90%);
+  --muted: hsl(220 15% 18%);
+  --muted-foreground: hsl(220 10% 55%);
+  --accent: hsl(0 0% 85%);
+  --accent-foreground: hsl(220 20% 6%);
+  --destructive: hsl(0 72% 51%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(220 15% 20%);
+  --input: hsl(220 15% 15%);
+  --ring: hsl(45 90% 55%);
+  --chart-1: hsl(45 90% 55%);
+  --chart-2: hsl(173 58% 39%);
+  --chart-3: hsl(197 37% 50%);
+  --chart-4: hsl(280 65% 60%);
+  --chart-5: hsl(0 0% 75%);
+  --sidebar-background: hsl(220 22% 5%);
+  --sidebar-foreground: hsl(0 0% 90%);
+  --sidebar-primary: hsl(45 90% 55%);
+  --sidebar-primary-foreground: hsl(220 20% 6%);
+  --sidebar-accent: hsl(220 15% 12%);
+  --sidebar-accent-foreground: hsl(0 0% 90%);
+  --sidebar-border: hsl(220 15% 15%);
+  --sidebar-ring: hsl(45 90% 55%);
+  /* border radius unit */
+  --radius: 0.625rem;
+  --sidebar: hsl(220 22% 5%);
+  /* Premium color tokens */
+  --gold: hsl(45 90% 55%);
+  --gold-light: hsl(45 90% 65%);
+  --gold-dark: hsl(45 90% 45%);
+  --silver: hsl(220 10% 75%);
+  --silver-light: hsl(220 10% 85%);
+  --silver-dark: hsl(220 10% 55%);
+}
+
+/* define design tokens (dark mode) - same premium theme */
+.dark {
+  --background: hsl(220 20% 6%);
+  --foreground: hsl(0 0% 95%);
+  --card: hsl(220 18% 10%);
+  --card-foreground: hsl(0 0% 95%);
+  --popover: hsl(220 20% 8%);
+  --popover-foreground: hsl(0 0% 95%);
+  --primary: hsl(45 90% 55%);
+  --primary-foreground: hsl(220 20% 6%);
+  --secondary: hsl(220 15% 15%);
+  --secondary-foreground: hsl(0 0% 90%);
+  --muted: hsl(220 15% 18%);
+  --muted-foreground: hsl(220 10% 55%);
+  --accent: hsl(0 0% 85%);
+  --accent-foreground: hsl(220 20% 6%);
+  --destructive: hsl(0 72% 51%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(220 15% 20%);
+  --input: hsl(220 15% 15%);
+  --ring: hsl(45 90% 55%);
+  --chart-1: hsl(45 90% 55%);
+  --chart-2: hsl(173 58% 39%);
+  --chart-3: hsl(197 37% 50%);
+  --chart-4: hsl(280 65% 60%);
+  --chart-5: hsl(0 0% 75%);
+  --sidebar-background: hsl(220 22% 5%);
+  --sidebar-foreground: hsl(0 0% 90%);
+  --sidebar-primary: hsl(45 90% 55%);
+  --sidebar-primary-foreground: hsl(220 20% 6%);
+  --sidebar-accent: hsl(220 15% 12%);
+  --sidebar-accent-foreground: hsl(0 0% 90%);
+  --sidebar-border: hsl(220 15% 15%);
+  --sidebar-ring: hsl(45 90% 55%);
+  --sidebar: hsl(220 22% 5%);
+}
+
+/* define theme */
+@theme {
+  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+
+  --breakpoint-toast-mobile: 600px;
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility -webkit-overflow-scrolling-touch {
+  -webkit-overflow-scrolling: touch;
+}
+
+@utility touch-pan-y {
+  touch-action: pan-y;
+}
+
+@utility overscroll-behavior-contain {
+  overscroll-behavior: contain;
+}
+
+@layer utilities {
+  :root {
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --foreground-rgb: 255, 255, 255;
+      --background-start-rgb: 0, 0, 0;
+      --background-end-rgb: 0, 0, 0;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+}
+
+.skeleton {
+  * {
+    pointer-events: none !important;
+  }
+
+  *[class^="text-"] {
+    color: transparent;
+    @apply rounded-md bg-foreground/20 select-none animate-pulse;
+  }
+
+  .skeleton-bg {
+    @apply bg-foreground/10;
+  }
+
+  .skeleton-div {
+    @apply bg-foreground/20 animate-pulse;
+  }
+}
+
+.ProseMirror {
+  outline: none;
+}
+
+.cm-editor,
+.cm-gutters {
+  @apply bg-background! dark:bg-zinc-800! outline-hidden! selection:bg-zinc-900!;
+}
+
+.ͼo.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground,
+.ͼo.cm-selectionBackground,
+.ͼo.cm-content::selection {
+  @apply bg-zinc-200! dark:bg-zinc-900!;
+}
+
+.cm-activeLine,
+.cm-activeLineGutter {
+  @apply bg-transparent!;
+}
+
+.cm-activeLine {
+  @apply rounded-r-sm!;
+}
+
+.cm-lineNumbers {
+  @apply min-w-7;
+}
+
+.cm-foldGutter {
+  @apply min-w-3;
+}
+
+.cm-lineNumbers .cm-activeLineGutter {
+  @apply rounded-l-sm!;
+}
+
+.suggestion-highlight {
+  @apply bg-blue-200 hover:bg-blue-300 dark:hover:bg-blue-400/50 dark:text-blue-50 dark:bg-blue-500/40;
+}
+
+/* Premium Glassmorphism utilities - using @utility for Tailwind v4 */
+@utility glass {
+  background-color: rgb(255 255 255 / 0.05);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.2);
+}
+
+@utility glass-dark {
+  background-color: rgb(255 255 255 / 0.05);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.3);
+}
+
+@utility glass-premium {
+  background-image: linear-gradient(to bottom right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.03));
+  backdrop-filter: blur(24px);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+@utility glass-gold {
+  background-image: linear-gradient(to bottom right, rgb(69 47 20 / 0.4), rgb(78 51 20 / 0.2));
+  backdrop-filter: blur(24px);
+  border: 1px solid rgb(245 158 11 / 0.2);
+  box-shadow: 0 10px 15px -3px rgb(245 158 11 / 0.1);
+}
+
+@utility glass-silver {
+  background-image: linear-gradient(to bottom right, rgb(30 41 59 / 0.6), rgb(15 23 42 / 0.4));
+  backdrop-filter: blur(24px);
+  border: 1px solid rgb(148 163 184 / 0.2);
+  box-shadow: 0 10px 15px -3px rgb(100 116 139 / 0.1);
+}
+
+/* Gold gradient utilities */
+@utility gold-gradient {
+  background-image: linear-gradient(to right, rgb(251 191 36), rgb(234 179 8), rgb(217 119 6));
+}
+
+@utility gold-gradient-soft {
+  background-image: linear-gradient(to right, rgb(245 158 11 / 0.8), rgb(217 119 6 / 0.8));
+}
+
+@utility gold-text {
+  background-image: linear-gradient(to right, rgb(251 191 36), rgb(234 179 8), rgb(217 119 6));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility gold-border {
+  border-color: rgb(245 158 11 / 0.3);
+}
+
+@utility gold-glow {
+  box-shadow: 0 10px 15px -3px rgb(245 158 11 / 0.2);
+}
+
+@utility gold-glow-strong {
+  box-shadow: 0 20px 25px -5px rgb(245 158 11 / 0.3);
+}
+
+/* Silver gradient utilities */
+@utility silver-gradient {
+  background-image: linear-gradient(to right, rgb(203 213 225), rgb(226 232 240), rgb(148 163 184));
+}
+
+@utility silver-text {
+  background-image: linear-gradient(to right, rgb(203 213 225), rgb(226 232 240), rgb(148 163 184));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility silver-border {
+  border-color: rgb(148 163 184 / 0.3);
+}
+
+@utility silver-glow {
+  box-shadow: 0 10px 15px -3px rgb(148 163 184 / 0.2);
+}
+
+/* Premium card styling - using standard CSS class */
+.card-premium {
+  background-color: rgb(255 255 255 / 0.05);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.card-premium:hover {
+  border-color: rgb(245 158 11 / 0.2);
+}
+
+/* Premium input styling */
+.input-premium {
+  background-color: rgb(255 255 255 / 0.05);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.input-premium:focus {
+  border-color: rgb(245 158 11 / 0.5);
+  box-shadow: 0 0 0 2px rgb(245 158 11 / 0.2);
+}
+
+/* minimal scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: --alpha(var(--muted-foreground) / 0.5);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+@theme inline {
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Enhanced prose styling for tables and blockquotes */
+.prose table {
+  @apply w-full border-collapse text-sm my-4 rounded-lg overflow-hidden;
+}
+
+.prose thead {
+  @apply bg-stone-100 dark:bg-stone-800;
+}
+
+.prose th {
+  @apply px-4 py-3 text-left font-semibold text-stone-700 dark:text-stone-200 border border-stone-200 dark:border-stone-700;
+}
+
+.prose td {
+  @apply px-4 py-3 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300;
+}
+
+.prose tbody tr:nth-child(even) {
+  @apply bg-stone-50 dark:bg-stone-800/50;
+}
+
+.prose tbody tr:hover {
+  @apply bg-rose-50/50 dark:bg-rose-900/10;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-rose-400 dark:border-rose-500 pl-4 pr-2 py-2 my-4 bg-rose-50/50 dark:bg-rose-900/10 rounded-r-lg italic text-stone-600 dark:text-stone-300;
+}
+
+.prose blockquote p {
+  @apply m-0;
+}
+
+/* Enhanced heading styles for structured responses */
+.prose h2 {
+  @apply text-lg font-semibold text-stone-800 dark:text-stone-100 mt-6 mb-3 pb-2 border-b border-stone-200 dark:border-stone-700;
+}
+
+.prose h3 {
+  @apply text-base font-semibold text-stone-700 dark:text-stone-200 mt-4 mb-2;
+}
+
+/* Enhanced list styling */
+.prose ul {
+  @apply list-disc pl-5 my-3 space-y-1;
+}
+
+.prose ol {
+  @apply list-decimal pl-5 my-3 space-y-1;
+}
+
+.prose li {
+  @apply text-stone-600 dark:text-stone-300;
+}
+
+.prose li::marker {
+  @apply text-rose-500 dark:text-rose-400;
+}
+
+/* Bold text with rose accent */
+.prose strong {
+  @apply font-semibold text-stone-800 dark:text-stone-100;
+}
+
+/* Code styling */
+.prose code:not(pre code) {
+  @apply bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded text-sm font-mono text-rose-600 dark:text-rose-400;
+}
+
+/* Message text styling for better readability */
+.message-text {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+}
