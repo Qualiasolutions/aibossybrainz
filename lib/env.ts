@@ -15,7 +15,7 @@ export const env = createEnv({
 		REDIS_URL: z.string().url().optional(),
 		BLOB_READ_WRITE_TOKEN: z
 			.string()
-			.min(1, "BLOB_READ_WRITE_TOKEN is required"),
+			.optional(),
 		OPENROUTER_API_KEY: z
 			.string()
 			.min(1, "OPENROUTER_API_KEY is required for AI chat"),
