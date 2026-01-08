@@ -419,7 +419,7 @@ export function Chat({
 									/>
 								</div>
 								{/* Messages */}
-								<div className="flex-1 overflow-hidden">
+								<div className="flex-1 overflow-hidden" style={{ maxHeight: "80%" }}>
 									<Messages
 										chatId={id}
 										className="h-full"

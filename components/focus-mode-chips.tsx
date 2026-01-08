@@ -101,7 +101,7 @@ export function FocusModeChips({
 			<div
 				ref={scrollRef}
 				onScroll={checkScroll}
-				className="flex gap-2 overflow-x-auto px-1 py-1 scrollbar-hide"
+				className="flex justify-between gap-3 overflow-x-auto px-1 py-1 scrollbar-hide"
 				style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
 			>
 				{availableModes.map((mode) => {
@@ -116,7 +116,7 @@ export function FocusModeChips({
 							whileHover={{ scale: 1.02 }}
 							whileTap={{ scale: 0.98 }}
 							className={cn(
-								"flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200",
+								"flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200",
 								"border shadow-sm",
 								isSelected
 									? "border-red-500/50 bg-red-500/10 text-red-600 shadow-red-500/10"

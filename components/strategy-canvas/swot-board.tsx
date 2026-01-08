@@ -3,15 +3,17 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlertTriangle,
+	Download,
 	Plus,
+	RotateCcw,
 	Shield,
+	Sparkles,
 	Target,
 	TrendingUp,
 	Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { CanvasPanel } from "./canvas-panel";
 import { NoteColorPicker, StickyNote } from "./sticky-note";
 import type {
 	NoteColor,
@@ -23,46 +25,50 @@ const quadrants = [
 	{
 		key: "strengths" as const,
 		label: "Strengths",
-		subtitle: "Internal advantages",
+		subtitle: "Internal advantages that give you an edge",
 		icon: Shield,
-		color: "emerald" as const,
-		bgClass:
-			"bg-gradient-to-br from-emerald-50/50 to-teal-50/30 dark:from-emerald-950/30 dark:to-teal-950/20",
-		borderClass: "border-emerald-200/50 dark:border-emerald-800/30",
+		gradient: "from-emerald-500 to-teal-600",
+		bgGradient: "from-emerald-500/5 via-emerald-500/3 to-transparent",
+		borderColor: "border-emerald-500/20 hover:border-emerald-500/40",
+		iconBg: "bg-gradient-to-br from-emerald-500 to-teal-600",
 		noteColor: "emerald" as NoteColor,
+		glowColor: "shadow-emerald-500/10",
 	},
 	{
 		key: "weaknesses" as const,
 		label: "Weaknesses",
-		subtitle: "Internal challenges",
+		subtitle: "Internal challenges to address",
 		icon: AlertTriangle,
-		color: "amber" as const,
-		bgClass:
-			"bg-gradient-to-br from-red-50/50 to-orange-50/30 dark:from-neutral-950/30 dark:to-orange-950/20",
-		borderClass: "border-neutral-200/50 dark:border-neutral-800/30",
+		gradient: "from-amber-500 to-orange-600",
+		bgGradient: "from-amber-500/5 via-amber-500/3 to-transparent",
+		borderColor: "border-amber-500/20 hover:border-amber-500/40",
+		iconBg: "bg-gradient-to-br from-amber-500 to-orange-600",
 		noteColor: "amber" as NoteColor,
+		glowColor: "shadow-amber-500/10",
 	},
 	{
 		key: "opportunities" as const,
 		label: "Opportunities",
-		subtitle: "External possibilities",
+		subtitle: "External possibilities to capture",
 		icon: TrendingUp,
-		color: "blue" as const,
-		bgClass:
-			"bg-gradient-to-br from-blue-50/50 to-sky-50/30 dark:from-blue-950/30 dark:to-sky-950/20",
-		borderClass: "border-blue-200/50 dark:border-blue-800/30",
+		gradient: "from-blue-500 to-indigo-600",
+		bgGradient: "from-blue-500/5 via-blue-500/3 to-transparent",
+		borderColor: "border-blue-500/20 hover:border-blue-500/40",
+		iconBg: "bg-gradient-to-br from-blue-500 to-indigo-600",
 		noteColor: "blue" as NoteColor,
+		glowColor: "shadow-blue-500/10",
 	},
 	{
 		key: "threats" as const,
 		label: "Threats",
-		subtitle: "External risks",
+		subtitle: "External risks to mitigate",
 		icon: Zap,
-		color: "rose" as const,
-		bgClass:
-			"bg-gradient-to-br from-rose-50/50 to-pink-50/30 dark:from-rose-950/30 dark:to-pink-950/20",
-		borderClass: "border-rose-200/50 dark:border-rose-800/30",
+		gradient: "from-red-500 to-rose-600",
+		bgGradient: "from-red-500/5 via-red-500/3 to-transparent",
+		borderColor: "border-red-500/20 hover:border-red-500/40",
+		iconBg: "bg-gradient-to-br from-red-500 to-rose-600",
 		noteColor: "rose" as NoteColor,
+		glowColor: "shadow-red-500/10",
 	},
 ];
 
@@ -76,6 +82,7 @@ const defaultData: SwotData = {
 export function SwotBoard() {
 	const [data, setData] = useState<SwotData>(defaultData);
 	const [selectedColor, setSelectedColor] = useState<NoteColor>("rose");
+	const [hoveredQuadrant, setHoveredQuadrant] = useState<string | null>(null);
 
 	const generateId = () =>
 		`note-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -138,125 +145,252 @@ export function SwotBoard() {
 		URL.revokeObjectURL(url);
 	};
 
+	const totalNotes = Object.values(data).flat().length;
+
 	return (
-		<CanvasPanel
-			title="SWOT Analysis"
-			subtitle="Analyze internal and external factors"
-			icon={<Target className="size-5" />}
-			accentColor="purple"
-			onReset={resetBoard}
-			onExport={exportBoard}
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.5 }}
+			className="relative"
 		>
+			{/* Premium Header */}
+			<div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex items-center gap-4">
+					<motion.div
+						initial={{ scale: 0 }}
+						animate={{ scale: 1 }}
+						transition={{ type: "spring", delay: 0.2 }}
+						className="relative"
+					>
+						<div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 blur-xl opacity-40" />
+						<div className="relative flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/25">
+							<Target className="size-7 text-white" />
+						</div>
+					</motion.div>
+					<div>
+						<h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+							SWOT Analysis
+						</h2>
+						<p className="text-sm text-neutral-500 dark:text-neutral-400">
+							Strategic analysis of internal and external factors
+						</p>
+					</div>
+				</div>
+
+				{/* Action Buttons */}
+				<div className="flex items-center gap-2">
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+						className="flex items-center gap-2 rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+						onClick={resetBoard}
+						type="button"
+					>
+						<RotateCcw className="size-4" />
+						Reset
+					</motion.button>
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+						className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-red-500/25 transition-all hover:shadow-red-500/40"
+						onClick={exportBoard}
+						type="button"
+					>
+						<Download className="size-4" />
+						Export
+					</motion.button>
+				</div>
+			</div>
+
+			{/* Stats Bar */}
+			<motion.div
+				initial={{ opacity: 0, y: 10 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.3 }}
+				className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-neutral-200/50 bg-white/50 p-4 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/50"
+			>
+				<div className="flex items-center gap-2">
+					<Sparkles className="size-4 text-red-500" />
+					<span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+						{totalNotes} {totalNotes === 1 ? "item" : "items"} total
+					</span>
+				</div>
+				<div className="hidden h-4 w-px bg-neutral-300 dark:bg-neutral-700 sm:block" />
+				{quadrants.map((q) => {
+					const count = data[q.key].length;
+					if (count === 0) return null;
+					return (
+						<motion.div
+							key={q.key}
+							initial={{ scale: 0 }}
+							animate={{ scale: 1 }}
+							className={cn(
+								"flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium",
+								q.key === "strengths" && "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+								q.key === "weaknesses" && "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+								q.key === "opportunities" && "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+								q.key === "threats" && "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+							)}
+						>
+							<q.icon className="size-3" />
+							{count} {q.label}
+						</motion.div>
+					);
+				})}
+			</motion.div>
+
 			{/* SWOT Grid */}
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
 				{quadrants.map((quadrant, index) => {
 					const Icon = quadrant.icon;
 					const notes = data[quadrant.key];
+					const isHovered = hoveredQuadrant === quadrant.key;
 
 					return (
 						<motion.div
 							key={quadrant.key}
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ delay: index * 0.1 }}
+							initial={{ opacity: 0, y: 30, scale: 0.95 }}
+							animate={{ opacity: 1, y: 0, scale: 1 }}
+							transition={{
+								delay: index * 0.1 + 0.2,
+								type: "spring",
+								stiffness: 100,
+							}}
+							onHoverStart={() => setHoveredQuadrant(quadrant.key)}
+							onHoverEnd={() => setHoveredQuadrant(null)}
 							className={cn(
-								"relative min-h-[200px] rounded-xl border p-4 sm:min-h-[280px]",
-								quadrant.bgClass,
-								quadrant.borderClass,
+								"group relative min-h-[280px] overflow-hidden rounded-2xl border bg-white/80 backdrop-blur-xl transition-all duration-300 dark:bg-neutral-900/80 sm:min-h-[320px]",
+								quadrant.borderColor,
+								isHovered && quadrant.glowColor,
+								isHovered && "shadow-2xl",
 							)}
 						>
-							{/* Quadrant Header */}
-							<div className="mb-4 flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<div
-										className={cn(
-											"flex size-8 items-center justify-center rounded-lg",
-											quadrant.color === "emerald" &&
-												"bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400",
-											quadrant.color === "amber" &&
-												"bg-red-100 text-red-600 dark:bg-neutral-900/50 dark:text-red-500",
-											quadrant.color === "blue" &&
-												"bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400",
-											quadrant.color === "rose" &&
-												"bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400",
-										)}
-									>
-										<Icon className="size-4" />
-									</div>
-									<div>
-										<h3 className="font-semibold text-slate-800 dark:text-slate-200">
-											{quadrant.label}
-										</h3>
-										<p className="text-xs text-slate-500 dark:text-slate-400">
-											{quadrant.subtitle}
-										</p>
-									</div>
-								</div>
-								<button
-									className={cn(
-										"flex size-8 items-center justify-center rounded-lg transition-all",
-										"bg-white/60 hover:bg-white dark:bg-slate-800/60 dark:hover:bg-slate-800",
-										"text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200",
-										"shadow-sm hover:shadow",
-									)}
-									onClick={() => addNote(quadrant.key, quadrant.noteColor)}
-									title="Add note"
-									type="button"
-								>
-									<Plus className="size-4" />
-								</button>
-							</div>
+							{/* Background Gradient */}
+							<div
+								className={cn(
+									"absolute inset-0 bg-gradient-to-br opacity-50 transition-opacity duration-300",
+									quadrant.bgGradient,
+									isHovered && "opacity-80",
+								)}
+							/>
 
-							{/* Notes Grid */}
-							<div className="grid gap-3 sm:grid-cols-2">
-								<AnimatePresence>
-									{notes.map((note) => (
-										<StickyNote
-											key={note.id}
-											note={note}
-											onUpdate={(id, content) =>
-												updateNote(quadrant.key, id, content)
-											}
-											onDelete={(id) => deleteNote(quadrant.key, id)}
-										/>
-									))}
-								</AnimatePresence>
-							</div>
+							{/* Grid Pattern */}
+							<div
+								className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
+								style={{
+									backgroundImage: `linear-gradient(to right, currentColor 1px, transparent 1px),
+														linear-gradient(to bottom, currentColor 1px, transparent 1px)`,
+									backgroundSize: "24px 24px",
+								}}
+							/>
 
-							{/* Empty state */}
-							{notes.length === 0 && (
-								<motion.div
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									className="flex h-24 items-center justify-center"
-								>
-									<button
+							{/* Content */}
+							<div className="relative p-5">
+								{/* Quadrant Header */}
+								<div className="mb-5 flex items-start justify-between">
+									<div className="flex items-center gap-3">
+										<motion.div
+											whileHover={{ scale: 1.1, rotate: 5 }}
+											className={cn(
+												"flex size-12 items-center justify-center rounded-xl shadow-lg",
+												quadrant.iconBg,
+											)}
+										>
+											<Icon className="size-6 text-white" />
+										</motion.div>
+										<div>
+											<h3 className="font-bold text-lg text-neutral-800 dark:text-white">
+												{quadrant.label}
+											</h3>
+											<p className="text-xs text-neutral-500 dark:text-neutral-400">
+												{quadrant.subtitle}
+											</p>
+										</div>
+									</div>
+									<motion.button
+										whileHover={{ scale: 1.1 }}
+										whileTap={{ scale: 0.9 }}
 										className={cn(
-											"flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all",
-											"border border-dashed border-slate-300 dark:border-slate-600",
-											"text-slate-400 hover:border-slate-400 hover:text-slate-600",
-											"dark:text-slate-500 dark:hover:border-slate-500 dark:hover:text-slate-400",
+											"flex size-10 items-center justify-center rounded-xl transition-all",
+											"bg-white/80 shadow-md hover:shadow-lg dark:bg-neutral-800/80",
+											"text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-white",
 										)}
 										onClick={() => addNote(quadrant.key, quadrant.noteColor)}
+										title="Add note"
 										type="button"
 									>
-										<Plus className="size-4" />
-										Add {quadrant.label.toLowerCase().slice(0, -1)}
-									</button>
-								</motion.div>
-							)}
+										<Plus className="size-5" />
+									</motion.button>
+								</div>
+
+								{/* Notes Grid */}
+								<div className="grid gap-3 sm:grid-cols-2">
+									<AnimatePresence mode="popLayout">
+										{notes.map((note, noteIndex) => (
+											<motion.div
+												key={note.id}
+												initial={{ opacity: 0, scale: 0.8 }}
+												animate={{ opacity: 1, scale: 1 }}
+												exit={{ opacity: 0, scale: 0.8 }}
+												transition={{ delay: noteIndex * 0.05 }}
+											>
+												<StickyNote
+													note={note}
+													onUpdate={(id, content) =>
+														updateNote(quadrant.key, id, content)
+													}
+													onDelete={(id) => deleteNote(quadrant.key, id)}
+												/>
+											</motion.div>
+										))}
+									</AnimatePresence>
+								</div>
+
+								{/* Empty State */}
+								{notes.length === 0 && (
+									<motion.div
+										initial={{ opacity: 0 }}
+										animate={{ opacity: 1 }}
+										transition={{ delay: 0.3 }}
+										className="flex min-h-[120px] items-center justify-center"
+									>
+										<motion.button
+											whileHover={{ scale: 1.02 }}
+											whileTap={{ scale: 0.98 }}
+											className={cn(
+												"flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-medium transition-all",
+												"border-2 border-dashed border-neutral-300 dark:border-neutral-600",
+												"text-neutral-400 hover:border-neutral-400 hover:text-neutral-600",
+												"dark:text-neutral-500 dark:hover:border-neutral-500 dark:hover:text-neutral-400",
+												"hover:bg-white/50 dark:hover:bg-neutral-800/50",
+											)}
+											onClick={() => addNote(quadrant.key, quadrant.noteColor)}
+											type="button"
+										>
+											<Plus className="size-4" />
+											Add your first {quadrant.label.toLowerCase().slice(0, -1)}
+										</motion.button>
+									</motion.div>
+								)}
+							</div>
 						</motion.div>
 					);
 				})}
 			</div>
 
-			{/* Color picker footer */}
-			<div className="mt-4 flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800/50">
-				<span className="text-sm text-slate-500 dark:text-slate-400">
-					Note color:
+			{/* Color Picker Footer */}
+			<motion.div
+				initial={{ opacity: 0, y: 10 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.6 }}
+				className="mt-6 flex items-center justify-between rounded-2xl border border-neutral-200/50 bg-white/50 px-5 py-4 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/50"
+			>
+				<span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+					Default note color:
 				</span>
 				<NoteColorPicker selected={selectedColor} onSelect={setSelectedColor} />
-			</div>
-		</CanvasPanel>
+			</motion.div>
+		</motion.div>
 	);
 }

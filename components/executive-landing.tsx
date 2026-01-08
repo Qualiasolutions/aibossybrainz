@@ -52,8 +52,8 @@ export function ExecutiveLanding({
 					transition={{ duration: 0.5 }}
 				>
 					<div className="mx-auto flex items-center justify-center gap-2">
-						<div className="flex size-10 items-center justify-center rounded-xl red-gradient shadow-lg shadow-red-500/25 sm:size-12">
-							<Brain className="size-5 text-black sm:size-6" />
+						<div className="flex size-10 items-center justify-center rounded-xl border-2 border-red-500 bg-transparent sm:size-12">
+							<Brain className="size-5 text-red-500 sm:size-6" />
 						</div>
 					</div>
 					<h1 className="red-text font-bold text-2xl tracking-tight sm:text-3xl lg:text-4xl">
