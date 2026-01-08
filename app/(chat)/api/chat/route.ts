@@ -268,6 +268,7 @@ export async function POST(request: Request) {
 						attachments: [] as unknown as Json,
 						createdAt: new Date().toISOString(),
 						botType: null,
+						deletedAt: null,
 					},
 				],
 			}),
@@ -368,6 +369,7 @@ export async function POST(request: Request) {
 							currentMessage.role === "assistant"
 								? (currentMessage as any).metadata?.botType || selectedBotType
 								: null,
+						deletedAt: null,
 					})),
 				});
 
