@@ -15,13 +15,16 @@ import {
 const FileSchema = z.object({
 	file: z
 		.instanceof(Blob)
-		.refine((file) => file.size <= 5 * 1024 * 1024, {
-			message: "File size should be less than 5MB",
+		.refine((file) => file.size <= 10 * 1024 * 1024, {
+			message: "File size should be less than 10MB",
 		})
 		.refine((file) => isAllowedMimeType(file.type), {
 			message: `File type should be one of: ${ALLOWED_MIME_TYPES.join(", ")}`,
 		}),
 });
+
+// Route segment config - increase body size limit
+export const maxDuration = 30;
 
 export async function POST(request: Request) {
 	const supabase = await createClient();

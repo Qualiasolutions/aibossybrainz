@@ -171,6 +171,7 @@ export const ALLOWED_MIME_TYPES = [
 	"image/png",
 	"image/gif",
 	"image/webp",
+	"application/pdf",
 ] as const;
 
 export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];

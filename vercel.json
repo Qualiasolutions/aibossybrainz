@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "app/(chat)/api/files/upload/route.ts": {
+      "maxDuration": 30
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",
