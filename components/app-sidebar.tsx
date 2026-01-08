@@ -98,7 +98,6 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 										width={200}
 										height={65}
 										className="h-auto w-full max-w-[200px]"
-										priority
 									/>
 								</motion.div>
 							</Link>
