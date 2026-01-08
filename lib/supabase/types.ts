@@ -12,6 +12,7 @@ export type Database = {
       Chat: {
         Row: {
           createdAt: string
+          deletedAt: string | null
           id: string
           isPinned: boolean
           lastContext: Json | null
@@ -23,6 +24,7 @@ export type Database = {
         }
         Insert: {
           createdAt: string
+          deletedAt?: string | null
           id?: string
           isPinned?: boolean
           lastContext?: Json | null
@@ -34,6 +36,7 @@ export type Database = {
         }
         Update: {
           createdAt?: string
+          deletedAt?: string | null
           id?: string
           isPinned?: boolean
           lastContext?: Json | null
@@ -57,6 +60,7 @@ export type Database = {
         Row: {
           content: string | null
           createdAt: string
+          deletedAt: string | null
           id: string
           kind: string
           title: string
@@ -65,6 +69,7 @@ export type Database = {
         Insert: {
           content?: string | null
           createdAt: string
+          deletedAt?: string | null
           id?: string
           kind?: string
           title: string
@@ -73,6 +78,7 @@ export type Database = {
         Update: {
           content?: string | null
           createdAt?: string
+          deletedAt?: string | null
           id?: string
           kind?: string
           title?: string
@@ -170,6 +176,7 @@ export type Database = {
           botType: string | null
           chatId: string
           createdAt: string
+          deletedAt: string | null
           id: string
           parts: Json
           role: string
@@ -179,6 +186,7 @@ export type Database = {
           botType?: string | null
           chatId: string
           createdAt: string
+          deletedAt?: string | null
           id?: string
           parts: Json
           role: string
@@ -188,6 +196,7 @@ export type Database = {
           botType?: string | null
           chatId?: string
           createdAt?: string
+          deletedAt?: string | null
           id?: string
           parts?: Json
           role?: string
@@ -245,16 +254,19 @@ export type Database = {
         Row: {
           chatId: string
           createdAt: string
+          deletedAt: string | null
           id: string
         }
         Insert: {
           chatId: string
           createdAt: string
+          deletedAt?: string | null
           id?: string
         }
         Update: {
           chatId?: string
           createdAt?: string
+          deletedAt?: string | null
           id?: string
         }
         Relationships: [
@@ -270,6 +282,7 @@ export type Database = {
       Suggestion: {
         Row: {
           createdAt: string
+          deletedAt: string | null
           description: string | null
           documentCreatedAt: string
           documentId: string
@@ -281,6 +294,7 @@ export type Database = {
         }
         Insert: {
           createdAt: string
+          deletedAt?: string | null
           description?: string | null
           documentCreatedAt: string
           documentId: string
@@ -292,6 +306,7 @@ export type Database = {
         }
         Update: {
           createdAt?: string
+          deletedAt?: string | null
           description?: string | null
           documentCreatedAt?: string
           documentId?: string
@@ -412,16 +427,19 @@ export type Database = {
       Vote_v2: {
         Row: {
           chatId: string
+          deletedAt: string | null
           isUpvoted: boolean
           messageId: string
         }
         Insert: {
           chatId: string
+          deletedAt?: string | null
           isUpvoted: boolean
           messageId: string
         }
         Update: {
           chatId?: string
+          deletedAt?: string | null
           isUpvoted?: boolean
           messageId?: string
         }
