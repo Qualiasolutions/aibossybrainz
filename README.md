@@ -1,70 +1,222 @@
-<a href="https://chat.vercel.ai/">
-  <img alt="Next.js 14 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
-  <h1 align="center">Chat SDK</h1>
-</a>
+# AI Boss Brainz
 
 <p align="center">
-    Chat SDK is a free, open-source template built with Next.js and the AI SDK that helps you quickly build powerful chatbot applications.
+  <img src="app/(chat)/opengraph-image.png" alt="AI Boss Brainz" width="600">
 </p>
 
 <p align="center">
-  <a href="https://chat-sdk.dev"><strong>Read Docs</strong></a> ·
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#model-providers"><strong>Model Providers</strong></a> ·
-  <a href="#deploy-your-own"><strong>Deploy Your Own</strong></a> ·
-  <a href="#running-locally"><strong>Running locally</strong></a>
+  <strong>Your AI Executive Team, Available 24/7</strong>
 </p>
-<br/>
 
-## Features
+<p align="center">
+  AI Boss Brainz transforms how businesses approach strategic consulting. Instead of a generic chatbot, you get access to two distinct AI executives with specialized expertise, personalities, and strategic frameworks.
+</p>
 
-- [Next.js](https://nextjs.org) App Router
-  - Advanced routing for seamless navigation and performance
-  - React Server Components (RSCs) and Server Actions for server-side rendering and increased performance
-- [AI SDK](https://ai-sdk.dev/docs/introduction)
-  - Unified API for generating text, structured objects, and tool calls with LLMs
-  - Hooks for building dynamic chat and generative user interfaces
-  - Supports xAI (default), OpenAI, Fireworks, and other model providers
-- [shadcn/ui](https://ui.shadcn.com)
-  - Styling with [Tailwind CSS](https://tailwindcss.com)
-  - Component primitives from [Radix UI](https://radix-ui.com) for accessibility and flexibility
-- Data Persistence
-  - [Neon Serverless Postgres](https://vercel.com/marketplace/neon) for saving chat history and user data
-  - [Vercel Blob](https://vercel.com/storage/blob) for efficient file storage
-- [Auth.js](https://authjs.dev)
-  - Simple and secure authentication
+## Meet Your Executives
 
-## Model Providers
+### Alexandria | Chief Marketing Officer
 
-This template uses the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) to access multiple AI models through a unified interface. The default configuration includes [xAI](https://x.ai) models (`grok-2-vision-1212`, `grok-3-mini`) routed through the gateway.
+Alexandria brings deep expertise in brand strategy, market positioning, and creative campaigns. She excels at:
 
-### AI Gateway Authentication
+* Brand identity and positioning strategy
+* Marketing campaign development
+* Crisis communications and reputation management
+* Customer experience optimization
+* Content strategy and storytelling
 
-**For Vercel deployments**: Authentication is handled automatically via OIDC tokens.
+Her approach is thoughtful, creative, and brand centric. She sees every business challenge through the lens of brand equity and customer perception.
 
-**For non-Vercel deployments**: You need to provide an AI Gateway API key by setting the `AI_GATEWAY_API_KEY` environment variable in your `.env.local` file.
+### Kim | Chief Sales Officer
 
-With the [AI SDK](https://ai-sdk.dev/docs/introduction), you can also switch to direct LLM providers like [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://ai-sdk.dev/providers/ai-sdk-providers) with just a few lines of code.
+Kim is your revenue focused strategist with expertise in sales processes, deal structures, and market expansion. She specializes in:
 
-## Deploy Your Own
+* Sales pipeline optimization
+* Deal negotiation and closing strategies
+* Market entry and expansion planning
+* Revenue forecasting and metrics
+* Team scaling and sales operations
 
-You can deploy your own version of the Next.js AI Chatbot to Vercel with one click:
+Her style is direct, results driven, and always focused on the bottom line. Every recommendation ties back to revenue impact.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/templates/next.js/nextjs-ai-chatbot)
+### Collaborative Mode
 
-## Running locally
+When complex challenges require both perspectives, engage both executives simultaneously. They'll debate, complement each other's viewpoints, and deliver comprehensive strategic recommendations that balance brand building with revenue generation.
 
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js AI Chatbot. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables) for this, but a `.env` file is all that is necessary.
+## Key Features
 
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control access to your various AI and authentication provider accounts.
+### Executive Focus Modes
 
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
+Tailor your consultation with specialized modes:
+
+| Mode | Description |
+|------|-------------|
+| Default | General strategic consultation |
+| Brand Crisis | Reputation management and damage control |
+| Launch Campaign | Go to market strategy and execution |
+| Pipeline Audit | Sales funnel analysis and optimization |
+| Deal Closing | Negotiation tactics and contract strategy |
+| Market Entry | New market research and expansion planning |
+| Team Scaling | Organizational growth and hiring strategy |
+
+### Intelligent Conversation Analytics
+
+* **Topic Detection** automatically categorizes conversations
+* **Drift Alerts** notify when discussions stray from objectives
+* **Executive Recommendations** suggest when to bring in another perspective
+* **Conversation Depth Metrics** track strategic value delivered
+
+### Executive Memory System
+
+The platform remembers your preferences and patterns:
+
+* Which executive you prefer for different topics
+* Your business context and ongoing initiatives
+* Historical recommendations and their outcomes
+* Personal communication style preferences
+
+### Reports Library
+
+All AI generated documents, frameworks, and artifacts are automatically saved and organized:
+
+* Filter by executive, date, or topic
+* Export with executive branding
+* Version history for all documents
+* Quick access to past strategic work
+
+### Rich Message Interactions
+
+Go beyond simple chat with:
+
+* **Reactions** to mark insights as Actionable, Brilliant, Helpful, or Save for Later
+* **Voting** to train better responses over time
+* **Voice Input** for hands free consulting sessions
+* **File Attachments** for document analysis
+
+## Technology
+
+Built with modern, production grade technology:
+
+* **Framework** Next.js 15+ with React 19 and TypeScript
+* **AI Engine** Vercel AI SDK with advanced streaming
+* **Database** Supabase (PostgreSQL) with row level security
+* **Authentication** Supabase Auth with secure session management
+* **Voice** ElevenLabs text to speech for natural responses
+* **Styling** Tailwind CSS with shadcn/ui components
+* **Monitoring** Sentry for error tracking and performance
+
+## Getting Started
+
+### Prerequisites
+
+* Node.js 18+
+* pnpm package manager
+* Supabase account
+* OpenRouter API key
+
+### Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/Qualiasolutions/aibossybrainz.git
+cd aibossybrainz
+```
+
+2. Install dependencies
 
 ```bash
 pnpm install
+```
+
+3. Configure environment variables
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` with your credentials:
+
+```
+AUTH_SECRET=your_auth_secret
+OPENROUTER_API_KEY=your_openrouter_key
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
+```
+
+4. Set up the database
+
+Apply migrations in the Supabase SQL Editor from `supabase/migrations/`
+
+5. Start the development server
+
+```bash
 pnpm dev
 ```
 
-Your app template should now be running on [localhost:3000](http://localhost:3000).
+Visit [localhost:3000](http://localhost:3000) to meet your AI executives.
+
+## Deployment
+
+Deploy to Vercel with one click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Qualiasolutions/aibossybrainz)
+
+Or deploy manually:
+
+```bash
+pnpm build
+vercel deploy --prod
+```
+
+## Usage Limits
+
+| Tier | Daily Messages |
+|------|----------------|
+| Guest | 50 |
+| Regular | 500 |
+| Premium | 2,000 |
+
+## Project Structure
+
+```
+app/
+├── (auth)/           Authentication pages
+├── (chat)/           Main application
+│   ├── api/          API routes
+│   ├── analytics/    Usage dashboard
+│   ├── history/      Conversation history
+│   ├── reports/      Reports library
+│   └── executives/   Executive profiles
+
+components/
+├── chat.tsx              Chat interface
+├── executive-switch.tsx  Executive selector
+├── focus-mode-selector.tsx
+├── message.tsx           Styled messages
+└── conversation-analytics.tsx
+
+lib/
+├── ai/                   AI configuration
+├── bot-personalities.ts  Executive personas
+├── db/                   Database queries
+└── security/             Rate limiting
+```
+
+## Contributing
+
+We welcome contributions! Please read our contributing guidelines before submitting pull requests.
+
+## License
+
+This project is licensed under the terms included in the LICENSE file.
+
+## Support
+
+For questions, feature requests, or issues, please open a GitHub issue or contact the team at [qualiasolutions.net](https://qualiasolutions.net).
+
+---
+
+<p align="center">
+  Built by <a href="https://qualiasolutions.net">Qualia Solutions</a>
+</p>
