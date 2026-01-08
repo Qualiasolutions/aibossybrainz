@@ -36,7 +36,7 @@ export default async function HistoryPage() {
 	const getBotIcon = (botType?: string) => {
 		switch (botType) {
 			case "alexandria":
-				return <Crown className="h-4 w-4 text-amber-600" />;
+				return <Crown className="h-4 w-4 text-red-600" />;
 			case "kim":
 				return <TrendingUp className="h-4 w-4 text-blue-600" />;
 			case "collaborative":
@@ -50,7 +50,7 @@ export default async function HistoryPage() {
 		switch (botType) {
 			case "alexandria":
 				return (
-					<span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 font-semibold text-[10px] text-amber-700">
+					<span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-1 font-semibold text-[10px] text-red-700">
 						<Crown className="h-3 w-3" />
 						Alexandria
 					</span>
@@ -84,7 +84,7 @@ export default async function HistoryPage() {
 
 			const botCounts = msgs.reduce(
 				(acc, msg) => {
-					const botType = (msg as any).botType || "alexandria";
+					const botType = (msg as any).botType || "collaborative";
 					acc[botType] = (acc[botType] || 0) + 1;
 					return acc;
 				},
@@ -158,11 +158,11 @@ export default async function HistoryPage() {
 							</CardContent>
 						</Card>
 
-						<Card className="border-0 bg-gradient-to-br from-white to-amber-50/50 shadow-md">
+						<Card className="border-0 bg-gradient-to-br from-white to-red-50/50 shadow-md">
 							<CardContent className="p-4 sm:p-6">
 								<div className="flex items-center gap-3">
-									<div className="flex size-10 items-center justify-center rounded-full bg-amber-100 sm:size-12">
-										<Crown className="h-5 w-5 text-amber-600 sm:h-6 sm:w-6" />
+									<div className="flex size-10 items-center justify-center rounded-full bg-red-100 sm:size-12">
+										<Crown className="h-5 w-5 text-red-600 sm:h-6 sm:w-6" />
 									</div>
 									<div>
 										<p className="text-slate-600 text-xs sm:text-sm">

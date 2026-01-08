@@ -375,7 +375,7 @@ export const PreviewMessage = memo(
 );
 
 export const ThinkingMessage = ({
-	botType = "alexandria",
+	botType = "collaborative",
 }: {
 	botType?: BotType;
 }) => {

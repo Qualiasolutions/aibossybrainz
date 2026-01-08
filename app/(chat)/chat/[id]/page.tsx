@@ -47,7 +47,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 	const lastAssistantMessage = messagesFromDb
 		.filter((m) => m.role === "assistant")
 		.at(-1);
-	const initialBotType = (lastAssistantMessage?.botType || "alexandria") as any;
+	const initialBotType = (lastAssistantMessage?.botType || "collaborative") as any;
 
 	const cookieStore = await cookies();
 	const chatModelFromCookie = cookieStore.get("chat-model");

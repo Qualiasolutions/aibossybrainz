@@ -142,9 +142,9 @@ export function BrainstormBoard() {
 					<button
 						className={cn(
 							"flex items-center gap-2 rounded-lg px-4 py-2 font-medium text-sm transition-all",
-							"bg-gradient-to-r from-amber-400 to-orange-500 text-white",
-							"hover:from-amber-500 hover:to-orange-600",
-							"shadow-lg shadow-amber-200/40 dark:shadow-amber-900/30",
+							"bg-gradient-to-r from-red-500 to-orange-500 text-white",
+							"hover:from-red-500 hover:to-orange-600",
+							"shadow-lg shadow-neutral-200/40 dark:shadow-neutral-900/30",
 						)}
 						onClick={addNote}
 						type="button"
@@ -209,7 +209,7 @@ export function BrainstormBoard() {
 											? "bg-emerald-500 text-white"
 											: cat.color === "rose"
 												? "bg-rose-500 text-white"
-												: "bg-amber-500 text-white"
+												: "bg-red-500 text-white"
 								: "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700",
 						)}
 						onClick={() =>
@@ -230,7 +230,7 @@ export function BrainstormBoard() {
 												? "bg-emerald-400"
 												: cat.color === "rose"
 													? "bg-rose-400"
-													: "bg-amber-400",
+													: "bg-red-500",
 							)}
 						/>
 						{cat.label} ({noteCounts[cat.color] ?? 0})
@@ -286,8 +286,8 @@ export function BrainstormBoard() {
 							animate={{ opacity: 1, y: 0 }}
 							className="text-center"
 						>
-							<div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30">
-								<Lightbulb className="size-8 text-amber-500" />
+							<div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-red-100 to-orange-100 dark:from-neutral-900/30 dark:to-orange-900/30">
+								<Lightbulb className="size-8 text-red-500" />
 							</div>
 							<h3 className="mb-2 font-semibold text-lg text-slate-700 dark:text-slate-300">
 								Start Brainstorming
@@ -299,9 +299,9 @@ export function BrainstormBoard() {
 							<button
 								className={cn(
 									"flex items-center gap-2 rounded-lg px-6 py-3 font-medium transition-all",
-									"bg-gradient-to-r from-amber-400 to-orange-500 text-white",
-									"hover:from-amber-500 hover:to-orange-600",
-									"shadow-lg shadow-amber-200/40 dark:shadow-amber-900/30",
+									"bg-gradient-to-r from-red-500 to-orange-500 text-white",
+									"hover:from-red-500 hover:to-orange-600",
+									"shadow-lg shadow-neutral-200/40 dark:shadow-neutral-900/30",
 								)}
 								onClick={addNote}
 								type="button"
@@ -338,7 +338,7 @@ export function BrainstormBoard() {
 										cat.color === "rose" &&
 											"bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
 										cat.color === "amber" &&
-											"bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+											"bg-red-100 text-red-700 dark:bg-neutral-900/30 dark:text-neutral-300",
 									)}
 								>
 									{count}

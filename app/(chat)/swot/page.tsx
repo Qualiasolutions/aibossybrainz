@@ -54,7 +54,7 @@ export default function SwotPage() {
 					}}
 				/>
 				<motion.div
-					className="absolute -bottom-20 left-1/3 size-72 rounded-full bg-gradient-to-br from-amber-200/40 to-rose-200/40 blur-3xl dark:from-amber-900/20 dark:to-rose-900/20"
+					className="absolute -bottom-20 left-1/3 size-72 rounded-full bg-gradient-to-br from-neutral-200/40 to-rose-200/40 blur-3xl dark:from-neutral-900/20 dark:to-rose-900/20"
 					animate={{
 						x: [0, 40, 0],
 						y: [0, -40, 0],

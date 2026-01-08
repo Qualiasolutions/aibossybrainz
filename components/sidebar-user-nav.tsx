@@ -50,7 +50,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                                 src={`https://avatar.vercel.sh/${user.email}`}
                                 width={24}
                             />
-                            <span className="truncate" data-testid="user-email">
+                            <span className="truncate text-zinc-700" data-testid="user-email">
                                 {isGuest ? "Guest" : user?.email}
                             </span>
                             <ChevronUp className="ml-auto" />

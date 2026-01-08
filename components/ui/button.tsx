@@ -5,14 +5,14 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        // Primary gold gradient button
-        default: "bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold hover:from-amber-400 hover:to-amber-500 shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40",
-        // Premium dark button with gold border
-        premium: "bg-gradient-to-r from-slate-800 to-slate-900 text-white border border-amber-500/30 hover:border-amber-400/50 shadow-xl hover:shadow-amber-500/10",
+        // Primary red gradient button
+        default: "bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold hover:from-red-500 hover:to-red-600 shadow-lg shadow-red-500/20 hover:shadow-red-500/40",
+        // Premium dark button with red border
+        premium: "bg-gradient-to-r from-neutral-900 to-black text-white border border-red-500/30 hover:border-red-400/50 shadow-xl hover:shadow-red-500/10",
         // Glass outline button
         outline: "border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 text-foreground",
         // Secondary muted button
@@ -24,7 +24,7 @@ const buttonVariants = cva(
         // Silver gradient button
         silver: "bg-gradient-to-r from-slate-400 to-slate-500 text-slate-900 hover:from-slate-300 hover:to-slate-400 shadow-lg shadow-slate-400/20",
         // Link style
-        link: "text-amber-400 underline-offset-4 hover:underline hover:text-amber-300",
+        link: "text-red-500 underline-offset-4 hover:underline hover:text-red-400",
       },
       size: {
         default: "h-11 px-5 py-2",

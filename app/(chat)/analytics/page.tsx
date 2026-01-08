@@ -152,7 +152,7 @@ export default function AnalyticsPage() {
 				) : data ? (
 					<div className="space-y-8">
 						{/* Summary Cards */}
-						<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+						<div className="grid gap-4 sm:grid-cols-2">
 							<MetricCard
 								color="from-rose-500 to-pink-500"
 								icon={<MessageSquare className="size-5" />}
@@ -166,20 +166,6 @@ export default function AnalyticsPage() {
 								subtitle={`Last ${range} days`}
 								title="Conversations"
 								value={formatNumber(data.summary.totalChats)}
-							/>
-							<MetricCard
-								color="from-emerald-500 to-teal-500"
-								icon={<TrendingUp className="size-5" />}
-								subtitle="Tokens used"
-								title="Token Usage"
-								value={formatNumber(data.summary.totalTokens)}
-							/>
-							<MetricCard
-								color="from-purple-500 to-violet-500"
-								icon={<Mic className="size-5" />}
-								subtitle="Voice minutes"
-								title="Voice Usage"
-								value={data.summary.voiceMinutes.toFixed(1)}
 							/>
 						</div>
 

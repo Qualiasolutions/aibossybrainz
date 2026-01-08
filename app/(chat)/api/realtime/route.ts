@@ -5,6 +5,7 @@ import { systemPrompt } from "@/lib/ai/prompts";
 import { myProvider } from "@/lib/ai/providers";
 import { getVoiceForBot } from "@/lib/ai/voice-config";
 import { ChatSDKError } from "@/lib/errors";
+import { withElevenLabsResilience } from "@/lib/resilience";
 
 export const maxDuration = 30;
 
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
 			return new ChatSDKError("unauthorized:chat").toResponse();
 		}
 
-		const { message, botType = "alexandria" } = await request.json();
+		const { message, botType = "collaborative" } = await request.json();
 
 		if (!message || typeof message !== "string") {
 			return new ChatSDKError("bad_request:api").toResponse();
@@ -74,32 +75,38 @@ export async function POST(request: Request) {
 					.slice(0, 4000); // ElevenLabs limit
 
 				if (cleanText) {
-					const ttsResponse = await fetch(
-						`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
-						{
-							method: "POST",
-							headers: {
-								"Content-Type": "application/json",
-								"xi-api-key": process.env.ELEVENLABS_API_KEY,
-							},
-							body: JSON.stringify({
-								text: cleanText,
-								model_id: "eleven_flash_v2_5",
-								voice_settings: {
-									stability: 0.5,
-									similarity_boost: 0.75,
-									style: 0.0,
-									use_speaker_boost: true,
+					// Use resilience wrapper for ElevenLabs TTS (circuit breaker + retry)
+					const audioData = await withElevenLabsResilience(async () => {
+						const ttsResponse = await fetch(
+							`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+							{
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+									"xi-api-key": process.env.ELEVENLABS_API_KEY!,
 								},
-							}),
-						},
-					);
+								body: JSON.stringify({
+									text: cleanText,
+									model_id: "eleven_flash_v2_5",
+									voice_settings: {
+										stability: 0.5,
+										similarity_boost: 0.75,
+										style: 0.0,
+										use_speaker_boost: true,
+									},
+								}),
+							},
+						);
 
-					if (ttsResponse.ok) {
-						const audioBuffer = await ttsResponse.arrayBuffer();
-						const base64Audio = Buffer.from(audioBuffer).toString("base64");
-						audioUrl = `data:audio/mpeg;base64,${base64Audio}`;
-					}
+						if (!ttsResponse.ok) {
+							throw new Error(`ElevenLabs API error: ${ttsResponse.status}`);
+						}
+
+						return ttsResponse.arrayBuffer();
+					});
+
+					const base64Audio = Buffer.from(audioData).toString("base64");
+					audioUrl = `data:audio/mpeg;base64,${base64Audio}`;
 				}
 			} catch (error) {
 				console.error("TTS error:", error);

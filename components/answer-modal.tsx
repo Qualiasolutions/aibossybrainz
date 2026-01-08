@@ -70,7 +70,7 @@ export function AnswerModal({
   const getSectionIcon = (type?: string) => {
     switch (type) {
       case "insight":
-        return <Lightbulb className="size-4 text-amber-400" />;
+        return <Lightbulb className="size-4 text-red-500" />;
       case "analysis":
         return <Target className="size-4 text-blue-400" />;
       case "action":
@@ -78,14 +78,14 @@ export function AnswerModal({
       case "recommendation":
         return <ArrowRight className="size-4 text-purple-400" />;
       default:
-        return <Sparkles className="size-4 text-amber-400" />;
+        return <Sparkles className="size-4 text-red-500" />;
     }
   };
 
   const getSectionBorderColor = (type?: string) => {
     switch (type) {
       case "insight":
-        return "border-l-amber-500";
+        return "border-l-red-500";
       case "analysis":
         return "border-l-blue-500";
       case "action":
@@ -93,7 +93,7 @@ export function AnswerModal({
       case "recommendation":
         return "border-l-purple-500";
       default:
-        return "border-l-amber-500";
+        return "border-l-red-500";
     }
   };
 
@@ -124,14 +124,14 @@ export function AnswerModal({
             className="relative w-full max-w-4xl max-h-[90vh] glass-dark rounded-2xl overflow-hidden flex flex-col"
           >
             {/* Gold accent line */}
-            <div className="absolute top-0 left-0 right-0 h-1 gold-gradient" />
+            <div className="absolute top-0 left-0 right-0 h-1 red-gradient" />
 
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-white/10">
               <div className="flex items-center gap-4">
                 {/* Executive Avatar */}
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center border border-amber-500/30">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-500/20 to-red-600/10 flex items-center justify-center border border-red-500/30">
                     {executiveAvatar ? (
                       <img
                         src={executiveAvatar}
@@ -139,7 +139,7 @@ export function AnswerModal({
                         className="w-full h-full rounded-full object-cover"
                       />
                     ) : (
-                      <User className="size-6 text-amber-400" />
+                      <User className="size-6 text-red-500" />
                     )}
                   </div>
                   {/* Online indicator */}
@@ -149,7 +149,7 @@ export function AnswerModal({
                 <div>
                   <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                     {executiveName}
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-500 border border-red-500/30">
                       {executiveRole || "Executive"}
                     </span>
                   </h2>
@@ -196,7 +196,7 @@ export function AnswerModal({
             <ScrollArea className="flex-1 p-6">
               {/* Title */}
               {title && (
-                <h3 className="text-xl font-semibold text-white mb-6 gold-text">
+                <h3 className="text-xl font-semibold text-white mb-6 red-text">
                   {title}
                 </h3>
               )}

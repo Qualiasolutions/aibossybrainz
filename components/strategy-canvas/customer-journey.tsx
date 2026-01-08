@@ -183,7 +183,7 @@ export function CustomerJourney() {
 											stage.color === "rose" &&
 												"bg-gradient-to-br from-rose-400 to-pink-500 text-white",
 											stage.color === "amber" &&
-												"bg-gradient-to-br from-amber-400 to-orange-500 text-white",
+												"bg-gradient-to-br from-red-500 to-orange-500 text-white",
 											stage.color === "emerald" &&
 												"bg-gradient-to-br from-emerald-400 to-teal-500 text-white",
 											stage.color === "blue" &&
@@ -231,7 +231,7 @@ export function CustomerJourney() {
 															tp.type === "pain" &&
 																"bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
 															tp.type === "opportunity" &&
-																"bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+																"bg-red-50 text-red-700 dark:bg-neutral-900/30 dark:text-neutral-300",
 														)}
 													>
 														<div className="flex items-start gap-1.5">
@@ -287,7 +287,7 @@ export function CustomerJourney() {
 																	? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200"
 																	: type.color === "rose"
 																		? "bg-rose-100 text-rose-700 dark:bg-rose-800 dark:text-rose-200"
-																		: "bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-200"
+																		: "bg-red-100 text-red-700 dark:bg-neutral-800 dark:text-neutral-200"
 																: "bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-400",
 														)}
 														onClick={() => setNewType(type.type)}
@@ -353,7 +353,7 @@ export function CustomerJourney() {
 									type.color === "rose" &&
 										"bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400",
 									type.color === "amber" &&
-										"bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400",
+										"bg-red-100 text-red-600 dark:bg-neutral-900/50 dark:text-red-500",
 								)}
 							>
 								<Icon className="size-3" />

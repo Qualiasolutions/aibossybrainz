@@ -299,29 +299,6 @@ export function ConversationAnalytics({
 
 			<CollapsibleContent className="px-3 pb-3">
 				<div className="space-y-4 pt-2">
-					{/* Message Stats */}
-					<div className="grid grid-cols-3 gap-4">
-						<div className="rounded-md bg-muted/50 p-2 text-center">
-							<MessageSquare className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
-							<p className="text-lg font-semibold">
-								{analysis.userMessageCount}
-							</p>
-							<p className="text-xs text-muted-foreground">Your Messages</p>
-						</div>
-						<div className="rounded-md bg-muted/50 p-2 text-center">
-							<Brain className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
-							<p className="text-lg font-semibold">
-								{analysis.assistantMessageCount}
-							</p>
-							<p className="text-xs text-muted-foreground">AI Responses</p>
-						</div>
-						<div className="rounded-md bg-muted/50 p-2 text-center">
-							<Target className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
-							<p className="text-lg font-semibold">{analysis.depthScore}%</p>
-							<p className="text-xs text-muted-foreground">Depth Score</p>
-						</div>
-					</div>
-
 					{/* Executive Breakdown */}
 					{Object.keys(analysis.executiveBreakdown).length > 0 && (
 						<div className="space-y-2">
@@ -382,10 +359,10 @@ export function ConversationAnalytics({
 
 					{/* Topic Drift Warning */}
 					{analysis.topicDrift > 50 && (
-						<div className="flex items-start gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/20">
-							<AlertCircle className="h-4 w-4 text-amber-500 mt-0.5" />
+						<div className="flex items-start gap-2 p-2 rounded-md bg-red-500/10 border border-red-500/20">
+							<AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
 							<div>
-								<p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+								<p className="text-sm font-medium text-red-600 dark:text-red-500">
 									High Topic Drift Detected
 								</p>
 								<p className="text-xs text-muted-foreground">

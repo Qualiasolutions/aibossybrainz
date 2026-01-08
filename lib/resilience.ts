@@ -23,6 +23,11 @@ interface CircuitBreakerState {
 
 const circuitBreakers = new Map<string, CircuitBreakerState>();
 
+// Maximum number of circuit breakers to track (prevents unbounded memory growth)
+const MAX_CIRCUIT_BREAKERS = 100;
+// Time after which an idle circuit breaker can be cleaned up (1 hour)
+const CIRCUIT_CLEANUP_AGE = 60 * 60 * 1000;
+
 const DEFAULT_CIRCUIT_OPTIONS: CircuitBreakerOptions = {
 	failureThreshold: 5,
 	successThreshold: 2,
@@ -30,9 +35,55 @@ const DEFAULT_CIRCUIT_OPTIONS: CircuitBreakerOptions = {
 };
 
 /**
+ * Clean up old circuit breaker entries to prevent memory leaks
+ * Called periodically when getting circuit state
+ */
+function cleanupOldCircuits(): void {
+	if (circuitBreakers.size <= MAX_CIRCUIT_BREAKERS) {
+		return;
+	}
+
+	const now = Date.now();
+	const entriesToDelete: string[] = [];
+
+	for (const [name, state] of circuitBreakers) {
+		// Remove circuits that have been idle for too long and are in closed state
+		if (
+			state.state === "closed" &&
+			state.lastFailure > 0 &&
+			now - state.lastFailure > CIRCUIT_CLEANUP_AGE
+		) {
+			entriesToDelete.push(name);
+		}
+	}
+
+	// Also remove oldest entries if still over limit
+	if (circuitBreakers.size - entriesToDelete.length > MAX_CIRCUIT_BREAKERS) {
+		const sortedEntries = Array.from(circuitBreakers.entries())
+			.filter(([name]) => !entriesToDelete.includes(name))
+			.sort((a, b) => a[1].lastFailure - b[1].lastFailure);
+
+		const toRemove = sortedEntries.slice(
+			0,
+			sortedEntries.length - MAX_CIRCUIT_BREAKERS,
+		);
+		for (const [name] of toRemove) {
+			entriesToDelete.push(name);
+		}
+	}
+
+	for (const name of entriesToDelete) {
+		circuitBreakers.delete(name);
+	}
+}
+
+/**
  * Get or create circuit breaker state for a service
  */
 function getCircuitState(name: string): CircuitBreakerState {
+	// Periodically clean up old entries to prevent memory leaks
+	cleanupOldCircuits();
+
 	if (!circuitBreakers.has(name)) {
 		circuitBreakers.set(name, {
 			state: "closed",

@@ -18,7 +18,7 @@ export function SubmitButton({
 	return (
 		<Button
 			aria-disabled={pending || isSuccessful}
-			className="relative h-auto rounded-2xl bg-gradient-to-r from-rose-500 via-rose-400 to-amber-300 px-6 py-3 font-semibold text-base text-white shadow-[0_18px_45px_rgba(244,114,182,0.28)] transition-all hover:scale-[1.01] hover:shadow-[0_24px_60px_rgba(244,114,182,0.32)] focus-visible:ring-rose-400/60"
+			className="relative h-auto rounded-2xl bg-gradient-to-r from-rose-500 via-rose-400 to-neutral-300 px-6 py-3 font-semibold text-base text-white shadow-[0_18px_45px_rgba(244,114,182,0.28)] transition-all hover:scale-[1.01] hover:shadow-[0_24px_60px_rgba(244,114,182,0.32)] focus-visible:ring-rose-400/60"
 			disabled={pending || isSuccessful}
 			size="lg"
 			type={pending ? "button" : "submit"}

@@ -77,80 +77,31 @@ const PureChatItem = ({
 			<SidebarMenuButton asChild isActive={isActive}>
 				<Link
 					className={cn(
-						"group relative my-2 flex min-h-[56px] flex-col justify-center rounded-xl px-3 py-3",
-						"border border-transparent transition-all duration-300",
-						"hover:border-zinc-300 hover:bg-zinc-100",
-						isActive && "border-amber-500 bg-amber-50",
-						isPinned && "bg-gradient-to-r from-amber-100 to-transparent"
+						"group relative my-1 flex h-10 items-center rounded-lg px-3",
+						"border border-transparent transition-all duration-200",
+						"hover:border-neutral-200 hover:bg-neutral-50",
+						isActive && "border-red-200 bg-red-50",
+						isPinned && "bg-red-50/50"
 					)}
 					href={`/chat/${chat.id}`}
 					onClick={() => setOpenMobile(false)}
 				>
-					{/* Active state indicator - gold gradient */}
+					{/* Active state indicator */}
 					{isActive && (
-						<div className="-translate-y-1/2 absolute top-1/2 left-0 h-8 w-1 rounded-r-full bg-gradient-to-b from-amber-400 to-amber-600 shadow-lg shadow-amber-500/30" />
+						<div className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-red-500" />
 					)}
 
-					{/* Pinned glow effect */}
-					{isPinned && (
-						<div className="absolute -left-1 -top-1 h-3 w-3 rounded-full bg-amber-500/20 blur-md" />
-					)}
-
-					<div className="flex w-full items-start justify-between gap-2">
-						<div className="min-w-0 flex-1">
-							<div className="flex items-center gap-2">
-								{isPinned && (
-									<Star className="size-3.5 shrink-0 fill-amber-400 text-amber-400 drop-shadow-sm" />
-								)}
-								<span className={cn(
-									"line-clamp-2 font-medium text-sm transition-colors",
-									"text-zinc-800 group-hover:text-zinc-900",
-									isActive && "text-amber-700 font-semibold"
-								)}>
-									{chat.title}
-								</span>
-							</div>
-							<div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-								<span
-									className={cn(
-										"rounded-full px-2 py-0.5 font-medium text-xs transition-colors",
-										visibilityType === "public"
-											? "bg-emerald-100 text-emerald-700 border border-emerald-300"
-											: "bg-zinc-100 text-zinc-600 border border-zinc-300",
-									)}
-								>
-									{visibilityType === "public" ? "Public" : "Private"}
-								</span>
-								{chat.topic && (
-									<span
-										className={cn(
-											"flex items-center gap-1 rounded-full px-2 py-0.5 font-medium text-xs border",
-											"bg-zinc-100 border-zinc-300 text-zinc-700",
-										)}
-									>
-										{chat.topic}
-									</span>
-								)}
-							</div>
-						</div>
-
-						<div className="opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-							<div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/10 transition-colors duration-200 group-hover:bg-amber-500/20">
-								<svg
-									className="h-3 w-3 text-amber-400"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M9 5l7 7-7 7"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-									/>
-								</svg>
-							</div>
-						</div>
+					<div className="flex w-full items-center gap-2 min-w-0">
+						{isPinned && (
+							<Star className="size-3 shrink-0 fill-red-500 text-red-500" />
+						)}
+						<span className={cn(
+							"truncate text-sm transition-colors",
+							"text-neutral-700 group-hover:text-neutral-900",
+							isActive && "text-red-700 font-medium"
+						)}>
+							{chat.title}
+						</span>
 					</div>
 				</Link>
 			</SidebarMenuButton>
@@ -221,7 +172,7 @@ const PureChatItem = ({
 
 					<DropdownMenuItem
 						className={cn(
-							isPinned && "text-amber-400",
+							isPinned && "text-red-500",
 						)}
 						disabled={isPinLoading}
 						onSelect={(e) => {
@@ -230,7 +181,7 @@ const PureChatItem = ({
 						}}
 					>
 						<Star
-							className={cn("size-4", isPinned && "fill-amber-400 text-amber-400")}
+							className={cn("size-4", isPinned && "fill-red-500 text-red-500")}
 						/>
 						<span className="font-medium text-sm">
 							{isPinned ? "Unpin" : "Pin"}

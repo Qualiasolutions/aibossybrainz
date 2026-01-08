@@ -31,7 +31,7 @@ const CATEGORY_GLASS_STYLES: Record<SuggestionCategory, string> = {
 	action:
 		"glass-emerald hover:shadow-emerald-300/40 dark:hover:shadow-emerald-700/30",
 	clarify:
-		"glass-amber hover:shadow-amber-300/40 dark:hover:shadow-amber-700/30",
+		"glass-neutral hover:shadow-neutral-300/40 dark:hover:shadow-red-700/30",
 };
 
 // Rich text colors for each category
@@ -39,7 +39,7 @@ const CATEGORY_TEXT_COLORS: Record<SuggestionCategory, string> = {
 	"deep-dive": "text-blue-700 dark:text-blue-300",
 	pivot: "text-purple-700 dark:text-purple-300",
 	action: "text-emerald-700 dark:text-emerald-300",
-	clarify: "text-amber-700 dark:text-amber-300",
+	clarify: "text-red-700 dark:text-neutral-300",
 };
 
 // Icon colors for each category
@@ -47,7 +47,7 @@ const CATEGORY_ICON_COLORS: Record<SuggestionCategory, string> = {
 	"deep-dive": "text-blue-500 dark:text-blue-400",
 	pivot: "text-purple-500 dark:text-purple-400",
 	action: "text-emerald-500 dark:text-emerald-400",
-	clarify: "text-amber-500 dark:text-amber-400",
+	clarify: "text-red-500 dark:text-red-500",
 };
 
 // Executive-themed container gradients
@@ -70,7 +70,7 @@ export function MessageSuggestions({
 	suggestions,
 	onSelect,
 	isVisible,
-	botType = "alexandria",
+	botType = "collaborative",
 }: MessageSuggestionsProps) {
 	if (!isVisible || suggestions.length === 0) {
 		return null;

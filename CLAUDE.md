@@ -4,158 +4,143 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Alecci Media AI Chatbot** - An executive personality-driven AI consultancy platform. Fork of Vercel's Chat SDK, customized with three executive personas (Alexandria, Kim, Collaborative) that provide specialized business consulting advice.
+**Alecci Media AI Chatbot** - Executive personality-driven AI consultancy platform. Fork of Vercel's Chat SDK with three executive personas (Alexandria, Kim, Collaborative) providing specialized business consulting.
 
-**Core differentiator:** AI executives feel like real consultants, not chatbots.
+**Supabase Project:** `wubiidettbyavutahgjb`
 
 ## Commands
 
 ```bash
-pnpm dev              # Start dev server with Turbopack (localhost:3000)
-pnpm build            # Run migrations + production build
-pnpm lint             # Ultracite linter (npx ultracite@latest check)
-pnpm format           # Ultracite formatter (npx ultracite@latest fix)
-
-# Database (Drizzle ORM + Postgres)
-pnpm db:generate      # Generate migration from schema changes
-pnpm db:migrate       # Apply migrations (npx tsx lib/db/migrate.ts)
-pnpm db:studio        # Open Drizzle Studio
-pnpm db:push          # Push schema directly (dev only)
-pnpm db:pull          # Pull schema from database
+pnpm dev              # Dev server with Turbopack (localhost:3000)
+pnpm build            # Production build
+pnpm lint             # Ultracite linter (Biome-based)
+pnpm format           # Ultracite formatter
 
 # Testing (Playwright)
-pnpm test             # Run all Playwright tests
-export PLAYWRIGHT=True && pnpm exec playwright test tests/e2e/chat.test.ts  # Single test file
+pnpm test                                                  # Run all tests
+export PLAYWRIGHT=True && pnpm exec playwright test tests/e2e/chat.test.ts  # Single test
+pnpm exec playwright test --project=e2e                    # E2E tests only
+pnpm exec playwright test --project=routes                 # API route tests only
 ```
 
 ## Architecture
 
 ### Tech Stack
-- **Framework:** Next.js 15+ (App Router, React 19, TypeScript)
-- **AI:** Vercel AI SDK 5.x with OpenRouter provider (Gemini 3 Flash + Gemini 2.5 Pro)
-- **Database:** Vercel Postgres via Drizzle ORM
-- **Auth:** NextAuth v5 (credentials + guest)
+- **Framework:** Next.js 15.6+ (App Router, React 19, TypeScript)
+- **AI:** Vercel AI SDK 5.x with OpenRouter (Gemini 3 Flash)
+- **Database:** Supabase (Postgres with RLS)
+- **Auth:** Supabase Auth
 - **Storage:** Vercel Blob
-- **Styling:** Tailwind CSS 4 + shadcn/ui (Radix primitives)
+- **Styling:** Tailwind CSS 4 + shadcn/ui
 - **Voice:** ElevenLabs TTS
-- **Linting:** Ultracite (Biome-based)
+- **Monitoring:** Sentry
+
+### AI Models (`lib/ai/providers.ts`)
+
+All models use OpenRouter with `google/gemini-3-flash-preview`:
+- `chat-model` - Main chat responses
+- `chat-model-reasoning` - Complex reasoning tasks
+- `artifact-model` - Document generation
+- `title-model` - Title generation
 
 ### Executive Personality System (`lib/bot-personalities.ts`)
 
-Three AI personalities with distinct prompt augmentations:
-- **Alexandria** - CMO/brand strategist (rose gradient styling)
-- **Kim** - Sales VP/revenue optimizer (blue gradient styling)
-- **Collaborative** - Both executives together (purple gradient styling)
+Three personas with distinct system prompts and styling:
+- **Alexandria** - CMO, brand strategist (rose gradient)
+- **Kim** - CSO, sales/revenue (red gradient)
+- **Collaborative** - Both executives together (mixed gradient)
 
-Focus modes provide specialized contexts: `brand_crisis`, `launch_campaign`, `pipeline_audit`, `deal_closing`, `market_entry`, `team_scaling`.
+Focus modes: `default`, `brand_crisis`, `launch_campaign`, `pipeline_audit`, `deal_closing`, `market_entry`, `team_scaling`
 
-### AI Provider Configuration (`lib/ai/providers.ts`)
-
-```typescript
-// Uses OpenRouter for model access
-"chat-model": "google/gemini-3-flash-preview"      // Fast responses
-"chat-model-reasoning": "google/gemini-2.5-pro"    // Complex tasks
-"artifact-model": "google/gemini-2.5-pro"          // Document generation
-"title-model": "google/gemini-2.0-flash-exp:free"  // Title generation
-```
-
-### Key Directory Structure
+### Key Directories
 
 ```
 app/
-├── (auth)/           # Auth routes + auth.ts config
-├── (chat)/           # Main chat app (authenticated)
-│   ├── api/          # Route handlers (chat, voice, analytics, reactions)
-│   ├── analytics/    # Usage analytics dashboard
-│   ├── reports/      # Reports library page
-│   └── chat/[id]/    # Dynamic chat route
-├── (legal)/          # Legal pages (privacy, terms, about)
-└── api/              # Public API routes
-
+├── (auth)/           # Supabase Auth routes
+├── (chat)/           # Main app (authenticated)
+│   ├── api/          # Route handlers: chat, voice, analytics, reactions
+│   ├── analytics/    # Usage dashboard
+│   └── reports/      # Reports library
 lib/
 ├── ai/
-│   ├── providers.ts      # OpenRouter model configuration
-│   ├── prompts.ts        # System prompt construction
-│   ├── topic-classifier.ts # Chat topic detection
-│   └── tools/            # AI tools (createDocument, webSearch, etc.)
+│   ├── providers.ts      # OpenRouter config
+│   ├── prompts.ts        # System prompt builder
+│   ├── topic-classifier.ts
+│   ├── knowledge-base.ts # Per-executive knowledge loading
+│   └── tools/            # createDocument, webSearch, etc.
 ├── bot-personalities.ts  # Executive personas + focus modes
-├── db/
-│   ├── schema.ts         # Drizzle schema (User, Chat, Message_v2, etc.)
-│   ├── queries.ts        # Database query functions
-│   └── migrations/       # SQL migration files
-└── security/             # Rate limiting
-
+├── db/queries.ts         # All Supabase query functions
+├── supabase/             # Supabase client creation
+└── security/             # Rate limiting (Redis + DB fallback)
 components/
 ├── chat.tsx              # Main chat interface
-├── executive-switch.tsx  # Executive persona selector
-├── focus-mode-selector.tsx # Focus mode dropdown
-├── message.tsx           # Message rendering with executive styling
-├── multimodal-input.tsx  # Input with file uploads
-├── voice-player-button.tsx # ElevenLabs TTS playback
-└── ui/                   # shadcn/ui primitives
-
-hooks/
-├── use-voice-player.ts   # TTS playback management
-├── use-realtime-call.ts  # Real-time voice conversations
-└── use-auto-speak.ts     # Auto-TTS toggle
+├── executive-switch.tsx  # Persona selector
+├── focus-mode-selector.tsx
+├── message.tsx           # Executive-styled messages
+└── voice-player-button.tsx
 ```
 
-### Database Schema (`lib/db/schema.ts`)
+### Database Tables (Supabase)
 
-Key tables:
-- `User` - Users with `userType` (guest/regular/premium)
-- `Chat` - Conversations with `topic`, `topicColor`, `isPinned`
+Key tables in `lib/supabase/types.ts`:
+- `User` - Synced from Supabase Auth
+- `Chat` - Conversations with `topic`, `topicColor`, `isPinned`, `lastContext`
 - `Message_v2` - Messages with `botType`, `parts`, `attachments`
-- `Document` - AI-generated artifacts (text, code, image, sheet)
-- `Vote_v2`, `MessageReaction` - Message feedback
-- `ExecutiveMemory` - Per-user executive usage tracking
+- `Document` - AI artifacts (text, code, image, sheet)
+- `Vote_v2`, `MessageReaction` - Feedback
+- `ExecutiveMemory` - Per-user executive tracking
 - `UserAnalytics` - Usage metrics
 
-### Message Rate Limits (`lib/ai/entitlements.ts`)
+All tables have RLS enabled. See `supabase/migrations/` for schema.
 
-- Guest: 50 messages/day
-- Regular: 500 messages/day
-- Premium: 2000 messages/day
+### Chat Flow (`app/(chat)/api/chat/route.ts`)
 
-### Chat Route Flow (`app/(chat)/api/chat/route.ts`)
+1. Validate with Zod schema
+2. Check rate limits (Redis → DB fallback)
+3. Truncate to 60 messages (first + recent)
+4. Load knowledge base for selected executive
+5. Build system prompt (persona + focus mode + knowledge)
+6. Stream via AI SDK with tools
+7. Auto-classify topic on new chats
+8. Save messages to Supabase
 
-1. Validate request with Zod schema
-2. Check rate limits per user tier
-3. Truncate history to 60 messages (first + recent)
-4. Build system prompt with executive personality + focus mode
-5. Stream response via AI SDK
-6. Auto-classify topic on new chats
-7. Save messages to database
+### Rate Limits (`lib/ai/entitlements.ts`)
 
-## Testing
-
-Playwright tests in `tests/` with two projects:
-- `e2e/` - End-to-end chat flows
-- `routes/` - API route tests
-
-Helpers in `tests/fixtures.ts` and `tests/helpers.ts`.
+- Guest: 50/day
+- Regular: 500/day
+- Premium: 2000/day
 
 ## Environment Variables
 
-Required (see `.env.example`):
+Required:
 - `AUTH_SECRET` - NextAuth secret
 - `OPENROUTER_API_KEY` - AI model access
-- `POSTGRES_URL` - Database connection
-- `BLOB_READ_WRITE_TOKEN` - Vercel Blob storage
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
+- `BLOB_READ_WRITE_TOKEN` - Vercel Blob
 
 Optional:
-- `REDIS_URL` - Rate limiting
+- `REDIS_URL` - Rate limiting (falls back to DB)
 - `TAVILY_API_KEY` - Enhanced web search
 - `ELEVENLABS_API_KEY` - Text-to-speech
 
-## Roadmap Reference
+## Supabase Migrations
 
-See `ROADMAP.md` for feature specifications and `PROGRESS.md` for implementation status. Key completed features:
-- Executive personalities with message styling
-- Focus modes for specialized contexts
-- Topic-based chat classification
-- Usage analytics dashboard
-- Reports library
-- Message reactions system
-- PDF/Excel export
-- Voice playback with speed controls
+Apply via Supabase Dashboard SQL Editor in order:
+1. `supabase/migrations/01_create_tables.sql`
+2. `supabase/migrations/02_enable_rls.sql`
+
+See `supabase/README.md` for details.
+
+## Testing
+
+Playwright config: `playwright.config.ts`
+- **e2e/** - End-to-end chat flows
+- **routes/** - API route tests
+- **fixtures.ts, helpers.ts** - Test utilities
+
+Dev server auto-starts on `pnpm test`.
+
+## Roadmap
+
+See `ROADMAP.md` for features and `PROGRESS.md` for status.

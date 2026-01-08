@@ -28,7 +28,7 @@ export function PureMessageActions({
 	vote,
 	isLoading,
 	setMode,
-	botType = "alexandria",
+	botType = "collaborative",
 	onExpand,
 }: {
 	chatId: string;

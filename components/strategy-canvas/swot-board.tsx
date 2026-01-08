@@ -38,8 +38,8 @@ const quadrants = [
 		icon: AlertTriangle,
 		color: "amber" as const,
 		bgClass:
-			"bg-gradient-to-br from-amber-50/50 to-orange-50/30 dark:from-amber-950/30 dark:to-orange-950/20",
-		borderClass: "border-amber-200/50 dark:border-amber-800/30",
+			"bg-gradient-to-br from-red-50/50 to-orange-50/30 dark:from-neutral-950/30 dark:to-orange-950/20",
+		borderClass: "border-neutral-200/50 dark:border-neutral-800/30",
 		noteColor: "amber" as NoteColor,
 	},
 	{
@@ -174,7 +174,7 @@ export function SwotBoard() {
 											quadrant.color === "emerald" &&
 												"bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400",
 											quadrant.color === "amber" &&
-												"bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400",
+												"bg-red-100 text-red-600 dark:bg-neutral-900/50 dark:text-red-500",
 											quadrant.color === "blue" &&
 												"bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400",
 											quadrant.color === "rose" &&

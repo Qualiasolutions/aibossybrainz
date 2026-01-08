@@ -153,7 +153,7 @@ export function VoiceInputButton({
 					{isListening && (
 						<motion.div
 							animate={{ scale: 2 }}
-							className="absolute inset-0 rounded-full bg-gradient-to-br from-rose-500/40 via-rose-500/20 to-amber-400/20 opacity-50"
+							className="absolute inset-0 rounded-full bg-gradient-to-br from-rose-500/40 via-rose-500/20 to-red-500/20 opacity-50"
 							exit={{ scale: 0 }}
 							initial={{ scale: 0 }}
 							transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY }}

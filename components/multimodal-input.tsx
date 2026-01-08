@@ -220,9 +220,9 @@ function PureMultimodalInput({
 		}
 	}, []);
 
-	// Premium glass-dark input styling with gold accents
+	// Premium glass-dark input styling with red accents
 	const promptContainerClass =
-		"rounded-2xl border border-white/10 bg-white/5 p-3 shadow-[0_4px_24px_rgba(0,0,0,0.3)] backdrop-blur-xl transition-all duration-300 focus-within:border-amber-500/30 focus-within:shadow-[0_4px_24px_rgba(0,0,0,0.4),0_0_0_2px_rgba(245,158,11,0.15)] sm:p-4";
+		"rounded-2xl border border-white/10 bg-white/5 p-3 shadow-[0_4px_24px_rgba(0,0,0,0.3)] backdrop-blur-xl transition-all duration-300 focus-within:border-red-500/30 focus-within:shadow-[0_4px_24px_rgba(0,0,0,0.4),0_0_0_2px_rgba(220,38,38,0.15)] sm:p-4";
 
 	const handleFileChange = useCallback(
 		async (event: ChangeEvent<HTMLInputElement>) => {
@@ -313,7 +313,7 @@ function PureMultimodalInput({
 				<div className="flex flex-row items-start">
 					<PromptInputTextarea
 						autoFocus
-						className="grow resize-none border-0! border-none! bg-transparent p-1 text-sm leading-relaxed text-zinc-900 caret-amber-500 outline-none ring-0 [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 sm:p-2 sm:text-base [&::-webkit-scrollbar]:hidden"
+						className="grow resize-none border-0! border-none! bg-transparent p-1 text-sm leading-relaxed text-zinc-900 caret-red-500 outline-none ring-0 [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 sm:p-2 sm:text-base [&::-webkit-scrollbar]:hidden"
 						data-testid="multimodal-input"
 						disableAutoResize={true}
 						maxHeight={180}
@@ -333,7 +333,7 @@ function PureMultimodalInput({
 							status={status}
 						/>
 						<VoiceInputButton
-							className="size-8 rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-white/10 hover:text-amber-400 sm:size-9"
+							className="size-8 rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-white/10 hover:text-red-400 sm:size-9"
 							disabled={status !== "ready"}
 							onTranscript={handleVoiceTranscript}
 							size="sm"
@@ -344,7 +344,7 @@ function PureMultimodalInput({
 						<StopButton setMessages={setMessages} stop={stop} />
 					) : (
 						<PromptInputSubmit
-							className="size-9 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-black shadow-md shadow-amber-500/25 transition-all hover:from-amber-400 hover:to-amber-500 hover:shadow-lg hover:shadow-amber-500/30 disabled:from-white/10 disabled:to-white/5 disabled:text-muted-foreground disabled:shadow-none sm:size-10"
+							className="size-9 rounded-xl bg-gradient-to-br from-red-500 to-red-600 text-black shadow-md shadow-red-500/25 transition-all hover:from-red-400 hover:to-red-500 hover:shadow-lg hover:shadow-red-500/30 disabled:from-white/10 disabled:to-white/5 disabled:text-muted-foreground disabled:shadow-none sm:size-10"
 							disabled={!input.trim() || uploadQueue.length > 0}
 							status={status}
 						>
@@ -394,7 +394,7 @@ function PureAttachmentsButton({
 	return (
 		<Button
 			aria-label="Upload files"
-			className="size-8 rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-white/10 hover:text-amber-400 sm:size-9"
+			className="size-8 rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-white/10 hover:text-red-400 sm:size-9"
 			data-testid="attachments-button"
 			disabled={status !== "ready" || isReasoningModel}
 			onClick={(event) => {
@@ -494,13 +494,13 @@ function PureModelSelectorCompact({
 			value={selectedModel?.name}
 		>
 			<Trigger
-				className="group hover:-translate-y-0.5 flex h-7 items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 font-medium text-[10px] text-foreground shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-amber-500/30 hover:bg-white/10 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:ring-offset-2 focus:ring-offset-background sm:h-8 sm:gap-2 sm:rounded-xl sm:px-2.5 sm:text-xs lg:h-9 lg:px-3 lg:text-sm"
+				className="group hover:-translate-y-0.5 flex h-7 items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 font-medium text-[10px] text-foreground shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-red-500/30 hover:bg-white/10 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 focus:ring-offset-background sm:h-8 sm:gap-2 sm:rounded-xl sm:px-2.5 sm:text-xs lg:h-9 lg:px-3 lg:text-sm"
 				type="button"
 			>
 				<div className="relative">
 					{getModelIcon(optimisticModelId)}
 					<div className="-bottom-0.5 -right-0.5 absolute">
-						<div className="h-1.5 w-1.5 rounded-full border border-background bg-amber-500" />
+						<div className="h-1.5 w-1.5 rounded-full border border-background bg-red-500" />
 					</div>
 				</div>
 				<span className="hidden font-semibold text-[10px] text-foreground sm:inline sm:text-xs lg:text-sm">
@@ -519,7 +519,7 @@ function PureModelSelectorCompact({
 				<div className="p-2">
 					<div className="mb-2 border-white/10 border-b px-3 py-2">
 						<div className="flex items-center gap-2">
-							<div className="flex h-4 w-4 items-center justify-center rounded bg-gradient-to-br from-amber-500 to-amber-600">
+							<div className="flex h-4 w-4 items-center justify-center rounded bg-gradient-to-br from-red-500 to-red-600">
 								<div className="text-black">
 									<CpuIcon size={10} />
 								</div>
@@ -537,9 +537,9 @@ function PureModelSelectorCompact({
 								<SelectItem
 									className={cn(
 										"relative cursor-pointer rounded-xl px-3 py-3 transition-all duration-200",
-										"border border-transparent hover:border-amber-500/30 hover:bg-white/10",
+										"border border-transparent hover:border-red-500/30 hover:bg-white/10",
 										isSelected &&
-											"border-amber-500/30 bg-amber-500/10",
+											"border-red-500/30 bg-red-500/10",
 									)}
 									key={model.id}
 									value={model.name}
@@ -549,7 +549,7 @@ function PureModelSelectorCompact({
 											{getModelIcon(model.id)}
 											{isSelected && (
 												<div className="-bottom-0.5 -right-0.5 absolute">
-													<div className="h-2 w-2 rounded-full border border-background bg-amber-500" />
+													<div className="h-2 w-2 rounded-full border border-background bg-red-500" />
 												</div>
 											)}
 										</div>
@@ -563,9 +563,9 @@ function PureModelSelectorCompact({
 										</div>
 										{isSelected && (
 											<div className="ml-2">
-												<div className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/20">
+												<div className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500/20">
 													<svg
-														className="h-3 w-3 text-amber-400"
+														className="h-3 w-3 text-red-400"
 														fill="currentColor"
 														viewBox="0 0 20 20"
 													>

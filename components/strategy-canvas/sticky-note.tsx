@@ -9,7 +9,7 @@ import type { NoteColor, StickyNote as StickyNoteType } from "./types";
 const colorClasses: Record<NoteColor, string> = {
 	rose: "bg-gradient-to-br from-rose-200 via-rose-100 to-pink-100 dark:from-rose-900/80 dark:via-rose-800/70 dark:to-pink-900/60 border-rose-300/50 dark:border-rose-700/50 shadow-rose-200/40 dark:shadow-rose-900/40",
 	amber:
-		"bg-gradient-to-br from-amber-200 via-amber-100 to-yellow-100 dark:from-amber-900/80 dark:via-amber-800/70 dark:to-yellow-900/60 border-amber-300/50 dark:border-amber-700/50 shadow-amber-200/40 dark:shadow-amber-900/40",
+		"bg-gradient-to-br from-neutral-200 via-red-100 to-yellow-100 dark:from-neutral-900/80 dark:via-neutral-800/70 dark:to-yellow-900/60 border-neutral-300/50 dark:border-red-700/50 shadow-neutral-200/40 dark:shadow-neutral-900/40",
 	emerald:
 		"bg-gradient-to-br from-emerald-200 via-emerald-100 to-teal-100 dark:from-emerald-900/80 dark:via-emerald-800/70 dark:to-teal-900/60 border-emerald-300/50 dark:border-emerald-700/50 shadow-emerald-200/40 dark:shadow-emerald-900/40",
 	blue: "bg-gradient-to-br from-blue-200 via-blue-100 to-sky-100 dark:from-blue-900/80 dark:via-blue-800/70 dark:to-sky-900/60 border-blue-300/50 dark:border-blue-700/50 shadow-blue-200/40 dark:shadow-blue-900/40",
@@ -21,7 +21,7 @@ const colorClasses: Record<NoteColor, string> = {
 
 const accentColors: Record<NoteColor, string> = {
 	rose: "text-rose-600 dark:text-rose-400",
-	amber: "text-amber-600 dark:text-amber-400",
+	amber: "text-red-600 dark:text-red-500",
 	emerald: "text-emerald-600 dark:text-emerald-400",
 	blue: "text-blue-600 dark:text-blue-400",
 	purple: "text-purple-600 dark:text-purple-400",
@@ -213,7 +213,7 @@ export function NoteColorPicker({ selected, onSelect }: ColorPickerProps) {
 					className={cn(
 						"size-5 rounded-full border-2 transition-all",
 						color === "rose" && "bg-rose-400 dark:bg-rose-600",
-						color === "amber" && "bg-amber-400 dark:bg-amber-600",
+						color === "amber" && "bg-red-500 dark:bg-red-600",
 						color === "emerald" && "bg-emerald-400 dark:bg-emerald-600",
 						color === "blue" && "bg-blue-400 dark:bg-blue-600",
 						color === "purple" && "bg-purple-400 dark:bg-purple-600",

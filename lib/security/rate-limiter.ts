@@ -52,6 +52,10 @@ function getRateLimitKey(userId: string): string {
 /**
  * Checks and increments rate limit using Redis
  * Returns { allowed: boolean, remaining: number, reset: Date }
+ *
+ * SECURITY: When Redis is unavailable, returns source="database" to signal
+ * that the caller MUST perform a database-based rate limit check.
+ * The `allowed` field is set to `unknown: true` to indicate this is provisional.
  */
 export async function checkRateLimit(
 	userId: string,
@@ -62,17 +66,20 @@ export async function checkRateLimit(
 	current: number;
 	reset: Date;
 	source: "redis" | "database";
+	requiresDatabaseCheck?: boolean;
 }> {
 	const redis = await getRedisClient();
 
 	if (!redis) {
 		// Fall back to database-based rate limiting
+		// SECURITY: Do NOT set allowed=true blindly - caller must verify via database
 		return {
-			allowed: true, // Let database check handle it
-			remaining: maxRequests,
+			allowed: false, // Default to denied until database check confirms
+			remaining: 0,
 			current: 0,
 			reset: getEndOfDay(),
 			source: "database",
+			requiresDatabaseCheck: true,
 		};
 	}
 
@@ -99,12 +106,14 @@ export async function checkRateLimit(
 		};
 	} catch {
 		// Redis error, fall back to database
+		// SECURITY: Do NOT set allowed=true blindly - caller must verify via database
 		return {
-			allowed: true,
-			remaining: maxRequests,
+			allowed: false,
+			remaining: 0,
 			current: 0,
 			reset: getEndOfDay(),
 			source: "database",
+			requiresDatabaseCheck: true,
 		};
 	}
 }

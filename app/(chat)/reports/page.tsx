@@ -158,11 +158,11 @@ export default async function ReportsPage() {
 							</CardContent>
 						</Card>
 
-						<Card className="border-0 bg-gradient-to-br from-white to-amber-50/50 dark:from-slate-800 dark:to-amber-900/20 shadow-md">
+						<Card className="border-0 bg-gradient-to-br from-white to-red-50/50 dark:from-slate-800 dark:to-neutral-900/20 shadow-md">
 							<CardContent className="p-4 sm:p-6">
 								<div className="flex items-center gap-3">
-									<div className="flex size-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/50 sm:size-12">
-										<FileText className="h-5 w-5 text-amber-600 dark:text-amber-400 sm:h-6 sm:w-6" />
+									<div className="flex size-10 items-center justify-center rounded-full bg-red-100 dark:bg-neutral-900/50 sm:size-12">
+										<FileText className="h-5 w-5 text-red-600 dark:text-red-500 sm:h-6 sm:w-6" />
 									</div>
 									<div>
 										<p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">

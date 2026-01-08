@@ -161,16 +161,16 @@ export function ExecutiveSwitch({
 		<div className="relative">
 			<Button
 				className={cn(
-					"group relative flex h-11 items-center gap-3 rounded-xl border-2 border-stone-200 bg-white px-4 text-left shadow-sm transition-all duration-200 sm:h-12 sm:gap-4 sm:px-5",
-					"hover:border-rose-300 hover:shadow-md",
-					"focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2",
+					"group relative flex h-9 items-center gap-2.5 rounded-md border border-neutral-200 bg-white px-3 text-left shadow-sm transition-all duration-200 sm:h-10 sm:gap-3 sm:px-4 dark:border-neutral-700 dark:bg-neutral-900",
+					"hover:border-red-200 hover:shadow dark:hover:border-red-800",
+					"focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:ring-offset-1",
 					disabled && "cursor-not-allowed opacity-60",
 				)}
 				disabled={disabled}
 				onClick={() => setIsOpen(!isOpen)}
 				variant="outline"
 			>
-				<div className="flex items-center gap-3 sm:gap-4">
+				<div className="flex items-center gap-2.5 sm:gap-3">
 					<motion.div
 						animate={{ scale: 1 }}
 						className="flex-shrink-0"
@@ -182,27 +182,27 @@ export function ExecutiveSwitch({
 					</motion.div>
 
 					<div className="flex flex-col">
-						<span className="font-semibold text-sm text-stone-800 sm:text-base">
+						<span className="font-medium text-xs text-neutral-900 sm:text-sm dark:text-neutral-100">
 							{selectedPersonality.name.split(" ")[0]}
 						</span>
-						<span className="hidden text-stone-500 text-xs sm:block">
+						<span className="hidden text-neutral-500 text-[10px] sm:block dark:text-neutral-400">
 							{selectedPersonality.role.split("(")[0].trim()}
 						</span>
 					</div>
 				</div>
 
-				<div className="flex items-center gap-2 pl-2 sm:gap-3 sm:pl-4">
-					<span className="hidden rounded-full bg-emerald-100 px-2 py-0.5 font-medium text-emerald-700 text-xs sm:inline-flex">
+				<div className="flex items-center gap-1.5 pl-1.5 sm:gap-2 sm:pl-3">
+					<span className="hidden rounded-full bg-red-50 px-2 py-0.5 font-medium text-red-600 text-[10px] sm:inline-flex dark:bg-red-950/50 dark:text-red-400">
 						Active
 					</span>
 
 					<motion.div
 						animate={{ rotate: isOpen ? 180 : 0 }}
-						className="text-stone-400"
+						className="text-neutral-400 dark:text-neutral-500"
 						transition={{ duration: 0.2 }}
 					>
 						<svg
-							className="size-4 sm:size-5"
+							className="size-3.5 sm:size-4"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -218,7 +218,7 @@ export function ExecutiveSwitch({
 				</div>
 			</Button>
 
-			{/* Professional Modal Popup */}
+			{/* Premium Modal Popup */}
 			{mounted &&
 				isOpen &&
 				createPortal(
@@ -227,43 +227,43 @@ export function ExecutiveSwitch({
 							{/* Modal Backdrop */}
 							<motion.div
 								animate={{ opacity: 1 }}
-								className="absolute inset-0 bg-black/60 backdrop-blur-md"
+								className="absolute inset-0 bg-black/70 backdrop-blur-sm dark:bg-black/80"
 								exit={{ opacity: 0 }}
 								initial={{ opacity: 0 }}
 								onClick={() => setIsOpen(false)}
-								transition={{ duration: 0.3 }}
+								transition={{ duration: 0.2 }}
 							/>
 
 							{/* Modal Content */}
 							<div className="absolute inset-0 flex items-center justify-center overflow-y-auto p-4 sm:p-6">
 								<motion.div
 									animate={{ opacity: 1, scale: 1, y: 0 }}
-									className="relative w-full max-w-4xl"
-									exit={{ opacity: 0, scale: 0.95, y: 20 }}
-									initial={{ opacity: 0, scale: 0.95, y: 20 }}
+									className="relative w-full max-w-3xl"
+									exit={{ opacity: 0, scale: 0.98, y: 10 }}
+									initial={{ opacity: 0, scale: 0.98, y: 10 }}
 									transition={{
-										duration: 0.4,
+										duration: 0.25,
 										ease: [0.25, 0.46, 0.45, 0.94],
 									}}
 								>
 									{/* Modal Card */}
-									<Card className="overflow-hidden border border-stone-200/60 bg-white shadow-2xl shadow-stone-200/50 backdrop-blur-xl">
+									<Card className="overflow-hidden border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-950">
 										{/* Modal Header */}
-										<div className="relative border-rose-100/40 border-b bg-gradient-to-r from-rose-50/80 via-white to-rose-50/80 px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-											{/* Decorative Background */}
-											<div className="absolute inset-0 bg-gradient-to-r from-rose-400/5 via-rose-400/10 to-rose-400/5" />
+										<div className="relative border-b border-neutral-100 bg-white px-4 py-5 sm:px-6 sm:py-6 lg:px-8 dark:border-neutral-800 dark:bg-neutral-950">
+											{/* Subtle red accent line */}
+											<div className="absolute top-0 left-0 h-0.5 w-full bg-gradient-to-r from-red-500 via-red-600 to-red-500" />
 
 											<div className="relative z-10">
 												<div className="flex items-start justify-between gap-3 sm:items-center">
 													<div className="flex items-center gap-3 sm:gap-4">
 														<div className="hidden sm:block">
-															<Sparkles className="h-6 w-6 text-rose-500 sm:h-8 sm:w-8" />
+															<Sparkles className="h-5 w-5 text-red-500 sm:h-6 sm:w-6" />
 														</div>
 														<div>
-															<h1 className="font-semibold text-lg text-stone-800 sm:text-2xl lg:text-3xl">
-																Select Executive Advisor
+															<h1 className="font-semibold text-base text-neutral-900 sm:text-xl lg:text-2xl dark:text-white">
+																Select Executive
 															</h1>
-															<p className="mt-1 text-sm text-stone-500 sm:mt-2 sm:text-base">
+															<p className="mt-0.5 text-xs text-neutral-500 sm:mt-1 sm:text-sm dark:text-neutral-400">
 																Choose your AI consultant
 															</p>
 														</div>
@@ -271,13 +271,13 @@ export function ExecutiveSwitch({
 
 													{/* Close Button */}
 													<Button
-														className="h-9 w-9 flex-shrink-0 rounded-full border border-rose-200 bg-white text-rose-600 shadow-sm transition-all duration-200 hover:bg-rose-50 sm:h-10 sm:w-10 lg:h-12 lg:w-12"
+														className="h-8 w-8 flex-shrink-0 rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-sm transition-all duration-200 hover:bg-neutral-50 hover:text-neutral-900 sm:h-9 sm:w-9 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white"
 														onClick={() => setIsOpen(false)}
 														size="icon"
 														variant="outline"
 													>
 														<svg
-															className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6"
+															className="h-4 w-4"
 															fill="none"
 															stroke="currentColor"
 															viewBox="0 0 24 24"
@@ -295,42 +295,42 @@ export function ExecutiveSwitch({
 										</div>
 
 										{/* Modal Body */}
-										<div className="max-h-[60vh] overflow-y-auto p-4 sm:max-h-none sm:p-6 lg:p-8">
-											<div className="grid gap-4 sm:gap-6 lg:grid-cols-2 lg:gap-8">
+										<div className="max-h-[60vh] overflow-y-auto bg-neutral-50 p-4 sm:max-h-none sm:p-6 dark:bg-neutral-900/50">
+											<div className="grid gap-4 sm:gap-5 lg:grid-cols-2 lg:gap-6">
 												{/* Current Executive Section */}
-												<div className="space-y-4 sm:space-y-6">
-													<div className="flex items-center gap-2 sm:gap-3">
-														<div className="h-px flex-1 bg-gradient-to-r from-stone-200 to-transparent" />
+												<div className="space-y-3 sm:space-y-4">
+													<div className="flex items-center gap-2">
+														<div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
 														<div className="flex items-center gap-2">
-															<Badge className="border-0 bg-rose-100 px-2 py-1 font-semibold text-rose-700 text-xs shadow-sm sm:px-3 sm:py-1.5 sm:text-sm">
-																Active
+															<Badge className="border-0 bg-red-500 px-2.5 py-0.5 font-medium text-white text-[10px] sm:text-xs">
+																ACTIVE
 															</Badge>
 															<motion.div
-																animate={{ scale: [1, 1.1, 1] }}
-																className="h-2 w-2 rounded-full bg-rose-500 shadow sm:h-3 sm:w-3"
+																animate={{ scale: [1, 1.2, 1] }}
+																className="h-1.5 w-1.5 rounded-full bg-red-500"
 																transition={{
 																	duration: 2,
 																	repeat: Number.POSITIVE_INFINITY,
 																}}
 															/>
 														</div>
-														<div className="h-px flex-1 bg-gradient-to-r from-transparent to-stone-200" />
+														<div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
 													</div>
 
 													<motion.div
 														animate={{ opacity: 1, x: 0 }}
 														className="group"
-														initial={{ opacity: 0, x: -20 }}
-														transition={{ duration: 0.5 }}
+														initial={{ opacity: 0, x: -10 }}
+														transition={{ duration: 0.3 }}
 													>
-														<div className="rounded-2xl border border-stone-200/60 bg-gradient-to-br from-stone-50 via-white to-stone-50 p-4 shadow-sm transition-all duration-300 sm:rounded-3xl sm:p-6 lg:p-8">
-															<div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
+														<div className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 sm:p-5">
+															<div className="flex items-center gap-3 sm:gap-4">
 																<div className="relative flex-shrink-0">
 																	{getExecutiveIcon(selectedExecutive, "md")}
-																	<div className="-bottom-1 -right-1 sm:-bottom-2 sm:-right-2 absolute">
-																		<div className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 shadow sm:h-6 sm:w-6 lg:h-8 lg:w-8">
+																	<div className="-bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 absolute">
+																		<div className="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 sm:h-5 sm:w-5">
 																			<svg
-																				className="h-2.5 w-2.5 text-white sm:h-3 sm:w-3 lg:h-4 lg:w-4"
+																				className="h-2.5 w-2.5 text-white"
 																				fill="none"
 																				stroke="currentColor"
 																				viewBox="0 0 24 24"
@@ -346,13 +346,13 @@ export function ExecutiveSwitch({
 																	</div>
 																</div>
 																<div className="min-w-0 flex-1">
-																	<h3 className="truncate font-semibold text-base text-stone-800 sm:text-lg lg:text-2xl">
+																	<h3 className="truncate font-semibold text-sm text-neutral-900 sm:text-base dark:text-white">
 																		{selectedPersonality.name}
 																	</h3>
-																	<p className="mt-0.5 truncate font-medium text-sm text-stone-500 sm:mt-1 sm:text-base">
+																	<p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
 																		{selectedPersonality.role}
 																	</p>
-																	<p className="mt-2 line-clamp-2 text-sm text-stone-600 leading-relaxed sm:mt-3 sm:line-clamp-none sm:text-base">
+																	<p className="mt-2 line-clamp-2 text-xs text-neutral-600 leading-relaxed dark:text-neutral-300 sm:line-clamp-none sm:text-sm">
 																		{selectedPersonality.description}
 																	</p>
 																</div>
@@ -362,49 +362,49 @@ export function ExecutiveSwitch({
 												</div>
 
 												{/* Other Executives Section */}
-												<div className="space-y-4 sm:space-y-6">
-													<div className="flex items-center gap-2 sm:gap-3">
-														<div className="h-px flex-1 bg-gradient-to-r from-stone-200 to-transparent" />
-														<Badge className="border-0 bg-stone-100 px-2 py-1 font-semibold text-stone-600 text-xs shadow-sm sm:px-3 sm:py-1.5 sm:text-sm">
-															Available
+												<div className="space-y-3 sm:space-y-4">
+													<div className="flex items-center gap-2">
+														<div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
+														<Badge className="border-0 bg-neutral-200 px-2.5 py-0.5 font-medium text-neutral-600 text-[10px] sm:text-xs dark:bg-neutral-700 dark:text-neutral-300">
+															AVAILABLE
 														</Badge>
-														<div className="h-px flex-1 bg-gradient-to-r from-transparent to-stone-200" />
+														<div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
 													</div>
 
-													<div className="space-y-2 sm:space-y-3">
+													<div className="space-y-2">
 														{otherExecutives.map(
 															([key, personality], index) => (
 																<motion.button
 																	animate={{ opacity: 1, x: 0 }}
-																	className="group w-full text-left transition-all duration-300"
-																	exit={{ opacity: 0, x: -20 }}
-																	initial={{ opacity: 0, x: 20 }}
+																	className="group w-full text-left"
+																	exit={{ opacity: 0, x: -10 }}
+																	initial={{ opacity: 0, x: 10 }}
 																	key={key}
 																	onClick={() =>
 																		handleExecutiveSelect(key as BotType)
 																	}
 																	transition={{
-																		duration: 0.4,
-																		delay: 0.1 + index * 0.1,
+																		duration: 0.2,
+																		delay: 0.05 + index * 0.05,
 																	}}
-																	whileHover={{ scale: 1.01, y: -2 }}
+																	whileHover={{ scale: 1.01 }}
 																	whileTap={{ scale: 0.99 }}
 																>
-																	<div className="rounded-xl border border-stone-100 bg-white p-3 shadow-sm transition-all duration-300 hover:border-rose-200 hover:bg-rose-50/30 hover:shadow-md sm:rounded-2xl sm:p-4 lg:p-6">
-																		<div className="flex items-center gap-3 sm:gap-4">
+																	<div className="rounded-lg border border-neutral-200 bg-white p-3 transition-all duration-200 hover:border-red-200 hover:shadow dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-red-800 sm:p-4">
+																		<div className="flex items-center gap-3">
 																			{getExecutiveIcon(key as BotType, "sm")}
 																			<div className="min-w-0 flex-1">
-																				<h4 className="truncate font-semibold text-sm text-stone-800 transition-colors duration-300 group-hover:text-stone-900 sm:text-base lg:text-lg">
+																				<h4 className="truncate font-medium text-sm text-neutral-900 dark:text-white">
 																					{personality.name}
 																				</h4>
-																				<p className="truncate text-stone-500 text-xs sm:mt-0.5 sm:text-sm">
+																				<p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
 																					{personality.role}
 																				</p>
 																			</div>
-																			<div className="flex-shrink-0 opacity-60 transition-all duration-300 group-hover:opacity-100">
-																				<div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 transition-colors group-hover:bg-rose-500 sm:h-10 sm:w-10">
+																			<div className="flex-shrink-0 opacity-40 transition-all duration-200 group-hover:opacity-100">
+																				<div className="flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 transition-colors group-hover:bg-red-500 dark:bg-neutral-800 dark:group-hover:bg-red-600">
 																					<svg
-																						className="h-4 w-4 text-rose-500 transition-colors group-hover:text-white sm:h-5 sm:w-5"
+																						className="h-3.5 w-3.5 text-neutral-400 transition-colors group-hover:text-white"
 																						fill="none"
 																						stroke="currentColor"
 																						viewBox="0 0 24 24"
@@ -427,13 +427,13 @@ export function ExecutiveSwitch({
 												</div>
 											</div>
 
-											{/* Modal Footer - Hidden on mobile, visible on larger screens */}
-											<div className="mt-4 hidden items-center justify-between border-rose-100 border-t pt-4 sm:mt-6 sm:flex sm:pt-6">
-												<p className="text-sm text-stone-400">
+											{/* Modal Footer */}
+											<div className="mt-4 hidden items-center justify-between border-t border-neutral-200 pt-4 sm:flex dark:border-neutral-700">
+												<p className="text-xs text-neutral-400">
 													Select an advisor to customize your conversation
 												</p>
 												<Button
-													className="h-10 rounded-full border border-rose-200 bg-white px-6 font-medium text-rose-600 text-sm shadow-sm transition-all duration-200 hover:bg-rose-50"
+													className="h-8 rounded-md border border-neutral-200 bg-white px-4 font-medium text-neutral-600 text-xs shadow-sm transition-all duration-200 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
 													onClick={() => setIsOpen(false)}
 													variant="outline"
 												>

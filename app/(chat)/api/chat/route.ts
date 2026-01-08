@@ -3,7 +3,6 @@ import {
 	convertToModelMessages,
 	createUIMessageStream,
 	JsonToSseTransformStream,
-	smoothStream,
 	stepCountIs,
 	streamText,
 } from "ai";
@@ -51,6 +50,8 @@ import {
 	checkRateLimit,
 	getRateLimitHeaders,
 } from "@/lib/security/rate-limiter";
+import type { BotType, FocusMode } from "@/lib/bot-personalities";
+import type { Session } from "@/lib/artifacts/server";
 import type { ChatMessage } from "@/lib/types";
 import type { AppUsage } from "@/lib/usage";
 import { convertToUIMessages, generateUUID } from "@/lib/utils";
@@ -137,15 +138,15 @@ export async function POST(request: Request) {
 			message,
 			selectedChatModel,
 			selectedVisibilityType,
-			selectedBotType = "alexandria",
+			selectedBotType = "collaborative",
 			focusMode = "default",
 		}: {
 			id: string;
 			message: ChatMessage;
 			selectedChatModel: ChatModel["id"];
 			selectedVisibilityType: VisibilityType;
-			selectedBotType: string;
-			focusMode: string;
+			selectedBotType: BotType;
+			focusMode: FocusMode;
 		} = requestBody;
 
 		const supabase = await createClient();
@@ -184,13 +185,14 @@ export async function POST(request: Request) {
 				return response;
 			}
 		} else {
-			// Fall back to database-based rate limiting
+			// SECURITY: Redis unavailable - MUST verify via database (fail closed)
+			// This ensures rate limiting is enforced even when Redis is down
 			const messageCount = await getMessageCountByUserId({
 				id: user.id,
 				differenceInHours: 24,
 			});
 
-			if (messageCount > maxMessages) {
+			if (messageCount >= maxMessages) {
 				return new ChatSDKError("rate_limit:chat").toResponse();
 			}
 		}
@@ -284,8 +286,8 @@ export async function POST(request: Request) {
 					system: systemPrompt({
 						selectedChatModel,
 						requestHints,
-						botType: selectedBotType as any,
-						focusMode: focusMode as any,
+						botType: selectedBotType,
+						focusMode: focusMode,
 						knowledgeBaseContent,
 					}),
 					messages: convertToModelMessages(uiMessages),
@@ -302,10 +304,10 @@ export async function POST(request: Request) {
 					// experimental_transform: smoothStream({ chunking: "line" }),
 					tools: {
 						getWeather,
-						createDocument: createDocument({ session: { user } as any, dataStream }),
-						updateDocument: updateDocument({ session: { user } as any, dataStream }),
+						createDocument: createDocument({ session: { user } satisfies Session, dataStream }),
+						updateDocument: updateDocument({ session: { user } satisfies Session, dataStream }),
 						requestSuggestions: requestSuggestions({
-							session: { user } as any,
+							session: { user } satisfies Session,
 							dataStream,
 						}),
 						webSearch,
@@ -358,19 +360,26 @@ export async function POST(request: Request) {
 			generateId: generateUUID,
 			onFinish: async ({ messages }) => {
 				await saveMessages({
-					messages: messages.map((currentMessage) => ({
-						id: currentMessage.id,
-						role: currentMessage.role,
-						parts: currentMessage.parts as unknown as Json,
-						createdAt: new Date().toISOString(),
-						attachments: [] as unknown as Json,
-						chatId: id,
-						botType:
-							currentMessage.role === "assistant"
-								? (currentMessage as any).metadata?.botType || selectedBotType
-								: null,
-						deletedAt: null,
-					})),
+					messages: messages.map((currentMessage) => {
+						// Safely extract botType from message metadata
+						const messageMetadata = "metadata" in currentMessage
+							? (currentMessage.metadata as { botType?: BotType } | undefined)
+							: undefined;
+
+						return {
+							id: currentMessage.id,
+							role: currentMessage.role,
+							parts: currentMessage.parts as unknown as Json,
+							createdAt: new Date().toISOString(),
+							attachments: [] as unknown as Json,
+							chatId: id,
+							botType:
+								currentMessage.role === "assistant"
+									? messageMetadata?.botType || selectedBotType
+									: null,
+							deletedAt: null,
+						};
+					}),
 				});
 
 				if (finalMergedUsage) {

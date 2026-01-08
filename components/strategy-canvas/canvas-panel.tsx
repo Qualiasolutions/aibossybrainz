@@ -51,13 +51,13 @@ const accentClasses = {
 			"from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400",
 	},
 	amber: {
-		border: "border-amber-500/30 dark:border-amber-400/20",
-		glow: "shadow-amber-500/10 dark:shadow-amber-400/5",
+		border: "border-red-500/30 dark:border-red-500/20",
+		glow: "shadow-red-500/10 dark:shadow-red-500/5",
 		gradient:
-			"from-amber-500/10 via-transparent to-transparent dark:from-amber-400/5",
-		icon: "text-amber-500 dark:text-amber-400",
+			"from-red-500/10 via-transparent to-transparent dark:from-red-500/5",
+		icon: "text-red-500 dark:text-red-500",
 		title:
-			"from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400",
+			"from-red-600 to-orange-600 dark:from-red-500 dark:to-orange-400",
 	},
 	purple: {
 		border: "border-purple-500/30 dark:border-purple-400/20",

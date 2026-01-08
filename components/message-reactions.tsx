@@ -43,8 +43,8 @@ const REACTION_CONFIG: Record<
 	actionable: {
 		icon: Lightbulb,
 		label: "Actionable",
-		color: "text-amber-500",
-		bgColor: "bg-amber-500/10 hover:bg-amber-500/20",
+		color: "text-red-500",
+		bgColor: "bg-red-500/10 hover:bg-red-500/20",
 	},
 	needs_clarification: {
 		icon: HelpCircle,

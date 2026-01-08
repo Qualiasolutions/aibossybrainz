@@ -107,7 +107,7 @@ export default function StrategyCanvasPage() {
 					}}
 				/>
 				<motion.div
-					className="absolute -bottom-20 left-1/3 size-72 rounded-full bg-gradient-to-br from-amber-200/40 to-orange-200/40 blur-3xl dark:from-amber-900/20 dark:to-orange-900/20"
+					className="absolute -bottom-20 left-1/3 size-72 rounded-full bg-gradient-to-br from-neutral-200/40 to-orange-200/40 blur-3xl dark:from-neutral-900/20 dark:to-orange-900/20"
 					animate={{
 						x: [0, 40, 0],
 						y: [0, -40, 0],
@@ -180,7 +180,7 @@ export default function StrategyCanvasPage() {
 													canvas.color === "emerald" &&
 														"bg-emerald-100 dark:bg-emerald-900/30",
 													canvas.color === "amber" &&
-														"bg-amber-100 dark:bg-amber-900/30",
+														"bg-red-100 dark:bg-neutral-900/30",
 												)}
 												transition={{ type: "spring", duration: 0.5 }}
 											/>
@@ -199,7 +199,7 @@ export default function StrategyCanvasPage() {
 													"text-emerald-600 dark:text-emerald-400",
 												isActive &&
 													canvas.color === "amber" &&
-													"text-amber-600 dark:text-amber-400",
+													"text-red-600 dark:text-red-500",
 											)}
 										/>
 										<span className="relative">{canvas.label}</span>
@@ -261,7 +261,7 @@ export default function StrategyCanvasPage() {
 																? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
 																: canvas.color === "emerald"
 																	? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-																	: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
+																	: "bg-red-100 text-red-700 dark:bg-neutral-900/30 dark:text-neutral-300"
 														: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
 												)}
 												onClick={() => {
@@ -334,7 +334,7 @@ export default function StrategyCanvasPage() {
 												canvas.color === "emerald" &&
 													"bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/20",
 												canvas.color === "amber" &&
-													"bg-gradient-to-br from-amber-100 to-orange-50 dark:from-amber-900/40 dark:to-orange-900/20",
+													"bg-gradient-to-br from-red-100 to-orange-50 dark:from-neutral-900/40 dark:to-orange-900/20",
 											)}
 										/>
 									)}
@@ -350,7 +350,7 @@ export default function StrategyCanvasPage() {
 												canvas.color === "emerald" &&
 													"bg-emerald-100 text-emerald-600 group-hover:bg-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-400",
 												canvas.color === "amber" &&
-													"bg-amber-100 text-amber-600 group-hover:bg-amber-200 dark:bg-amber-900/50 dark:text-amber-400",
+													"bg-red-100 text-red-600 group-hover:bg-neutral-200 dark:bg-neutral-900/50 dark:text-red-500",
 											)}
 										>
 											<Icon className="size-5 sm:size-6" />

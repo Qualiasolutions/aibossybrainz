@@ -63,13 +63,13 @@ export function TosPopup({ onAccept }: TosPopupProps) {
             className="relative w-full max-w-2xl glass-dark rounded-2xl overflow-hidden"
           >
             {/* Gold accent line */}
-            <div className="absolute top-0 left-0 right-0 h-1 gold-gradient" />
+            <div className="absolute top-0 left-0 right-0 h-1 red-gradient" />
 
             {/* Header */}
             <div className="p-6 pb-4 border-b border-white/10">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-amber-500/20">
-                  <Shield className="size-6 text-amber-400" />
+                <div className="p-2 rounded-xl bg-red-500/20">
+                  <Shield className="size-6 text-red-400" />
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold text-white">Terms of Service</h2>
@@ -84,7 +84,7 @@ export function TosPopup({ onAccept }: TosPopupProps) {
                 {/* Key Points */}
                 <section className="space-y-4">
                   <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/10">
-                    <FileText className="size-5 text-amber-400 mt-0.5 shrink-0" />
+                    <FileText className="size-5 text-red-400 mt-0.5 shrink-0" />
                     <div>
                       <h3 className="font-medium text-white mb-1">Service Description</h3>
                       <p className="text-muted-foreground">
@@ -96,7 +96,7 @@ export function TosPopup({ onAccept }: TosPopupProps) {
                   </div>
 
                   <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/10">
-                    <Lock className="size-5 text-amber-400 mt-0.5 shrink-0" />
+                    <Lock className="size-5 text-red-400 mt-0.5 shrink-0" />
                     <div>
                       <h3 className="font-medium text-white mb-1">Data & Privacy</h3>
                       <p className="text-muted-foreground">
@@ -108,7 +108,7 @@ export function TosPopup({ onAccept }: TosPopupProps) {
                   </div>
 
                   <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/10">
-                    <AlertCircle className="size-5 text-amber-400 mt-0.5 shrink-0" />
+                    <AlertCircle className="size-5 text-red-400 mt-0.5 shrink-0" />
                     <div>
                       <h3 className="font-medium text-white mb-1">AI-Generated Content</h3>
                       <p className="text-muted-foreground">
@@ -125,23 +125,23 @@ export function TosPopup({ onAccept }: TosPopupProps) {
                   <h3 className="font-medium text-white">Terms Summary</h3>
                   <ul className="space-y-2 text-muted-foreground">
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-400 mt-1">•</span>
+                      <span className="text-red-400 mt-1">•</span>
                       You must be at least 18 years old to use this service
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-400 mt-1">•</span>
+                      <span className="text-red-400 mt-1">•</span>
                       You agree to use the service for lawful purposes only
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-400 mt-1">•</span>
+                      <span className="text-red-400 mt-1">•</span>
                       We may update these terms with notice to users
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-400 mt-1">•</span>
+                      <span className="text-red-400 mt-1">•</span>
                       AI recommendations should not replace professional advice
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-400 mt-1">•</span>
+                      <span className="text-red-400 mt-1">•</span>
                       You can request data deletion at any time
                     </li>
                   </ul>
@@ -160,7 +160,7 @@ export function TosPopup({ onAccept }: TosPopupProps) {
                 <Checkbox
                   checked={isChecked}
                   onCheckedChange={(checked) => setIsChecked(checked === true)}
-                  className="border-amber-500/50 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
+                  className="border-red-500/50 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
                 />
                 <span className="text-sm text-foreground/80 group-hover:text-foreground transition-colors">
                   I have read and agree to the Terms of Service and Privacy Policy

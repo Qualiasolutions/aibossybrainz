@@ -43,14 +43,14 @@ export function AuthShell({
 	return (
 		<div
 			className={cn(
-				"relative flex min-h-dvh w-full items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_#ffe3f0_0%,_#f9f6ff_42%,_#f9f6ff_100%)] text-slate-900",
+				"relative flex min-h-dvh w-full items-center justify-center overflow-hidden bg-white text-neutral-900",
 				className,
 			)}
 		>
 			<div aria-hidden className="pointer-events-none absolute inset-0">
-				<div className="absolute top-[-5%] left-[-10%] h-[28rem] w-[28rem] rounded-full bg-rose-200/40 blur-3xl md:h-[32rem] md:w-[32rem]" />
-				<div className="absolute top-[20%] right-[-12%] h-[24rem] w-[24rem] rounded-full bg-amber-100/40 blur-[140px] md:h-[28rem] md:w-[28rem]" />
-				<div className="-translate-x-1/2 absolute bottom-[-15%] left-[40%] h-[20rem] w-[20rem] rounded-full bg-rose-300/30 blur-[120px]" />
+				<div className="absolute top-[-5%] left-[-10%] h-[28rem] w-[28rem] rounded-full bg-red-500/5 blur-3xl md:h-[32rem] md:w-[32rem]" />
+				<div className="absolute top-[20%] right-[-12%] h-[24rem] w-[24rem] rounded-full bg-neutral-200/30 blur-[140px] md:h-[28rem] md:w-[28rem]" />
+				<div className="-translate-x-1/2 absolute bottom-[-15%] left-[40%] h-[20rem] w-[20rem] rounded-full bg-red-500/3 blur-[120px]" />
 			</div>
 
 			<motion.div
@@ -62,11 +62,11 @@ export function AuthShell({
 				<div className="space-y-8">
 					<motion.span
 						animate={{ opacity: 1, y: 0 }}
-						className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-1 font-semibold text-rose-600 text-xs uppercase tracking-widest shadow-sm ring-1 ring-white/80 backdrop-blur"
+						className="inline-flex items-center gap-2 rounded-full bg-neutral-100 px-4 py-1 font-semibold text-red-600 text-xs uppercase tracking-widest shadow-sm ring-1 ring-neutral-200 backdrop-blur"
 						initial={{ opacity: 0, y: -12 }}
 						transition={{ duration: 0.4 }}
 					>
-						<div className="flex h-3.5 w-3.5 items-center justify-center text-rose-500">
+						<div className="flex h-3.5 w-3.5 items-center justify-center text-red-500">
 							<CheckCircleFillIcon size={14} />
 						</div>
 						{eyebrow}
@@ -98,18 +98,18 @@ export function AuthShell({
 									index,
 								) => (
 									<motion.li
-										className="group hover:-translate-y-1 flex items-start gap-3 rounded-2xl border border-white/70 bg-white/70 p-4 shadow-lg shadow-rose-100/30 backdrop-blur transition duration-300 hover:shadow-2xl"
+										className="group hover:-translate-y-1 flex items-start gap-3 rounded-2xl border border-white/70 bg-white/70 p-4 shadow-lg shadow-red-100/30 backdrop-blur transition duration-300 hover:shadow-2xl"
 										custom={index}
 										key={highlightTitle}
 										variants={staggeredFade}
 									>
-										<div className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-rose-500/10 text-rose-600 transition duration-300 group-hover:bg-rose-500 group-hover:text-white">
+										<div className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-red-500/10 text-red-600 transition duration-300 group-hover:bg-red-500 group-hover:text-white">
 											<div className="flex h-3.5 w-3.5 items-center justify-center">
 												<CheckCircleFillIcon size={14} />
 											</div>
 										</div>
 										<div className="space-y-1">
-											<h3 className="font-semibold text-rose-500 text-sm uppercase tracking-wider">
+											<h3 className="font-semibold text-red-500 text-sm uppercase tracking-wider">
 												{highlightTitle}
 											</h3>
 											<p className="text-slate-600 text-sm">
@@ -125,11 +125,11 @@ export function AuthShell({
 
 				<motion.div
 					animate={{ opacity: 1, y: 0 }}
-					className="relative rounded-[32px] border border-white/80 bg-white/95 p-8 shadow-2xl shadow-rose-200/40 backdrop-blur-xl"
+					className="relative rounded-[32px] border border-neutral-200 bg-white p-8 shadow-2xl shadow-neutral-200/40 backdrop-blur-xl"
 					initial={{ opacity: 0, y: 24 }}
 					transition={{ duration: 0.45, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
 				>
-					<div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-rose-200 to-transparent" />
+					<div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent" />
 					<div className="flex flex-col gap-6">{children}</div>
 				</motion.div>
 			</motion.div>

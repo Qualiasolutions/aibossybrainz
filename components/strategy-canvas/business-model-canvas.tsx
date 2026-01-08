@@ -362,7 +362,7 @@ function BMCSection({
 							section.color === "pink" &&
 								"bg-pink-100 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400",
 							section.color === "amber" &&
-								"bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400",
+								"bg-red-100 text-red-600 dark:bg-neutral-900/50 dark:text-red-500",
 							section.color === "slate" &&
 								"bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400",
 						)}

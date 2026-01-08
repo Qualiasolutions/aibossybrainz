@@ -77,7 +77,7 @@ export default function RootLayout({
 					}}
 				/>
 			</head>
-			<body className="min-h-screen bg-[#f9f6ff] text-foreground antialiased">
+			<body className="min-h-screen bg-white text-foreground antialiased">
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="light"

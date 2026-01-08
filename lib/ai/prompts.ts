@@ -100,7 +100,7 @@ About the origin of user's request:
 export const systemPrompt = ({
 	selectedChatModel,
 	requestHints,
-	botType = "alexandria",
+	botType = "collaborative",
 	focusMode = "default",
 	knowledgeBaseContent = "",
 }: {

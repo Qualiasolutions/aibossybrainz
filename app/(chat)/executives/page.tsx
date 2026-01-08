@@ -63,7 +63,7 @@ export default function ExecutivesPage() {
 											src={alexandria.avatar!}
 											width={160}
 										/>
-										<div className="-bottom-3 -right-3 absolute flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-600 shadow-lg">
+										<div className="-bottom-3 -right-3 absolute flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-600 shadow-lg">
 											<Crown className="h-6 w-6 text-white" />
 										</div>
 									</div>

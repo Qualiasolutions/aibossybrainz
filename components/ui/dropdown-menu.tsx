@@ -97,7 +97,7 @@ const DropdownMenuItem = React.forwardRef<
       "hover:bg-white/10 hover:text-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-muted-foreground",
-      "[&:hover_svg]:text-amber-400",
+      "[&:hover_svg]:text-red-500",
       inset && "pl-8",
       className
     )}

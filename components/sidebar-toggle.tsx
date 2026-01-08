@@ -21,8 +21,8 @@ export function SidebarToggle({
 				<Button
 					className={cn(
 						"h-9 px-3 md:h-9 md:px-3",
-						"bg-white/10 border-2 border-amber-500/50 hover:border-amber-500",
-						"hover:bg-amber-500/20 transition-all duration-200",
+						"bg-white/10 border-2 border-red-500/50 hover:border-red-500",
+						"hover:bg-red-500/20 transition-all duration-200",
 						"shadow-md shadow-black/20",
 						className
 					)}
