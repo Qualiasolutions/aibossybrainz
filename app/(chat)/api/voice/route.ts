@@ -108,6 +108,10 @@ export async function POST(request: Request) {
 			if (!res.ok) {
 				// Log status only, avoid logging response body which may contain sensitive data
 				console.error("ElevenLabs API error:", res.status, res.statusText);
+				// Handle specific error codes
+				if (res.status === 401) {
+					throw new Error("INVALID_API_KEY");
+				}
 				throw new Error(`ElevenLabs API error: ${res.status}`);
 			}
 
@@ -135,8 +139,17 @@ export async function POST(request: Request) {
 			);
 		}
 
+		// Handle invalid API key
+		if (error instanceof Error && error.message === "INVALID_API_KEY") {
+			console.error("ElevenLabs API key invalid or expired");
+			return Response.json(
+				{ error: "Voice service configuration error" },
+				{ status: 503 },
+			);
+		}
+
 		console.error("Voice API error:", error);
-		return Response.json({ error: "Internal server error" }, { status: 500 });
+		return Response.json({ error: "Voice service unavailable" }, { status: 503 });
 	}
 }
 

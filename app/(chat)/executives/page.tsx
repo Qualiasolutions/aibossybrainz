@@ -19,7 +19,7 @@ export default function ExecutivesPage() {
 							<img
 								alt="Alecci Media Logo"
 								className="h-8 w-auto object-contain sm:h-10"
-								src="https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=1500w"
+								src="/images/AM_Logo_Horizontal_4C+(1).webp"
 							/>
 						</Link>
 						<Link href="/">
