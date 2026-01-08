@@ -313,7 +313,7 @@ function PureMultimodalInput({
 				<div className="flex flex-row items-start">
 					<PromptInputTextarea
 						autoFocus
-						className="grow resize-none border-0! border-none! bg-transparent p-1 text-sm leading-relaxed text-white caret-amber-400 outline-none ring-0 [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 sm:p-2 sm:text-base [&::-webkit-scrollbar]:hidden"
+						className="grow resize-none border-0! border-none! bg-transparent p-1 text-sm leading-relaxed text-zinc-900 caret-amber-500 outline-none ring-0 [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 sm:p-2 sm:text-base [&::-webkit-scrollbar]:hidden"
 						data-testid="multimodal-input"
 						disableAutoResize={true}
 						maxHeight={180}
