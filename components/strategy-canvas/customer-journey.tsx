@@ -1,14 +1,16 @@
 "use client";
 
-import { AnimatePresence, motion, Reorder } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlertCircle,
+	ArrowRight,
+	Download,
 	Eye,
-	GripVertical,
 	Heart,
 	Lightbulb,
 	Megaphone,
 	Plus,
+	RotateCcw,
 	Route,
 	Scale,
 	Search,
@@ -18,50 +20,77 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { CanvasPanel } from "./canvas-panel";
 import type { JourneyStage, JourneyTouchpoint } from "./types";
 
 const stages: {
 	key: JourneyStage;
 	label: string;
+	description: string;
 	icon: typeof Eye;
-	color: string;
+	gradient: string;
+	bgGradient: string;
+	iconBg: string;
+	borderColor: string;
 }[] = [
 	{
 		key: "awareness",
 		label: "Awareness",
+		description: "First contact",
 		icon: Eye,
-		color: "rose",
+		gradient: "from-rose-500 to-pink-600",
+		bgGradient: "from-rose-500/10 via-rose-500/5 to-transparent",
+		iconBg: "bg-gradient-to-br from-rose-500 to-pink-600",
+		borderColor: "border-rose-500/30",
 	},
 	{
 		key: "consideration",
 		label: "Consideration",
+		description: "Research phase",
 		icon: Search,
-		color: "amber",
+		gradient: "from-amber-500 to-orange-600",
+		bgGradient: "from-amber-500/10 via-amber-500/5 to-transparent",
+		iconBg: "bg-gradient-to-br from-amber-500 to-orange-600",
+		borderColor: "border-amber-500/30",
 	},
 	{
 		key: "decision",
 		label: "Decision",
+		description: "Evaluation",
 		icon: Scale,
-		color: "emerald",
+		gradient: "from-emerald-500 to-teal-600",
+		bgGradient: "from-emerald-500/10 via-emerald-500/5 to-transparent",
+		iconBg: "bg-gradient-to-br from-emerald-500 to-teal-600",
+		borderColor: "border-emerald-500/30",
 	},
 	{
 		key: "purchase",
 		label: "Purchase",
+		description: "Conversion",
 		icon: ShoppingCart,
-		color: "blue",
+		gradient: "from-blue-500 to-indigo-600",
+		bgGradient: "from-blue-500/10 via-blue-500/5 to-transparent",
+		iconBg: "bg-gradient-to-br from-blue-500 to-indigo-600",
+		borderColor: "border-blue-500/30",
 	},
 	{
 		key: "retention",
 		label: "Retention",
+		description: "Loyalty",
 		icon: Heart,
-		color: "purple",
+		gradient: "from-purple-500 to-violet-600",
+		bgGradient: "from-purple-500/10 via-purple-500/5 to-transparent",
+		iconBg: "bg-gradient-to-br from-purple-500 to-violet-600",
+		borderColor: "border-purple-500/30",
 	},
 	{
 		key: "advocacy",
 		label: "Advocacy",
+		description: "Referrals",
 		icon: Megaphone,
-		color: "pink",
+		gradient: "from-pink-500 to-rose-600",
+		bgGradient: "from-pink-500/10 via-pink-500/5 to-transparent",
+		iconBg: "bg-gradient-to-br from-pink-500 to-rose-600",
+		borderColor: "border-pink-500/30",
 	},
 ];
 
@@ -70,19 +99,25 @@ const touchpointTypes = [
 		type: "touchpoint" as const,
 		label: "Touchpoint",
 		icon: Sparkles,
-		color: "blue",
+		bgClass: "bg-blue-50 dark:bg-blue-900/30",
+		textClass: "text-blue-700 dark:text-blue-300",
+		borderClass: "border-blue-200 dark:border-blue-800",
 	},
 	{
 		type: "pain" as const,
 		label: "Pain Point",
 		icon: AlertCircle,
-		color: "rose",
+		bgClass: "bg-red-50 dark:bg-red-900/30",
+		textClass: "text-red-700 dark:text-red-300",
+		borderClass: "border-red-200 dark:border-red-800",
 	},
 	{
 		type: "opportunity" as const,
 		label: "Opportunity",
 		icon: Lightbulb,
-		color: "amber",
+		bgClass: "bg-amber-50 dark:bg-amber-900/30",
+		textClass: "text-amber-700 dark:text-amber-300",
+		borderClass: "border-amber-200 dark:border-amber-800",
 	},
 ];
 
@@ -92,6 +127,7 @@ export function CustomerJourney() {
 	const [newContent, setNewContent] = useState("");
 	const [newType, setNewType] =
 		useState<JourneyTouchpoint["type"]>("touchpoint");
+	const [hoveredStage, setHoveredStage] = useState<string | null>(null);
 
 	const generateId = () =>
 		`tp-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -147,192 +183,310 @@ export function CustomerJourney() {
 		URL.revokeObjectURL(url);
 	};
 
+	const totalTouchpoints = touchpoints.length;
+	const painPoints = touchpoints.filter((tp) => tp.type === "pain").length;
+	const opportunities = touchpoints.filter((tp) => tp.type === "opportunity").length;
+
 	return (
-		<CanvasPanel
-			title="Customer Journey Map"
-			subtitle="Map the customer experience across stages"
-			icon={<Route className="size-5" />}
-			accentColor="blue"
-			onReset={resetJourney}
-			onExport={exportJourney}
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.5 }}
+			className="relative"
 		>
+			{/* Premium Header */}
+			<div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex items-center gap-4">
+					<motion.div
+						initial={{ scale: 0 }}
+						animate={{ scale: 1 }}
+						transition={{ type: "spring", delay: 0.2 }}
+						className="relative"
+					>
+						<div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 blur-xl opacity-40" />
+						<div className="relative flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25">
+							<Route className="size-7 text-white" />
+						</div>
+					</motion.div>
+					<div>
+						<h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+							Customer Journey Map
+						</h2>
+						<p className="text-sm text-neutral-500 dark:text-neutral-400">
+							Map the complete customer experience across touchpoints
+						</p>
+					</div>
+				</div>
+
+				{/* Action Buttons */}
+				<div className="flex items-center gap-2">
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+						className="flex items-center gap-2 rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+						onClick={resetJourney}
+						type="button"
+					>
+						<RotateCcw className="size-4" />
+						Reset
+					</motion.button>
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+						className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40"
+						onClick={exportJourney}
+						type="button"
+					>
+						<Download className="size-4" />
+						Export
+					</motion.button>
+				</div>
+			</div>
+
+			{/* Stats Bar */}
+			<motion.div
+				initial={{ opacity: 0, y: 10 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.3 }}
+				className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-neutral-200/50 bg-white/50 p-4 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/50"
+			>
+				<div className="flex items-center gap-2">
+					<Sparkles className="size-4 text-blue-500" />
+					<span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+						{totalTouchpoints} touchpoints mapped
+					</span>
+				</div>
+				{painPoints > 0 && (
+					<>
+						<div className="hidden h-4 w-px bg-neutral-300 dark:bg-neutral-700 sm:block" />
+						<div className="flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
+							<AlertCircle className="size-3" />
+							{painPoints} pain {painPoints === 1 ? "point" : "points"}
+						</div>
+					</>
+				)}
+				{opportunities > 0 && (
+					<div className="flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+						<Lightbulb className="size-3" />
+						{opportunities} {opportunities === 1 ? "opportunity" : "opportunities"}
+					</div>
+				)}
+			</motion.div>
+
 			{/* Journey Timeline */}
 			<div className="relative">
-				{/* Progress line */}
-				<div className="absolute top-8 left-0 hidden h-1 w-full bg-gradient-to-r from-rose-300 via-emerald-300 to-purple-300 opacity-30 dark:from-rose-700 dark:via-emerald-700 dark:to-purple-700 lg:block" />
+				{/* Progress line - Desktop only */}
+				<div className="absolute top-[4.5rem] left-8 right-8 hidden h-1 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800 lg:block">
+					<motion.div
+						className="h-full bg-gradient-to-r from-rose-500 via-emerald-500 to-purple-500"
+						initial={{ width: "0%" }}
+						animate={{ width: "100%" }}
+						transition={{ duration: 1.5, delay: 0.5 }}
+					/>
+				</div>
 
-				{/* Stages */}
-				<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+				{/* Connecting arrows between stages - Desktop */}
+				<div className="absolute top-[4.5rem] left-0 right-0 hidden lg:flex items-center justify-between px-16">
+					{stages.slice(0, -1).map((_, index) => (
+						<motion.div
+							key={`arrow-${index}`}
+							initial={{ opacity: 0, scale: 0 }}
+							animate={{ opacity: 1, scale: 1 }}
+							transition={{ delay: 0.8 + index * 0.1 }}
+							className="flex-1 flex justify-center"
+						>
+							<ArrowRight className="size-5 text-neutral-400 dark:text-neutral-600" />
+						</motion.div>
+					))}
+				</div>
+
+				{/* Stages Grid */}
+				<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 lg:gap-5">
 					{stages.map((stage, index) => {
 						const Icon = stage.icon;
 						const stageTouchpoints = getTouchpointsForStage(stage.key);
+						const isHovered = hoveredStage === stage.key;
 
 						return (
 							<motion.div
 								key={stage.key}
-								initial={{ opacity: 0, y: 20 }}
+								initial={{ opacity: 0, y: 30 }}
 								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: index * 0.08 }}
+								transition={{ delay: index * 0.1 + 0.3 }}
+								onHoverStart={() => setHoveredStage(stage.key)}
+								onHoverEnd={() => setHoveredStage(null)}
 								className="relative"
 							>
 								{/* Stage Header */}
-								<div className="relative z-10 mb-3 flex flex-col items-center">
-									<div
+								<div className="relative z-10 mb-4 flex flex-col items-center">
+									<motion.div
+										whileHover={{ scale: 1.1, y: -5 }}
 										className={cn(
-											"mb-2 flex size-14 items-center justify-center rounded-2xl shadow-lg transition-transform hover:scale-105 sm:size-16",
-											stage.color === "rose" &&
-												"bg-gradient-to-br from-rose-400 to-pink-500 text-white",
-											stage.color === "amber" &&
-												"bg-gradient-to-br from-red-500 to-orange-500 text-white",
-											stage.color === "emerald" &&
-												"bg-gradient-to-br from-emerald-400 to-teal-500 text-white",
-											stage.color === "blue" &&
-												"bg-gradient-to-br from-blue-400 to-indigo-500 text-white",
-											stage.color === "purple" &&
-												"bg-gradient-to-br from-purple-400 to-violet-500 text-white",
-											stage.color === "pink" &&
-												"bg-gradient-to-br from-pink-400 to-rose-500 text-white",
+											"mb-3 flex size-16 items-center justify-center rounded-2xl shadow-lg transition-all sm:size-18",
+											stage.iconBg,
+											isHovered && "shadow-xl",
 										)}
+										style={{
+											boxShadow: isHovered
+												? `0 20px 40px -10px ${stage.gradient.includes("rose") ? "rgba(244, 63, 94, 0.3)" : stage.gradient.includes("amber") ? "rgba(245, 158, 11, 0.3)" : stage.gradient.includes("emerald") ? "rgba(16, 185, 129, 0.3)" : stage.gradient.includes("blue") ? "rgba(59, 130, 246, 0.3)" : stage.gradient.includes("purple") ? "rgba(139, 92, 246, 0.3)" : "rgba(236, 72, 153, 0.3)"}`
+												: undefined,
+										}}
 									>
-										<Icon className="size-6 sm:size-7" />
-									</div>
-									<h3 className="text-center font-semibold text-slate-700 text-xs dark:text-slate-300 sm:text-sm">
+										<Icon className="size-7 text-white sm:size-8" />
+									</motion.div>
+									<h3 className="text-center font-bold text-neutral-800 text-sm dark:text-white sm:text-base">
 										{stage.label}
 									</h3>
+									<p className="text-center text-xs text-neutral-500 dark:text-neutral-400">
+										{stage.description}
+									</p>
 								</div>
 
-								{/* Stage Content */}
-								<div
+								{/* Stage Content Card */}
+								<motion.div
 									className={cn(
-										"min-h-[180px] rounded-xl border p-3",
-										"bg-white/50 dark:bg-slate-800/50",
-										"border-slate-200/50 dark:border-slate-700/50",
+										"min-h-[200px] overflow-hidden rounded-2xl border bg-white/80 backdrop-blur-xl transition-all duration-300 dark:bg-neutral-900/80",
+										stage.borderColor,
+										isHovered && "shadow-xl",
 									)}
 								>
-									{/* Touchpoints */}
-									<div className="space-y-2">
-										<AnimatePresence>
-											{stageTouchpoints.map((tp) => {
-												const typeConfig = touchpointTypes.find(
-													(t) => t.type === tp.type,
-												);
-												const TypeIcon = typeConfig?.icon ?? Sparkles;
+									{/* Background Gradient */}
+									<div
+										className={cn(
+											"absolute inset-0 bg-gradient-to-br opacity-30 transition-opacity duration-300",
+											stage.bgGradient,
+											isHovered && "opacity-50",
+										)}
+									/>
 
-												return (
-													<motion.div
-														key={tp.id}
-														initial={{ opacity: 0, scale: 0.9 }}
-														animate={{ opacity: 1, scale: 1 }}
-														exit={{ opacity: 0, scale: 0.9 }}
-														className={cn(
-															"group relative rounded-lg p-2 text-xs shadow-sm",
-															tp.type === "touchpoint" &&
-																"bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-															tp.type === "pain" &&
-																"bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
-															tp.type === "opportunity" &&
-																"bg-red-50 text-red-700 dark:bg-neutral-900/30 dark:text-neutral-300",
-														)}
-													>
-														<div className="flex items-start gap-1.5">
-															<TypeIcon className="mt-0.5 size-3 flex-shrink-0" />
-															<span className="leading-tight">
-																{tp.content}
-															</span>
-														</div>
+									<div className="relative p-4">
+										{/* Touchpoints */}
+										<div className="space-y-2.5">
+											<AnimatePresence mode="popLayout">
+												{stageTouchpoints.map((tp, tpIndex) => {
+													const typeConfig = touchpointTypes.find(
+														(t) => t.type === tp.type,
+													);
+													const TypeIcon = typeConfig?.icon ?? Sparkles;
+
+													return (
+														<motion.div
+															key={tp.id}
+															initial={{ opacity: 0, scale: 0.8, y: 10 }}
+															animate={{ opacity: 1, scale: 1, y: 0 }}
+															exit={{ opacity: 0, scale: 0.8 }}
+															transition={{ delay: tpIndex * 0.05 }}
+															className={cn(
+																"group/item relative rounded-xl border p-3 shadow-sm transition-all hover:shadow-md",
+																typeConfig?.bgClass,
+																typeConfig?.borderClass,
+															)}
+														>
+															<div className="flex items-start gap-2">
+																<TypeIcon className={cn("mt-0.5 size-4 flex-shrink-0", typeConfig?.textClass)} />
+																<span className={cn("text-xs leading-relaxed", typeConfig?.textClass)}>
+																	{tp.content}
+																</span>
+															</div>
+															<motion.button
+																whileHover={{ scale: 1.1 }}
+																whileTap={{ scale: 0.9 }}
+																className="absolute top-2 right-2 rounded-lg p-1 opacity-0 transition-all hover:bg-black/10 group-hover/item:opacity-100"
+																onClick={() => deleteTouchpoint(tp.id)}
+																type="button"
+															>
+																<X className="size-3.5 text-neutral-500" />
+															</motion.button>
+														</motion.div>
+													);
+												})}
+											</AnimatePresence>
+										</div>
+
+										{/* Add form or button */}
+										{addingTo === stage.key ? (
+											<motion.div
+												initial={{ opacity: 0, y: 10 }}
+												animate={{ opacity: 1, y: 0 }}
+												className="mt-3 space-y-2.5"
+											>
+												<input
+													autoFocus
+													className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 dark:border-neutral-700 dark:bg-neutral-800"
+													placeholder="Describe the touchpoint..."
+													value={newContent}
+													onChange={(e) => setNewContent(e.target.value)}
+													onKeyDown={(e) => {
+														if (e.key === "Enter") {
+															addTouchpoint(stage.key);
+														}
+														if (e.key === "Escape") {
+															setAddingTo(null);
+															setNewContent("");
+														}
+													}}
+												/>
+												<div className="flex gap-1.5">
+													{touchpointTypes.map((type) => (
 														<button
-															className="absolute top-1 right-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-black/10 group-hover:opacity-100"
-															onClick={() => deleteTouchpoint(tp.id)}
+															key={type.type}
+															className={cn(
+																"flex-1 rounded-lg px-2 py-2 text-xs font-medium transition-all",
+																newType === type.type
+																	? cn(type.bgClass, type.textClass, "ring-2 ring-offset-1", type.borderClass)
+																	: "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400",
+															)}
+															onClick={() => setNewType(type.type)}
 															type="button"
 														>
-															<X className="size-3" />
+															{type.label}
 														</button>
-													</motion.div>
-												);
-											})}
-										</AnimatePresence>
-									</div>
-
-									{/* Add button or form */}
-									{addingTo === stage.key ? (
-										<motion.div
-											initial={{ opacity: 0, y: 5 }}
-											animate={{ opacity: 1, y: 0 }}
-											className="mt-2 space-y-2"
-										>
-											<input
-												autoFocus
-												className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-slate-600 dark:bg-slate-700"
-												placeholder="Describe the touchpoint..."
-												value={newContent}
-												onChange={(e) => setNewContent(e.target.value)}
-												onKeyDown={(e) => {
-													if (e.key === "Enter") {
-														addTouchpoint(stage.key);
-													}
-													if (e.key === "Escape") {
-														setAddingTo(null);
-														setNewContent("");
-													}
-												}}
-											/>
-											<div className="flex gap-1">
-												{touchpointTypes.map((type) => (
-													<button
-														key={type.type}
-														className={cn(
-															"flex-1 rounded px-1 py-1 text-xs transition-colors",
-															newType === type.type
-																? type.color === "blue"
-																	? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200"
-																	: type.color === "rose"
-																		? "bg-rose-100 text-rose-700 dark:bg-rose-800 dark:text-rose-200"
-																		: "bg-red-100 text-red-700 dark:bg-neutral-800 dark:text-neutral-200"
-																: "bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-400",
-														)}
-														onClick={() => setNewType(type.type)}
+													))}
+												</div>
+												<div className="flex gap-2">
+													<motion.button
+														whileHover={{ scale: 1.02 }}
+														whileTap={{ scale: 0.98 }}
+														className="flex-1 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 py-2.5 text-xs font-medium text-white shadow-md"
+														onClick={() => addTouchpoint(stage.key)}
 														type="button"
 													>
-														{type.label}
-													</button>
-												))}
-											</div>
-											<div className="flex gap-1">
-												<button
-													className="flex-1 rounded bg-blue-500 py-1 text-xs text-white hover:bg-blue-600"
-													onClick={() => addTouchpoint(stage.key)}
-													type="button"
-												>
-													Add
-												</button>
-												<button
-													className="flex-1 rounded bg-slate-200 py-1 text-xs text-slate-600 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300"
-													onClick={() => {
-														setAddingTo(null);
-														setNewContent("");
-													}}
-													type="button"
-												>
-													Cancel
-												</button>
-											</div>
-										</motion.div>
-									) : (
-										<button
-											className={cn(
-												"mt-2 flex w-full items-center justify-center gap-1 rounded-lg py-2 text-xs transition-colors",
-												"border border-dashed border-slate-300 dark:border-slate-600",
-												"text-slate-400 hover:border-slate-400 hover:text-slate-600",
-												"dark:text-slate-500 dark:hover:border-slate-500 dark:hover:text-slate-400",
-											)}
-											onClick={() => setAddingTo(stage.key)}
-											type="button"
-										>
-											<Plus className="size-3" />
-											Add
-										</button>
-									)}
-								</div>
+														Add
+													</motion.button>
+													<motion.button
+														whileHover={{ scale: 1.02 }}
+														whileTap={{ scale: 0.98 }}
+														className="flex-1 rounded-xl bg-neutral-200 py-2.5 text-xs font-medium text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300"
+														onClick={() => {
+															setAddingTo(null);
+															setNewContent("");
+														}}
+														type="button"
+													>
+														Cancel
+													</motion.button>
+												</div>
+											</motion.div>
+										) : (
+											<motion.button
+												whileHover={{ scale: 1.02 }}
+												whileTap={{ scale: 0.98 }}
+												className={cn(
+													"mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl py-3 text-xs font-medium transition-all",
+													"border-2 border-dashed border-neutral-200 dark:border-neutral-700",
+													"text-neutral-400 hover:border-neutral-300 hover:text-neutral-600",
+													"dark:text-neutral-500 dark:hover:border-neutral-600 dark:hover:text-neutral-400",
+													"hover:bg-white/50 dark:hover:bg-neutral-800/50",
+												)}
+												onClick={() => setAddingTo(stage.key)}
+												type="button"
+											>
+												<Plus className="size-4" />
+												Add touchpoint
+											</motion.button>
+										)}
+									</div>
+								</motion.div>
 							</motion.div>
 						);
 					})}
@@ -340,31 +494,32 @@ export function CustomerJourney() {
 			</div>
 
 			{/* Legend */}
-			<div className="mt-6 flex flex-wrap items-center justify-center gap-4 rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800/50">
+			<motion.div
+				initial={{ opacity: 0, y: 10 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.8 }}
+				className="mt-8 flex flex-wrap items-center justify-center gap-6 rounded-2xl border border-neutral-200/50 bg-white/50 px-6 py-4 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/50"
+			>
 				{touchpointTypes.map((type) => {
 					const Icon = type.icon;
 					return (
-						<div key={type.type} className="flex items-center gap-1.5 text-xs">
+						<div key={type.type} className="flex items-center gap-2">
 							<div
 								className={cn(
-									"flex size-5 items-center justify-center rounded",
-									type.color === "blue" &&
-										"bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400",
-									type.color === "rose" &&
-										"bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400",
-									type.color === "amber" &&
-										"bg-red-100 text-red-600 dark:bg-neutral-900/50 dark:text-red-500",
+									"flex size-8 items-center justify-center rounded-lg border",
+									type.bgClass,
+									type.borderClass,
 								)}
 							>
-								<Icon className="size-3" />
+								<Icon className={cn("size-4", type.textClass)} />
 							</div>
-							<span className="text-slate-600 dark:text-slate-400">
+							<span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
 								{type.label}
 							</span>
 						</div>
 					);
 				})}
-			</div>
-		</CanvasPanel>
+			</motion.div>
+		</motion.div>
 	);
 }

@@ -5,13 +5,11 @@ import {
 	ArrowLeft,
 	LayoutGrid,
 	Lightbulb,
-	Menu,
 	Moon,
 	Route,
 	Sparkles,
 	Sun,
 	Target,
-	X,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -20,7 +18,6 @@ import { BusinessModelCanvas } from "@/components/strategy-canvas/business-model
 import { CustomerJourney } from "@/components/strategy-canvas/customer-journey";
 import { SwotBoard } from "@/components/strategy-canvas/swot-board";
 import type { CanvasType } from "@/components/strategy-canvas/types";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const canvasTypes = [
@@ -29,41 +26,51 @@ const canvasTypes = [
 		label: "SWOT Analysis",
 		shortLabel: "SWOT",
 		icon: Target,
-		description: "Analyze strengths, weaknesses, opportunities & threats",
-		color: "purple",
-	},
-	{
-		key: "journey" as CanvasType,
-		label: "Customer Journey",
-		shortLabel: "Journey",
-		icon: Route,
-		description: "Map the customer experience across touchpoints",
-		color: "blue",
+		description: "Strengths, Weaknesses, Opportunities, Threats",
+		gradient: "from-red-500 to-rose-600",
+		lightBg: "bg-red-50 dark:bg-red-900/20",
+		activeBg: "bg-gradient-to-r from-red-500 to-rose-600",
+		shadowColor: "shadow-red-500/25",
 	},
 	{
 		key: "bmc" as CanvasType,
 		label: "Business Model Canvas",
 		shortLabel: "BMC",
 		icon: LayoutGrid,
-		description: "Design and document your business model",
-		color: "emerald",
+		description: "9 building blocks of your business",
+		gradient: "from-emerald-500 to-teal-600",
+		lightBg: "bg-emerald-50 dark:bg-emerald-900/20",
+		activeBg: "bg-gradient-to-r from-emerald-500 to-teal-600",
+		shadowColor: "shadow-emerald-500/25",
+	},
+	{
+		key: "journey" as CanvasType,
+		label: "Customer Journey",
+		shortLabel: "Journey",
+		icon: Route,
+		description: "Map the complete customer experience",
+		gradient: "from-blue-500 to-indigo-600",
+		lightBg: "bg-blue-50 dark:bg-blue-900/20",
+		activeBg: "bg-gradient-to-r from-blue-500 to-indigo-600",
+		shadowColor: "shadow-blue-500/25",
 	},
 	{
 		key: "brainstorm" as CanvasType,
 		label: "Brainstorming",
 		shortLabel: "Ideas",
 		icon: Lightbulb,
-		description: "Capture and organize your ideas freely",
-		color: "amber",
+		description: "Capture and organize ideas freely",
+		gradient: "from-amber-500 to-orange-600",
+		lightBg: "bg-amber-50 dark:bg-amber-900/20",
+		activeBg: "bg-gradient-to-r from-amber-500 to-orange-600",
+		shadowColor: "shadow-amber-500/25",
 	},
 ];
 
 export default function StrategyCanvasPage() {
 	const [activeCanvas, setActiveCanvas] = useState<CanvasType>("swot");
 	const [isDark, setIsDark] = useState(false);
-	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-	// SSR-safe dark mode detection
 	useEffect(() => {
 		setIsDark(document.documentElement.classList.contains("dark"));
 	}, []);
@@ -74,16 +81,14 @@ export default function StrategyCanvasPage() {
 		document.documentElement.classList.toggle("dark", newIsDark);
 	};
 
-	return (
-		<div className="relative min-h-screen overflow-hidden">
-			{/* Animated background */}
-			<div className="fixed inset-0 -z-10">
-				{/* Base gradient */}
-				<div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-rose-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-purple-950/30" />
+	const activeTab = canvasTypes.find((c) => c.key === activeCanvas);
 
-				{/* Animated gradient orbs */}
+	return (
+		<div className="relative min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950">
+			{/* Animated background */}
+			<div className="fixed inset-0 -z-10 overflow-hidden">
 				<motion.div
-					className="absolute -top-40 -left-40 size-80 rounded-full bg-gradient-to-br from-rose-200/40 to-purple-200/40 blur-3xl dark:from-rose-900/20 dark:to-purple-900/20"
+					className="absolute -top-40 -left-40 size-96 rounded-full bg-gradient-to-br from-red-200/30 to-rose-200/30 blur-3xl dark:from-red-900/10 dark:to-rose-900/10"
 					animate={{
 						x: [0, 50, 0],
 						y: [0, 30, 0],
@@ -95,7 +100,7 @@ export default function StrategyCanvasPage() {
 					}}
 				/>
 				<motion.div
-					className="absolute top-1/2 -right-40 size-96 rounded-full bg-gradient-to-br from-blue-200/40 to-emerald-200/40 blur-3xl dark:from-blue-900/20 dark:to-emerald-900/20"
+					className="absolute top-1/2 -right-40 size-96 rounded-full bg-gradient-to-br from-blue-200/30 to-indigo-200/30 blur-3xl dark:from-blue-900/10 dark:to-indigo-900/10"
 					animate={{
 						x: [0, -30, 0],
 						y: [0, 50, 0],
@@ -106,22 +111,8 @@ export default function StrategyCanvasPage() {
 						ease: "easeInOut",
 					}}
 				/>
-				<motion.div
-					className="absolute -bottom-20 left-1/3 size-72 rounded-full bg-gradient-to-br from-neutral-200/40 to-orange-200/40 blur-3xl dark:from-neutral-900/20 dark:to-orange-900/20"
-					animate={{
-						x: [0, 40, 0],
-						y: [0, -40, 0],
-					}}
-					transition={{
-						duration: 18,
-						repeat: Infinity,
-						ease: "easeInOut",
-					}}
-				/>
-
-				{/* Grid pattern */}
 				<div
-					className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
+					className="absolute inset-0 opacity-[0.02] dark:opacity-[0.04]"
 					style={{
 						backgroundImage: `linear-gradient(to right, currentColor 1px, transparent 1px),
                               linear-gradient(to bottom, currentColor 1px, transparent 1px)`,
@@ -130,269 +121,223 @@ export default function StrategyCanvasPage() {
 				/>
 			</div>
 
-			{/* Header */}
-			<header className="sticky top-0 z-50 border-b border-slate-200/50 bg-white/70 backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-900/70">
-				<div className="container mx-auto px-4 py-4 sm:px-6">
+			{/* Sticky Header */}
+			<header className="sticky top-0 z-50 border-b border-neutral-200/50 bg-white/80 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/80">
+				<div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
 					<div className="flex items-center justify-between">
 						{/* Logo and Back */}
 						<div className="flex items-center gap-4">
 							<Link href="/">
-								<Button className="gap-2" size="sm" variant="ghost">
+								<motion.button
+									whileHover={{ scale: 1.02 }}
+									whileTap={{ scale: 0.98 }}
+									className="flex items-center gap-2 rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+								>
 									<ArrowLeft className="size-4" />
 									<span className="hidden sm:inline">Back to Chat</span>
-								</Button>
+								</motion.button>
 							</Link>
-							<div className="hidden h-6 w-px bg-slate-200 dark:bg-slate-700 sm:block" />
-							<div className="hidden items-center gap-2 sm:flex">
-								<Sparkles className="size-5 text-rose-500" />
-								<h1 className="bg-gradient-to-r from-rose-600 via-purple-600 to-indigo-600 bg-clip-text font-bold text-lg text-transparent">
+							<div className="hidden h-6 w-px bg-neutral-200 dark:bg-neutral-800 sm:block" />
+							<div className="hidden items-center gap-2.5 sm:flex">
+								<div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-rose-600 shadow-md shadow-red-500/20">
+									<Sparkles className="size-4.5 text-white" />
+								</div>
+								<h1 className="font-bold text-lg text-neutral-900 dark:text-white">
 									Strategy Canvas
 								</h1>
 							</div>
 						</div>
 
-						{/* Desktop Navigation */}
-						<nav className="hidden items-center gap-1 lg:flex">
+						{/* Theme Toggle */}
+						<motion.button
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+							className="flex size-10 items-center justify-center rounded-xl text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+							onClick={toggleDarkMode}
+							type="button"
+						>
+							{isDark ? (
+								<Sun className="size-5" />
+							) : (
+								<Moon className="size-5" />
+							)}
+						</motion.button>
+					</div>
+				</div>
+			</header>
+
+			{/* Main Content */}
+			<main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+				{/* Page Header */}
+				<motion.div
+					initial={{ opacity: 0, y: -20 }}
+					animate={{ opacity: 1, y: 0 }}
+					className="mb-10 text-center"
+				>
+					<motion.div
+						initial={{ scale: 0 }}
+						animate={{ scale: 1 }}
+						transition={{ type: "spring", delay: 0.1 }}
+						className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 shadow-xl shadow-red-500/25"
+					>
+						<Sparkles className="size-8 text-white" />
+					</motion.div>
+					<h1 className="mb-2 text-3xl font-bold text-neutral-900 dark:text-white sm:text-4xl">
+						Strategic Planning Tools
+					</h1>
+					<p className="mx-auto max-w-2xl text-neutral-500 dark:text-neutral-400">
+						Visualize your strategy with interactive canvases. Analyze, brainstorm, and document your business decisions.
+					</p>
+				</motion.div>
+
+				{/* Premium Tab Navigation */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.2 }}
+					className="mb-8"
+				>
+					{/* Desktop Tabs */}
+					<div className="hidden rounded-2xl border border-neutral-200/50 bg-white/70 p-2 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/70 md:block">
+						<div className="flex gap-2">
 							{canvasTypes.map((canvas) => {
 								const Icon = canvas.icon;
 								const isActive = activeCanvas === canvas.key;
+
 								return (
-									<button
+									<motion.button
 										key={canvas.key}
-										className={cn(
-											"relative flex items-center gap-2 rounded-lg px-4 py-2 font-medium text-sm transition-all",
-											isActive
-												? "text-slate-900 dark:text-white"
-												: "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200",
-										)}
+										whileHover={{ scale: 1.01 }}
+										whileTap={{ scale: 0.99 }}
 										onClick={() => setActiveCanvas(canvas.key)}
+										className={cn(
+											"relative flex flex-1 flex-col items-center gap-2 rounded-xl px-4 py-4 transition-all",
+											isActive
+												? "text-white"
+												: "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
+										)}
 										type="button"
 									>
 										{isActive && (
 											<motion.div
 												layoutId="activeTab"
 												className={cn(
-													"absolute inset-0 rounded-lg",
-													canvas.color === "purple" &&
-														"bg-purple-100 dark:bg-purple-900/30",
-													canvas.color === "blue" &&
-														"bg-blue-100 dark:bg-blue-900/30",
-													canvas.color === "emerald" &&
-														"bg-emerald-100 dark:bg-emerald-900/30",
-													canvas.color === "amber" &&
-														"bg-red-100 dark:bg-neutral-900/30",
+													"absolute inset-0 rounded-xl shadow-lg",
+													canvas.activeBg,
+													canvas.shadowColor,
 												)}
-												transition={{ type: "spring", duration: 0.5 }}
+												transition={{
+													type: "spring",
+													stiffness: 400,
+													damping: 30,
+												}}
 											/>
 										)}
-										<Icon
+										<div className="relative z-10 flex items-center gap-2.5">
+											<Icon className="size-5" />
+											<span className="font-semibold text-sm">{canvas.label}</span>
+										</div>
+										<span
 											className={cn(
-												"relative size-4",
-												isActive &&
-													canvas.color === "purple" &&
-													"text-purple-600 dark:text-purple-400",
-												isActive &&
-													canvas.color === "blue" &&
-													"text-blue-600 dark:text-blue-400",
-												isActive &&
-													canvas.color === "emerald" &&
-													"text-emerald-600 dark:text-emerald-400",
-												isActive &&
-													canvas.color === "amber" &&
-													"text-red-600 dark:text-red-500",
+												"relative z-10 text-xs",
+												isActive
+													? "text-white/80"
+													: "text-neutral-400 dark:text-neutral-500",
 											)}
-										/>
-										<span className="relative">{canvas.label}</span>
-									</button>
+										>
+											{canvas.description}
+										</span>
+									</motion.button>
 								);
 							})}
-						</nav>
-
-						{/* Actions */}
-						<div className="flex items-center gap-2">
-							<button
-								className="flex size-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-								onClick={toggleDarkMode}
-								title={isDark ? "Light mode" : "Dark mode"}
-								type="button"
-							>
-								{isDark ? (
-									<Sun className="size-5" />
-								) : (
-									<Moon className="size-5" />
-								)}
-							</button>
-							<button
-								className="flex size-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 lg:hidden"
-								onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-								type="button"
-							>
-								{isMobileMenuOpen ? (
-									<X className="size-5" />
-								) : (
-									<Menu className="size-5" />
-								)}
-							</button>
 						</div>
 					</div>
 
-					{/* Mobile Navigation */}
-					<AnimatePresence>
-						{isMobileMenuOpen && (
-							<motion.nav
-								initial={{ height: 0, opacity: 0 }}
-								animate={{ height: "auto", opacity: 1 }}
-								exit={{ height: 0, opacity: 0 }}
-								className="mt-4 overflow-hidden lg:hidden"
-							>
-								<div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-									{canvasTypes.map((canvas) => {
-										const Icon = canvas.icon;
-										const isActive = activeCanvas === canvas.key;
-										return (
-											<button
-												key={canvas.key}
-												className={cn(
-													"flex flex-col items-center gap-1 rounded-xl p-3 transition-all",
-													isActive
-														? canvas.color === "purple"
-															? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
-															: canvas.color === "blue"
-																? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-																: canvas.color === "emerald"
-																	? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-																	: "bg-red-100 text-red-700 dark:bg-neutral-900/30 dark:text-neutral-300"
-														: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
-												)}
-												onClick={() => {
-													setActiveCanvas(canvas.key);
-													setIsMobileMenuOpen(false);
-												}}
-												type="button"
-											>
-												<Icon className="size-5" />
-												<span className="font-medium text-xs">
-													{canvas.shortLabel}
-												</span>
-											</button>
-										);
-									})}
-								</div>
-							</motion.nav>
-						)}
-					</AnimatePresence>
-				</div>
-			</header>
-
-			{/* Hero Section */}
-			<section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12">
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					className="mb-8 text-center sm:mb-12"
-				>
-					<h1 className="mb-3 bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 bg-clip-text font-bold text-3xl text-transparent dark:from-white dark:via-purple-200 dark:to-white sm:text-4xl lg:text-5xl">
-						Strategic Planning Tools
-					</h1>
-					<p className="mx-auto max-w-2xl text-slate-600 text-sm dark:text-slate-400 sm:text-base">
-						Visualize your strategy with interactive canvases. Analyze,
-						brainstorm, and document your business decisions.
-					</p>
-				</motion.div>
-
-				{/* Canvas selector cards - visible only on mobile when menu is closed */}
-				<div className="mb-8 hidden">
-					<div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-						{canvasTypes.map((canvas, index) => {
+					{/* Mobile Tabs */}
+					<div className="flex gap-2 overflow-x-auto pb-2 md:hidden">
+						{canvasTypes.map((canvas) => {
 							const Icon = canvas.icon;
 							const isActive = activeCanvas === canvas.key;
+
 							return (
 								<motion.button
 									key={canvas.key}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ delay: index * 0.1 }}
-									className={cn(
-										"group relative overflow-hidden rounded-2xl border p-4 text-left transition-all sm:p-6",
-										isActive
-											? "border-transparent shadow-xl"
-											: "border-slate-200/50 hover:border-slate-300 dark:border-slate-700/50 dark:hover:border-slate-600",
-									)}
+									whileTap={{ scale: 0.95 }}
 									onClick={() => setActiveCanvas(canvas.key)}
+									className={cn(
+										"flex flex-shrink-0 items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all",
+										isActive
+											? cn("text-white shadow-lg", canvas.activeBg, canvas.shadowColor)
+											: "bg-white text-neutral-600 shadow-sm dark:bg-neutral-800 dark:text-neutral-300",
+									)}
 									type="button"
 								>
-									{/* Active background */}
-									{isActive && (
-										<motion.div
-											layoutId="activeCard"
-											className={cn(
-												"absolute inset-0",
-												canvas.color === "purple" &&
-													"bg-gradient-to-br from-purple-100 to-violet-50 dark:from-purple-900/40 dark:to-violet-900/20",
-												canvas.color === "blue" &&
-													"bg-gradient-to-br from-blue-100 to-sky-50 dark:from-blue-900/40 dark:to-sky-900/20",
-												canvas.color === "emerald" &&
-													"bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/20",
-												canvas.color === "amber" &&
-													"bg-gradient-to-br from-red-100 to-orange-50 dark:from-neutral-900/40 dark:to-orange-900/20",
-											)}
-										/>
-									)}
-
-									<div className="relative">
-										<div
-											className={cn(
-												"mb-3 flex size-10 items-center justify-center rounded-xl transition-colors sm:size-12",
-												canvas.color === "purple" &&
-													"bg-purple-100 text-purple-600 group-hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-400",
-												canvas.color === "blue" &&
-													"bg-blue-100 text-blue-600 group-hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-400",
-												canvas.color === "emerald" &&
-													"bg-emerald-100 text-emerald-600 group-hover:bg-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-400",
-												canvas.color === "amber" &&
-													"bg-red-100 text-red-600 group-hover:bg-neutral-200 dark:bg-neutral-900/50 dark:text-red-500",
-											)}
-										>
-											<Icon className="size-5 sm:size-6" />
-										</div>
-										<h3 className="mb-1 font-semibold text-slate-800 text-sm dark:text-slate-200 sm:text-base">
-											{canvas.label}
-										</h3>
-										<p className="line-clamp-2 text-slate-500 text-xs dark:text-slate-400">
-											{canvas.description}
-										</p>
-									</div>
+									<Icon className="size-4" />
+									{canvas.shortLabel}
 								</motion.button>
 							);
 						})}
 					</div>
-				</div>
-			</section>
+				</motion.div>
 
-			{/* Canvas Content */}
-			<section className="container mx-auto px-4 pb-12 sm:px-6 sm:pb-20">
-				<AnimatePresence mode="wait">
+				{/* Active Tab Description (Mobile) */}
+				{activeTab && (
 					<motion.div
-						key={activeCanvas}
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						exit={{ opacity: 0, y: -20 }}
-						transition={{ duration: 0.3 }}
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						className="mb-6 text-center md:hidden"
 					>
-						{activeCanvas === "swot" && <SwotBoard />}
-						{activeCanvas === "journey" && <CustomerJourney />}
-						{activeCanvas === "bmc" && <BusinessModelCanvas />}
-						{activeCanvas === "brainstorm" && <BrainstormBoard />}
+						<p className="text-sm text-neutral-500 dark:text-neutral-400">
+							{activeTab.description}
+						</p>
 					</motion.div>
-				</AnimatePresence>
-			</section>
+				)}
+
+				{/* Canvas Content Container */}
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ delay: 0.3 }}
+					className="rounded-3xl border border-neutral-200/50 bg-white/60 p-4 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/60 sm:p-6 lg:p-8"
+				>
+					<AnimatePresence mode="wait">
+						<motion.div
+							key={activeCanvas}
+							initial={{ opacity: 0, x: 30 }}
+							animate={{ opacity: 1, x: 0 }}
+							exit={{ opacity: 0, x: -30 }}
+							transition={{
+								duration: 0.35,
+								ease: [0.4, 0, 0.2, 1],
+							}}
+						>
+							{activeCanvas === "swot" && <SwotBoard />}
+							{activeCanvas === "bmc" && <BusinessModelCanvas />}
+							{activeCanvas === "journey" && <CustomerJourney />}
+							{activeCanvas === "brainstorm" && <BrainstormBoard />}
+						</motion.div>
+					</AnimatePresence>
+				</motion.div>
+
+				{/* Pro Tip Footer */}
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ delay: 0.5 }}
+					className="mt-8 text-center"
+				>
+					<p className="text-xs text-neutral-400 dark:text-neutral-600">
+						Pro tip: Export your work to save progress and share with your team
+					</p>
+				</motion.div>
+			</main>
 
 			{/* Footer */}
-			<footer className="border-t border-slate-200/50 bg-white/50 py-6 backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-900/50">
-				<div className="container mx-auto px-4 text-center sm:px-6">
-					<p className="text-slate-500 text-sm dark:text-slate-400">
+			<footer className="border-t border-neutral-200/50 bg-white/50 py-6 backdrop-blur-sm dark:border-neutral-800/50 dark:bg-neutral-900/50">
+				<div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+					<p className="text-neutral-500 text-sm dark:text-neutral-400">
 						Strategy Canvas by{" "}
-						<span className="font-semibold text-rose-600 dark:text-rose-400">
+						<span className="font-semibold text-red-600 dark:text-red-400">
 							Alecci Media
 						</span>
 					</p>

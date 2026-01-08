@@ -1,20 +1,67 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Lightbulb, Plus, Shuffle, Trash2 } from "lucide-react";
+import {
+	Download,
+	Lightbulb,
+	Plus,
+	RotateCcw,
+	Shuffle,
+	Sparkles,
+	Trash2,
+	Wand2,
+} from "lucide-react";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CanvasPanel } from "./canvas-panel";
 import { NoteColorPicker, StickyNote } from "./sticky-note";
 import type { NoteColor, StickyNote as StickyNoteType } from "./types";
 
 const categories = [
-	{ label: "Ideas", color: "blue" as NoteColor },
-	{ label: "Questions", color: "purple" as NoteColor },
-	{ label: "Actions", color: "emerald" as NoteColor },
-	{ label: "Concerns", color: "rose" as NoteColor },
-	{ label: "Resources", color: "amber" as NoteColor },
+	{ label: "Ideas", color: "blue" as NoteColor, icon: Lightbulb },
+	{ label: "Questions", color: "purple" as NoteColor, icon: Sparkles },
+	{ label: "Actions", color: "emerald" as NoteColor, icon: Wand2 },
+	{ label: "Concerns", color: "rose" as NoteColor, icon: Sparkles },
+	{ label: "Resources", color: "amber" as NoteColor, icon: Sparkles },
 ];
+
+const categoryStyles: Record<NoteColor, { bg: string; text: string; border: string; activeBg: string }> = {
+	blue: {
+		bg: "bg-blue-100 dark:bg-blue-900/30",
+		text: "text-blue-700 dark:text-blue-300",
+		border: "border-blue-200 dark:border-blue-800",
+		activeBg: "bg-blue-500",
+	},
+	purple: {
+		bg: "bg-purple-100 dark:bg-purple-900/30",
+		text: "text-purple-700 dark:text-purple-300",
+		border: "border-purple-200 dark:border-purple-800",
+		activeBg: "bg-purple-500",
+	},
+	emerald: {
+		bg: "bg-emerald-100 dark:bg-emerald-900/30",
+		text: "text-emerald-700 dark:text-emerald-300",
+		border: "border-emerald-200 dark:border-emerald-800",
+		activeBg: "bg-emerald-500",
+	},
+	rose: {
+		bg: "bg-rose-100 dark:bg-rose-900/30",
+		text: "text-rose-700 dark:text-rose-300",
+		border: "border-rose-200 dark:border-rose-800",
+		activeBg: "bg-rose-500",
+	},
+	amber: {
+		bg: "bg-amber-100 dark:bg-amber-900/30",
+		text: "text-amber-700 dark:text-amber-300",
+		border: "border-amber-200 dark:border-amber-800",
+		activeBg: "bg-amber-500",
+	},
+	slate: {
+		bg: "bg-slate-100 dark:bg-slate-800/50",
+		text: "text-slate-700 dark:text-slate-300",
+		border: "border-slate-200 dark:border-slate-700",
+		activeBg: "bg-slate-500",
+	},
+};
 
 export function BrainstormBoard() {
 	const [notes, setNotes] = useState<StickyNoteType[]>([]);
@@ -127,131 +174,195 @@ export function BrainstormBoard() {
 	);
 
 	return (
-		<CanvasPanel
-			title="Brainstorming Board"
-			subtitle="Capture and organize your ideas freely"
-			icon={<Lightbulb className="size-5" />}
-			accentColor="amber"
-			onReset={resetBoard}
-			onExport={exportBoard}
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.5 }}
+			className="relative"
 		>
+			{/* Premium Header */}
+			<div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex items-center gap-4">
+					<motion.div
+						initial={{ scale: 0 }}
+						animate={{ scale: 1 }}
+						transition={{ type: "spring", delay: 0.2 }}
+						className="relative"
+					>
+						<div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 blur-xl opacity-40" />
+						<div className="relative flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/25">
+							<Lightbulb className="size-7 text-white" />
+						</div>
+					</motion.div>
+					<div>
+						<h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+							Brainstorming Board
+						</h2>
+						<p className="text-sm text-neutral-500 dark:text-neutral-400">
+							Capture and organize your ideas freely
+						</p>
+					</div>
+				</div>
+
+				{/* Action Buttons */}
+				<div className="flex items-center gap-2">
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+						className="flex items-center gap-2 rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+						onClick={resetBoard}
+						type="button"
+					>
+						<RotateCcw className="size-4" />
+						Reset
+					</motion.button>
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+						className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-amber-500/25 transition-all hover:shadow-amber-500/40"
+						onClick={exportBoard}
+						type="button"
+					>
+						<Download className="size-4" />
+						Export
+					</motion.button>
+				</div>
+			</div>
+
 			{/* Toolbar */}
-			<div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50 sm:gap-4 sm:p-4">
-				{/* Add new note */}
-				<div className="flex items-center gap-3">
-					<button
+			<motion.div
+				initial={{ opacity: 0, y: 10 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.3 }}
+				className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-neutral-200/50 bg-white/50 p-4 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/50"
+			>
+				{/* Add new note section */}
+				<div className="flex items-center gap-4">
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
 						className={cn(
-							"flex items-center gap-2 rounded-lg px-4 py-2 font-medium text-sm transition-all",
-							"bg-gradient-to-r from-red-500 to-orange-500 text-white",
-							"hover:from-red-500 hover:to-orange-600",
-							"shadow-lg shadow-neutral-200/40 dark:shadow-neutral-900/30",
+							"flex items-center gap-2 rounded-xl px-5 py-2.5 font-medium text-sm transition-all",
+							"bg-gradient-to-r from-amber-500 to-orange-600 text-white",
+							"shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40",
 						)}
 						onClick={addNote}
 						type="button"
 					>
-						<Plus className="size-4" />
+						<Plus className="size-5" />
 						Add Idea
-					</button>
-					<NoteColorPicker
-						selected={selectedColor}
-						onSelect={setSelectedColor}
-					/>
+					</motion.button>
+					<div className="hidden h-8 w-px bg-neutral-200 dark:bg-neutral-700 sm:block" />
+					<div className="flex items-center gap-2">
+						<span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Color:</span>
+						<NoteColorPicker
+							selected={selectedColor}
+							onSelect={setSelectedColor}
+						/>
+					</div>
 				</div>
 
 				{/* Actions */}
 				<div className="flex items-center gap-2">
-					<button
-						className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-slate-500 text-sm transition-colors hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+						className="flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
 						onClick={shuffleNotes}
 						title="Shuffle notes"
 						type="button"
 					>
 						<Shuffle className="size-4" />
 						<span className="hidden sm:inline">Shuffle</span>
-					</button>
-					<button
-						className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-red-500 text-sm transition-colors hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+					</motion.button>
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+						className="flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
 						onClick={clearNotes}
 						title="Clear all"
 						type="button"
 					>
 						<Trash2 className="size-4" />
 						<span className="hidden sm:inline">Clear</span>
-					</button>
+					</motion.button>
 				</div>
-			</div>
+			</motion.div>
 
 			{/* Category filters */}
-			<div className="mb-4 flex flex-wrap gap-2">
-				<button
+			<motion.div
+				initial={{ opacity: 0, y: 10 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.4 }}
+				className="mb-6 flex flex-wrap gap-2"
+			>
+				<motion.button
+					whileHover={{ scale: 1.02 }}
+					whileTap={{ scale: 0.98 }}
 					className={cn(
-						"rounded-full px-3 py-1.5 text-xs font-medium transition-all",
+						"rounded-full px-4 py-2 text-sm font-medium transition-all",
 						filterColor === "all"
-							? "bg-slate-800 text-white dark:bg-white dark:text-slate-800"
-							: "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700",
+							? "bg-neutral-900 text-white shadow-lg dark:bg-white dark:text-neutral-900"
+							: "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700",
 					)}
 					onClick={() => setFilterColor("all")}
 					type="button"
 				>
 					All ({notes.length})
-				</button>
-				{categories.map((cat) => (
-					<button
-						key={cat.color}
-						className={cn(
-							"flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all",
-							filterColor === cat.color
-								? cat.color === "blue"
-									? "bg-blue-500 text-white"
-									: cat.color === "purple"
-										? "bg-purple-500 text-white"
-										: cat.color === "emerald"
-											? "bg-emerald-500 text-white"
-											: cat.color === "rose"
-												? "bg-rose-500 text-white"
-												: "bg-red-500 text-white"
-								: "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700",
-						)}
-						onClick={() =>
-							setFilterColor(filterColor === cat.color ? "all" : cat.color)
-						}
-						type="button"
-					>
-						<span
+				</motion.button>
+				{categories.map((cat) => {
+					const style = categoryStyles[cat.color];
+					const isActive = filterColor === cat.color;
+					return (
+						<motion.button
+							key={cat.color}
+							whileHover={{ scale: 1.02 }}
+							whileTap={{ scale: 0.98 }}
 							className={cn(
-								"size-2 rounded-full",
-								filterColor === cat.color
-									? "bg-white/80"
-									: cat.color === "blue"
-										? "bg-blue-400"
-										: cat.color === "purple"
-											? "bg-purple-400"
-											: cat.color === "emerald"
-												? "bg-emerald-400"
-												: cat.color === "rose"
-													? "bg-rose-400"
-													: "bg-red-500",
+								"flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all",
+								isActive
+									? `${style.activeBg} text-white shadow-lg`
+									: "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700",
 							)}
-						/>
-						{cat.label} ({noteCounts[cat.color] ?? 0})
-					</button>
-				))}
-			</div>
+							onClick={() =>
+								setFilterColor(filterColor === cat.color ? "all" : cat.color)
+							}
+							type="button"
+						>
+							<span
+								className={cn(
+									"size-2.5 rounded-full",
+									isActive ? "bg-white/80" : style.activeBg,
+								)}
+							/>
+							{cat.label} ({noteCounts[cat.color] ?? 0})
+						</motion.button>
+					);
+				})}
+			</motion.div>
 
 			{/* Canvas */}
-			<div
+			<motion.div
 				ref={canvasRef}
+				initial={{ opacity: 0, scale: 0.98 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ delay: 0.5 }}
 				className={cn(
-					"relative min-h-[400px] overflow-hidden rounded-xl border-2 border-dashed sm:min-h-[500px]",
-					"border-slate-200 dark:border-slate-700",
-					"bg-gradient-to-br from-slate-50 via-white to-slate-50",
-					"dark:from-slate-900 dark:via-slate-800 dark:to-slate-900",
+					"relative min-h-[450px] overflow-hidden rounded-2xl border-2 sm:min-h-[550px]",
+					"border-neutral-200 dark:border-neutral-800",
+					"bg-gradient-to-br from-neutral-50 via-white to-amber-50/20",
+					"dark:from-neutral-900 dark:via-neutral-900 dark:to-amber-950/10",
 				)}
 				style={{
-					backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px)`,
-					backgroundSize: "20px 20px",
+					backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px)`,
+					backgroundSize: "24px 24px",
 				}}
 			>
+				{/* Decorative elements */}
+				<div className="absolute top-4 right-4 text-xs font-medium text-neutral-300 dark:text-neutral-700">
+					Drag to organize
+				</div>
+
 				{/* Floating notes */}
 				<AnimatePresence>
 					{filteredNotes.map((note) => (
@@ -262,9 +373,10 @@ export function BrainstormBoard() {
 								left: `${note.x ?? 10}%`,
 								top: `${note.y ?? 10}%`,
 							}}
-							initial={{ opacity: 0, scale: 0 }}
-							animate={{ opacity: 1, scale: 1 }}
-							exit={{ opacity: 0, scale: 0 }}
+							initial={{ opacity: 0, scale: 0, rotate: -10 }}
+							animate={{ opacity: 1, scale: 1, rotate: 0 }}
+							exit={{ opacity: 0, scale: 0, rotate: 10 }}
+							transition={{ type: "spring", stiffness: 200 }}
 						>
 							<StickyNote
 								note={note}
@@ -272,7 +384,7 @@ export function BrainstormBoard() {
 								onDelete={deleteNote}
 								onDragEnd={updateNotePosition}
 								isDraggable
-								className="w-36 sm:w-44"
+								className="w-40 sm:w-48"
 							/>
 						</motion.div>
 					))}
@@ -286,68 +398,83 @@ export function BrainstormBoard() {
 							animate={{ opacity: 1, y: 0 }}
 							className="text-center"
 						>
-							<div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-red-100 to-orange-100 dark:from-neutral-900/30 dark:to-orange-900/30">
-								<Lightbulb className="size-8 text-red-500" />
-							</div>
-							<h3 className="mb-2 font-semibold text-lg text-slate-700 dark:text-slate-300">
+							<motion.div
+								animate={{
+									y: [0, -10, 0],
+									rotate: [0, 5, -5, 0],
+								}}
+								transition={{
+									duration: 3,
+									repeat: Infinity,
+									ease: "easeInOut",
+								}}
+								className="mx-auto mb-6 flex size-20 items-center justify-center rounded-3xl bg-gradient-to-br from-amber-100 to-orange-100 shadow-xl shadow-amber-200/30 dark:from-amber-900/30 dark:to-orange-900/30 dark:shadow-amber-900/20"
+							>
+								<Lightbulb className="size-10 text-amber-600 dark:text-amber-400" />
+							</motion.div>
+							<h3 className="mb-2 font-bold text-xl text-neutral-800 dark:text-white">
 								Start Brainstorming
 							</h3>
-							<p className="mb-4 max-w-xs text-slate-500 text-sm dark:text-slate-400">
+							<p className="mb-6 max-w-sm text-neutral-500 text-sm dark:text-neutral-400">
 								Click &quot;Add Idea&quot; to create sticky notes and drag them
-								to organize your thoughts
+								to organize your thoughts visually
 							</p>
-							<button
+							<motion.button
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
 								className={cn(
-									"flex items-center gap-2 rounded-lg px-6 py-3 font-medium transition-all",
-									"bg-gradient-to-r from-red-500 to-orange-500 text-white",
-									"hover:from-red-500 hover:to-orange-600",
-									"shadow-lg shadow-neutral-200/40 dark:shadow-neutral-900/30",
+									"flex items-center gap-2 rounded-xl px-6 py-3 font-medium transition-all",
+									"bg-gradient-to-r from-amber-500 to-orange-600 text-white",
+									"shadow-xl shadow-amber-500/30 hover:shadow-amber-500/50",
 								)}
 								onClick={addNote}
 								type="button"
 							>
 								<Plus className="size-5" />
 								Add Your First Idea
-							</button>
+							</motion.button>
 						</motion.div>
 					</div>
 				)}
-			</div>
+			</motion.div>
 
 			{/* Stats footer */}
 			{notes.length > 0 && (
-				<div className="mt-4 flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800/50">
-					<span className="text-slate-500 text-sm dark:text-slate-400">
-						{notes.length} idea{notes.length !== 1 && "s"} captured
-					</span>
-					<div className="flex gap-2">
+				<motion.div
+					initial={{ opacity: 0, y: 10 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.6 }}
+					className="mt-6 flex items-center justify-between rounded-2xl border border-neutral-200/50 bg-white/50 px-5 py-4 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/50"
+				>
+					<div className="flex items-center gap-2">
+						<Sparkles className="size-4 text-amber-500" />
+						<span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+							{notes.length} idea{notes.length !== 1 && "s"} captured
+						</span>
+					</div>
+					<div className="flex flex-wrap gap-2">
 						{categories.map((cat) => {
 							const count = noteCounts[cat.color] ?? 0;
 							if (count === 0) return null;
+							const style = categoryStyles[cat.color];
 							return (
-								<span
+								<motion.span
 									key={cat.color}
+									initial={{ scale: 0 }}
+									animate={{ scale: 1 }}
 									className={cn(
-										"rounded-full px-2 py-0.5 text-xs font-medium",
-										cat.color === "blue" &&
-											"bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-										cat.color === "purple" &&
-											"bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
-										cat.color === "emerald" &&
-											"bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
-										cat.color === "rose" &&
-											"bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
-										cat.color === "amber" &&
-											"bg-red-100 text-red-700 dark:bg-neutral-900/30 dark:text-neutral-300",
+										"rounded-full px-3 py-1 text-xs font-medium",
+										style.bg,
+										style.text,
 									)}
 								>
-									{count}
-								</span>
+									{count} {cat.label}
+								</motion.span>
 							);
 						})}
 					</div>
-				</div>
+				</motion.div>
 			)}
-		</CanvasPanel>
+		</motion.div>
 	);
 }
