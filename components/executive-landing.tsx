@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Brain, Crown, Sparkles, UserRound, Users, Zap } from "lucide-react";
+import { Brain, Crown, UserRound, Users } from "lucide-react";
 import Image from "next/image";
 import { BOT_PERSONALITIES, type BotType } from "@/lib/bot-personalities";
 import { cn } from "@/lib/utils";
@@ -40,8 +40,8 @@ export function ExecutiveLanding({
 				/>
 			</div>
 
-			{/* Ambient gold glow */}
-			<div className="pointer-events-none absolute top-1/4 left-1/2 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-[100px]" />
+			{/* Ambient red glow */}
+			<div className="pointer-events-none absolute top-1/4 left-1/2 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/5 blur-[100px]" />
 
 			<div className="relative z-10 w-full max-w-3xl space-y-6 text-center sm:space-y-8">
 				{/* Logo/Brand Header */}
@@ -52,11 +52,11 @@ export function ExecutiveLanding({
 					transition={{ duration: 0.5 }}
 				>
 					<div className="mx-auto flex items-center justify-center gap-2">
-						<div className="flex size-10 items-center justify-center rounded-xl gold-gradient shadow-lg shadow-amber-500/25 sm:size-12">
+						<div className="flex size-10 items-center justify-center rounded-xl red-gradient shadow-lg shadow-red-500/25 sm:size-12">
 							<Brain className="size-5 text-black sm:size-6" />
 						</div>
 					</div>
-					<h1 className="gold-text font-bold text-2xl tracking-tight sm:text-3xl lg:text-4xl">
+					<h1 className="red-text font-bold text-2xl tracking-tight sm:text-3xl lg:text-4xl">
 						Your AI Boss Brainz
 					</h1>
 					<p className="mx-auto max-w-md text-sm text-muted-foreground sm:text-base">
@@ -67,7 +67,7 @@ export function ExecutiveLanding({
 				{/* Executive Selection Cards */}
 				<motion.div
 					animate={{ opacity: 1, y: 0 }}
-					className="grid grid-cols-3 gap-3 sm:gap-4"
+					className="flex flex-wrap justify-start gap-3 sm:gap-4"
 					initial={{ opacity: 0, y: 15 }}
 					transition={{ duration: 0.5, delay: 0.1 }}
 				>
@@ -79,8 +79,8 @@ export function ExecutiveLanding({
 								className={cn(
 									"group relative flex flex-col items-center rounded-2xl border-2 p-4 text-center transition-all duration-300 sm:p-5",
 									isSelected
-										? "border-amber-500/50 bg-gradient-to-b from-amber-950/30 to-amber-900/10 shadow-xl shadow-amber-500/20"
-										: "border-white/10 bg-white/5 hover:border-amber-500/30 hover:bg-white/10 hover:shadow-lg hover:shadow-amber-500/10",
+										? "border-red-500/50 bg-gradient-to-b from-neutral-950/30 to-neutral-900/10 shadow-xl shadow-red-500/20"
+										: "border-white/10 bg-white/5 hover:border-red-500/30 hover:bg-white/10 hover:shadow-lg hover:shadow-red-500/10",
 								)}
 								key={key}
 								onClick={() => onSelect(key)}
@@ -96,7 +96,7 @@ export function ExecutiveLanding({
 											className={cn(
 												"size-14 rounded-full border-2 object-cover transition-all sm:size-16 lg:size-18",
 												isSelected
-													? "border-amber-500 shadow-md shadow-amber-500/30"
+													? "border-red-500 shadow-md shadow-red-500/30"
 													: "border-white/20",
 											)}
 											height={72}
@@ -108,7 +108,7 @@ export function ExecutiveLanding({
 											className={cn(
 												"flex size-14 items-center justify-center rounded-full transition-all sm:size-16 lg:size-18",
 												isSelected
-													? "gold-gradient text-black shadow-md shadow-amber-500/30"
+													? "red-gradient text-black shadow-md shadow-red-500/30"
 													: "bg-white/10 text-muted-foreground",
 											)}
 										>
@@ -118,7 +118,7 @@ export function ExecutiveLanding({
 									{isSelected && (
 										<motion.div
 											animate={{ scale: 1 }}
-											className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full gold-gradient shadow-sm shadow-amber-500/30"
+											className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full red-gradient shadow-sm shadow-red-500/30"
 											initial={{ scale: 0 }}
 										>
 											<svg
@@ -141,53 +141,20 @@ export function ExecutiveLanding({
 								{/* Name */}
 								<h3
 									className={cn(
-										"font-semibold text-sm transition-colors sm:text-base",
-										isSelected ? "text-amber-400" : "text-foreground",
+										"font-semibold text-sm transition-colors sm:text-base px-3 py-1 rounded-lg border",
+										isSelected ? "text-red-400 border-red-500/30" : "text-foreground border-zinc-200",
 									)}
 								>
 									{key === "collaborative"
 										? "Both"
 										: personality.name.split(" ")[0]}
 								</h3>
-
-								{/* Role */}
-								<p
-									className={cn(
-										"mt-1 text-xs transition-colors sm:text-sm",
-										isSelected ? "text-amber-400/70" : "text-muted-foreground",
-									)}
-								>
-									{key === "collaborative"
-										? "Team Mode"
-										: personality.role.split("(")[0].trim()}
-								</p>
 							</motion.button>
 						);
 					})}
 				</motion.div>
 
-				{/* Capabilities */}
-				<motion.div
-					animate={{ opacity: 1 }}
-					className="flex flex-wrap items-center justify-center gap-4 sm:gap-6"
-					initial={{ opacity: 0 }}
-					transition={{ duration: 0.5, delay: 0.2 }}
-				>
-					{[
-						{ icon: Zap, label: "GTM Strategy" },
-						{ icon: Sparkles, label: "Revenue Growth" },
-						{ icon: Brain, label: "Smart Insights" },
-					].map(({ icon: ItemIcon, label }) => (
-						<span
-							className="flex items-center gap-2 text-xs text-muted-foreground sm:text-sm"
-							key={label}
-						>
-							<ItemIcon className="size-3.5 text-amber-400 sm:size-4" />
-							{label}
-						</span>
-					))}
-				</motion.div>
-			</div>
+				</div>
 		</section>
 	);
 }

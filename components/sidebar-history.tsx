@@ -252,7 +252,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 	if (isLoading) {
 		return (
 			<SidebarGroup>
-				<div className="px-3 py-1 font-semibold text-[11px] text-amber-600 uppercase tracking-[0.25em]">
+				<div className="px-3 py-1 font-semibold text-[11px] text-red-600 uppercase tracking-[0.25em]">
 					Today
 				</div>
 				<SidebarGroupContent>
@@ -293,7 +293,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 				<div className="relative">
 					<Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-zinc-500" />
 					<input
-						className="h-9 w-full rounded-lg border border-zinc-300 bg-white pr-8 pl-8 text-sm text-zinc-900 placeholder:text-zinc-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500/30"
+						className="h-9 w-full rounded-lg border border-zinc-300 bg-white pr-8 pl-8 text-sm text-zinc-900 placeholder:text-zinc-500 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/30"
 						onChange={(e) => setSearchQuery(e.target.value)}
 						placeholder="Search conversations..."
 						type="text"
@@ -319,7 +319,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 				{/* Topic Filter */}
 				<div className="relative">
 					<button
-						className="flex h-8 w-full items-center justify-between gap-2 rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-700 hover:border-amber-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500/30"
+						className="flex h-8 w-full items-center justify-between gap-2 rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-700 hover:border-red-500 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/30"
 						onClick={() => setShowTopicDropdown(!showTopicDropdown)}
 						onKeyDown={(e) => {
 							if (e.key === "Enter" || e.key === " ") {
@@ -385,7 +385,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 							{topicCategories.map((topic) => (
 								<button
 									key={topic.name}
-									className="flex w-full items-center gap-2 px-3 py-2 text-sm text-zinc-800 hover:bg-zinc-100 first:rounded-t-lg last:rounded-b-lg"
+									className="flex w-full items-center gap-2 px-3 py-2 text-sm text-zinc-800 border border-transparent hover:border-zinc-300 first:rounded-t-lg last:rounded-b-lg"
 									onClick={() => {
 										setTopicFilter(topic.name);
 										setShowTopicDropdown(false);
@@ -403,7 +403,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 									<span>{topic.name}</span>
 									{topicFilter === topic.name && (
 										<svg
-											className="ml-auto size-4 text-amber-400"
+											className="ml-auto size-4 text-red-500"
 											fill="currentColor"
 											viewBox="0 0 20 20"
 										>
@@ -453,9 +453,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 									<div className="flex flex-col gap-8">
 										{groupedChats.pinned.length > 0 && (
 											<div>
-												<div className="flex items-center gap-1.5 px-2 py-1 font-semibold text-[11px] text-amber-600 uppercase tracking-[0.25em]">
+												<div className="flex items-center gap-1.5 px-2 py-1 font-semibold text-[11px] text-red-600 uppercase tracking-[0.25em]">
 													<svg
-														className="size-3 fill-amber-400"
+														className="size-3 fill-red-500"
 														viewBox="0 0 24 24"
 													>
 														<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -631,7 +631,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 						</div>
 					) : (
 						<div className="mt-8 flex flex-row items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-4 text-muted-foreground text-sm backdrop-blur-sm">
-							<div className="animate-spin text-amber-500">
+							<div className="animate-spin text-red-500">
 								<LoaderIcon />
 							</div>
 							<div>Loading conversations…</div>
