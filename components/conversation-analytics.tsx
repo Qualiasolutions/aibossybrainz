@@ -27,6 +27,7 @@ interface ConversationAnalyticsProps {
 	messages: ChatMessage[];
 	currentBot: BotType;
 	className?: string;
+	compact?: boolean;
 }
 
 interface TopicAnalysis {
@@ -218,6 +219,7 @@ export function ConversationAnalytics({
 	messages,
 	currentBot,
 	className,
+	compact = false,
 }: ConversationAnalyticsProps) {
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -273,6 +275,29 @@ export function ConversationAnalytics({
 		analysis.topics.length > 0 ||
 		analysis.recommendation ||
 		analysis.topicDrift > 50;
+
+	// Compact mode for header - just show stats inline
+	if (compact) {
+		return (
+			<div className={cn("flex items-center gap-2 text-xs text-muted-foreground", className)}>
+				<div className="flex items-center gap-1">
+					<MessageSquare className="h-3 w-3" />
+					<span>{analysis.userMessageCount + analysis.assistantMessageCount}</span>
+				</div>
+				{analysis.topics.length > 0 && (
+					<div className="flex items-center gap-1">
+						<Target className="h-3 w-3" />
+						<span>{analysis.topics.length} topics</span>
+					</div>
+				)}
+				{analysis.topicDrift > 50 && (
+					<Badge variant="destructive" className="h-5 text-[10px] px-1.5">
+						Drift {analysis.topicDrift}%
+					</Badge>
+				)}
+			</div>
+		);
+	}
 
 	return (
 		<Collapsible

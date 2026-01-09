@@ -5,7 +5,7 @@ import type { ArtifactKind } from "@/components/artifact";
 import { ChatSDKError } from "../errors";
 import type { AppUsage } from "../usage";
 import { generateUUID } from "../utils";
-import { createClient } from "../supabase/server";
+import { createClient, createServiceClient } from "../supabase/server";
 import { withRetry } from "../resilience";
 
 // Database-specific retry options for transient failures
@@ -103,46 +103,22 @@ export async function ensureUserExists({
 	email: string;
 }) {
 	try {
-		const supabase = await createClient();
+		// Use service client to bypass RLS for user creation
+		const supabase = createServiceClient();
 
-		// Check if user already exists
-		const { data: existingUser, error: selectError } = await supabase
+		// Upsert user - creates if not exists, updates email if exists
+		const { data, error } = await supabase
 			.from("User")
+			.upsert({ id, email }, { onConflict: "id" })
 			.select("id")
-			.eq("id", id)
 			.single();
 
-		if (selectError && selectError.code !== "PGRST116") {
-			// PGRST116 = no rows found, which is expected for new users
-			throw selectError;
+		if (error) {
+			console.error("[ensureUserExists] Upsert error:", error);
+			throw error;
 		}
 
-		if (existingUser) {
-			return existingUser;
-		}
-
-		// User doesn't exist, create one
-		const { data: newUser, error: insertError } = await supabase
-			.from("User")
-			.insert({ id, email })
-			.select()
-			.single();
-
-		if (insertError) {
-			// Handle race condition where user was created between check and insert
-			if (insertError.code === "23505") {
-				// Unique constraint violation - user was just created
-				const { data } = await supabase
-					.from("User")
-					.select("id")
-					.eq("id", id)
-					.single();
-				return data;
-			}
-			throw insertError;
-		}
-
-		return newUser;
+		return data;
 	} catch (error) {
 		console.error("ensureUserExists error:", error);
 		throw new ChatSDKError("bad_request:database", "Failed to ensure user exists");

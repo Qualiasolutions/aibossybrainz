@@ -85,7 +85,7 @@ function PureMultimodalInput({
 
 	const adjustHeight = useCallback(() => {
 		if (textareaRef.current) {
-			textareaRef.current.style.height = "44px";
+			textareaRef.current.style.height = "32px";
 		}
 	}, []);
 
@@ -97,7 +97,7 @@ function PureMultimodalInput({
 
 	const resetHeight = useCallback(() => {
 		if (textareaRef.current) {
-			textareaRef.current.style.height = "44px";
+			textareaRef.current.style.height = "32px";
 		}
 	}, []);
 
@@ -317,8 +317,8 @@ function PureMultimodalInput({
 						className="grow resize-none border-0! border-none! bg-transparent p-1 text-sm leading-relaxed text-zinc-900 caret-red-500 outline-none ring-0 [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 sm:p-2 sm:text-base [&::-webkit-scrollbar]:hidden"
 						data-testid="multimodal-input"
 						disableAutoResize={true}
-						maxHeight={180}
-						minHeight={44}
+						maxHeight={90}
+						minHeight={32}
 						onChange={handleInput}
 						placeholder="Message your executive team..."
 						ref={textareaRef}

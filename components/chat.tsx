@@ -350,8 +350,17 @@ export function Chat({
 								/>
 							</div>
 
-							{/* Right: Voice, Export & Visibility */}
+							{/* Right: Analytics, Voice, Export & Visibility */}
 							<div className="flex items-center gap-1.5">
+								{messages.length > 0 && (
+									<div className="hidden lg:block">
+										<ConversationAnalytics
+											messages={messages}
+											currentBot={selectedBot}
+											compact
+										/>
+									</div>
+								)}
 								<AutoSpeakToggle
 									isEnabled={isAutoSpeakEnabled}
 									isLoading={isSpeakLoading}
@@ -411,15 +420,8 @@ export function Chat({
 							</div>
 						) : (
 							<div className="flex h-full w-full flex-col overflow-hidden">
-								{/* Conversation Analytics Panel */}
-								<div className="flex-shrink-0 px-4 py-2">
-									<ConversationAnalytics
-										messages={messages}
-										currentBot={selectedBot}
-									/>
-								</div>
-								{/* Messages */}
-								<div className="flex-1 overflow-hidden" style={{ maxHeight: "80%" }}>
+								{/* Messages - full height */}
+								<div className="flex-1 overflow-hidden">
 									<Messages
 										chatId={id}
 										className="h-full"
