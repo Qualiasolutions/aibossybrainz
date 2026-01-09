@@ -14,7 +14,7 @@ import {
 export const maxDuration = 30;
 
 // Max voice requests per day (separate from chat limit)
-const MAX_VOICE_REQUESTS_PER_DAY = 100;
+const MAX_VOICE_REQUESTS_PER_DAY = 500;
 
 export async function POST(request: Request) {
 	try {
@@ -28,12 +28,13 @@ export async function POST(request: Request) {
 		}
 
 		// Rate limit voice API to prevent abuse
+		// Skip rate limiting if Redis not available (allows voice to work without Redis)
 		const rateLimitResult = await checkRateLimit(
 			`voice:${user.id}`,
 			MAX_VOICE_REQUESTS_PER_DAY,
 		);
 
-		if (!rateLimitResult.allowed) {
+		if (rateLimitResult.source === "redis" && !rateLimitResult.allowed) {
 			const response = new ChatSDKError("rate_limit:chat").toResponse();
 			const headers = getRateLimitHeaders(
 				rateLimitResult.remaining,
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
 			}
 			return response;
 		}
+		// If database fallback, allow the request (voice is less critical than chat)
 
 		const { text, botType } = (await request.json()) as {
 			text: string;

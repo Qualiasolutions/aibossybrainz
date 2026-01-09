@@ -32,8 +32,6 @@ import {
 	PromptInputModelSelectContent,
 	PromptInputSubmit,
 	PromptInputTextarea,
-	PromptInputToolbar,
-	PromptInputTools,
 } from "./elements/prompt-input";
 import {
 	ArrowUpIcon,
@@ -85,7 +83,7 @@ function PureMultimodalInput({
 
 	const adjustHeight = useCallback(() => {
 		if (textareaRef.current) {
-			textareaRef.current.style.height = "32px";
+			textareaRef.current.style.height = "20px";
 		}
 	}, []);
 
@@ -97,7 +95,7 @@ function PureMultimodalInput({
 
 	const resetHeight = useCallback(() => {
 		if (textareaRef.current) {
-			textareaRef.current.style.height = "32px";
+			textareaRef.current.style.height = "20px";
 		}
 	}, []);
 
@@ -220,9 +218,9 @@ function PureMultimodalInput({
 		}
 	}, []);
 
-	// Premium glass-dark input styling with red accents
+	// Slim single-line input styling
 	const promptContainerClass =
-		"rounded-2xl border border-white/10 bg-white/5 p-3 shadow-[0_4px_24px_rgba(0,0,0,0.3)] backdrop-blur-xl transition-all duration-300 focus-within:border-red-500/30 focus-within:shadow-[0_4px_24px_rgba(0,0,0,0.4),0_0_0_2px_rgba(220,38,38,0.15)] sm:p-4";
+		"rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 shadow-[0_2px_12px_rgba(0,0,0,0.2)] backdrop-blur-xl transition-all duration-300 focus-within:border-red-500/30 focus-within:shadow-[0_2px_12px_rgba(0,0,0,0.3),0_0_0_1px_rgba(220,38,38,0.15)]";
 
 	const handleFileChange = useCallback(
 		async (event: ChangeEvent<HTMLInputElement>) => {
@@ -311,48 +309,43 @@ function PureMultimodalInput({
 						))}
 					</div>
 				)}
-				<div className="flex flex-row items-start">
+				<div className="flex flex-row items-center gap-1.5">
+					<AttachmentsButton
+						fileInputRef={fileInputRef}
+						selectedModelId={selectedModelId}
+						status={status}
+					/>
+					<VoiceInputButton
+						className="size-6 rounded text-muted-foreground/70 transition-colors duration-200 hover:text-red-400"
+						disabled={status !== "ready"}
+						onTranscript={handleVoiceTranscript}
+						size="sm"
+					/>
 					<PromptInputTextarea
 						autoFocus
-						className="grow resize-none border-0! border-none! bg-transparent p-1 text-sm leading-relaxed text-zinc-900 caret-red-500 outline-none ring-0 [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 sm:p-2 sm:text-base [&::-webkit-scrollbar]:hidden"
+						className="grow resize-none border-0! border-none! bg-transparent py-0.5 pl-0 text-xs leading-normal text-zinc-700 caret-red-500 outline-none ring-0 [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-zinc-400 placeholder:text-xs placeholder:pl-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 [&::-webkit-scrollbar]:hidden"
 						data-testid="multimodal-input"
 						disableAutoResize={true}
-						maxHeight={90}
-						minHeight={32}
+						maxHeight={28}
+						minHeight={20}
 						onChange={handleInput}
 						placeholder="Message your executive team..."
 						ref={textareaRef}
 						rows={1}
 						value={input}
 					/>
-				</div>
-				<PromptInputToolbar className="mt-2 flex items-center justify-between border-t-0 p-0 pt-2 shadow-none">
-					<PromptInputTools className="gap-1 sm:gap-2">
-						<AttachmentsButton
-							fileInputRef={fileInputRef}
-							selectedModelId={selectedModelId}
-							status={status}
-						/>
-						<VoiceInputButton
-							className="size-8 rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-white/10 hover:text-red-400 sm:size-9"
-							disabled={status !== "ready"}
-							onTranscript={handleVoiceTranscript}
-							size="sm"
-						/>
-					</PromptInputTools>
-
 					{status === "submitted" ? (
 						<StopButton setMessages={setMessages} stop={stop} />
 					) : (
 						<PromptInputSubmit
-							className="size-9 rounded-xl bg-gradient-to-br from-red-500 to-red-600 text-black shadow-md shadow-red-500/25 transition-all hover:from-red-400 hover:to-red-500 hover:shadow-lg hover:shadow-red-500/30 disabled:from-white/10 disabled:to-white/5 disabled:text-muted-foreground disabled:shadow-none sm:size-10"
+							className="size-6 rounded bg-gradient-to-br from-red-500 to-red-600 text-white shadow-sm transition-all hover:from-red-400 hover:to-red-500 disabled:from-white/10 disabled:to-white/5 disabled:text-muted-foreground disabled:shadow-none shrink-0"
 							disabled={!input.trim() || uploadQueue.length > 0}
 							status={status}
 						>
-							<ArrowUpIcon size={16} />
+							<ArrowUpIcon size={12} />
 						</PromptInputSubmit>
 					)}
-				</PromptInputToolbar>
+				</div>
 			</PromptInput>
 		</div>
 	);
@@ -395,7 +388,7 @@ function PureAttachmentsButton({
 	return (
 		<Button
 			aria-label="Upload files"
-			className="size-8 rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-white/10 hover:text-red-400 sm:size-9"
+			className="size-6 rounded p-0 text-muted-foreground/70 transition-colors duration-200 hover:bg-transparent hover:text-red-400"
 			data-testid="attachments-button"
 			disabled={status !== "ready" || isReasoningModel}
 			onClick={(event) => {
@@ -404,7 +397,7 @@ function PureAttachmentsButton({
 			}}
 			variant="ghost"
 		>
-			<PaperclipIcon size={18} />
+			<PaperclipIcon size={14} />
 		</Button>
 	);
 }

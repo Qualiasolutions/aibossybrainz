@@ -46,12 +46,12 @@ export function RealtimeCall({ chatId, botType, onClose }: RealtimeCallProps) {
 	};
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-			<div className="relative mx-4 w-full max-w-md rounded-3xl bg-gradient-to-b from-slate-900 to-slate-950 p-8 shadow-2xl">
+		<div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/80 backdrop-blur-sm">
+			<div className="relative mx-4 w-full max-w-md rounded-3xl bg-gradient-to-b from-stone-50 to-stone-100 p-8 shadow-2xl border border-red-200/20">
 				{/* Close button */}
 				{status === "idle" && (
 					<button
-						className="absolute top-4 right-4 rounded-full p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
+						className="absolute top-4 right-4 rounded-full p-2 text-stone-500 hover:bg-stone-200 hover:text-stone-700"
 						onClick={onClose}
 						type="button"
 					>
@@ -99,20 +99,20 @@ export function RealtimeCall({ chatId, botType, onClose }: RealtimeCallProps) {
 						)}
 					</div>
 
-					<h2 className="font-semibold text-lg text-white">{getBotName()}</h2>
+					<h2 className="font-semibold text-lg text-stone-800">{getBotName()}</h2>
 
 					<p
 						className={cn(
 							"mt-1 text-sm",
 							status === "active"
 								? isSpeaking
-									? "text-emerald-400"
+									? "text-emerald-600"
 									: isListening
-										? "text-blue-400"
-										: "text-slate-400"
+										? "text-blue-600"
+										: "text-stone-500"
 								: status === "connecting"
-									? "text-yellow-400"
-									: "text-slate-400",
+									? "text-yellow-600"
+									: "text-stone-500",
 						)}
 					>
 						{status === "idle" && "Ready to start call"}
@@ -129,17 +129,17 @@ export function RealtimeCall({ chatId, botType, onClose }: RealtimeCallProps) {
 
 				{/* Transcript display */}
 				{status === "active" && (transcript || aiResponse) && (
-					<div className="mb-6 max-h-40 space-y-3 overflow-y-auto rounded-xl bg-slate-800/50 p-4">
+					<div className="mb-6 max-h-40 space-y-3 overflow-y-auto rounded-xl bg-stone-200/50 p-4">
 						{transcript && (
 							<div className="flex justify-end">
-								<div className="max-w-[80%] rounded-2xl bg-blue-600 px-4 py-2 text-sm text-white">
+								<div className="max-w-[80%] rounded-2xl bg-blue-500 px-4 py-2 text-sm text-white">
 									{transcript}
 								</div>
 							</div>
 						)}
 						{aiResponse && (
 							<div className="flex justify-start">
-								<div className="max-w-[80%] rounded-2xl bg-slate-700 px-4 py-2 text-sm text-white">
+								<div className="max-w-[80%] rounded-2xl bg-stone-300 px-4 py-2 text-sm text-stone-800">
 									{aiResponse.length > 150
 										? `${aiResponse.slice(0, 150)}...`
 										: aiResponse}
@@ -174,7 +174,7 @@ export function RealtimeCall({ chatId, botType, onClose }: RealtimeCallProps) {
 									"h-14 w-14 rounded-full",
 									isMuted
 										? "bg-red-500 hover:bg-red-600"
-										: "bg-slate-700 hover:bg-slate-600",
+										: "bg-stone-300 hover:bg-stone-400 text-stone-700",
 								)}
 								onClick={toggleMute}
 								size="icon"
@@ -197,7 +197,7 @@ export function RealtimeCall({ chatId, botType, onClose }: RealtimeCallProps) {
 					)}
 
 					{status === "ended" && (
-						<div className="text-center text-slate-400">
+						<div className="text-center text-stone-500">
 							<p>Call ended</p>
 						</div>
 					)}
@@ -205,7 +205,7 @@ export function RealtimeCall({ chatId, botType, onClose }: RealtimeCallProps) {
 
 				{/* Tips */}
 				{status === "idle" && (
-					<p className="mt-6 text-center text-slate-500 text-xs">
+					<p className="mt-6 text-center text-stone-500 text-xs">
 						Click the call button to start a voice conversation.
 						<br />
 						Make sure your microphone is enabled.
@@ -213,7 +213,7 @@ export function RealtimeCall({ chatId, botType, onClose }: RealtimeCallProps) {
 				)}
 
 				{status === "active" && (
-					<p className="mt-6 text-center text-slate-500 text-xs">
+					<p className="mt-6 text-center text-stone-500 text-xs">
 						Speak naturally. The AI will respond when you pause.
 						<br />
 						{isMuted ? "Unmute to continue talking." : "Tap the mic to mute."}
