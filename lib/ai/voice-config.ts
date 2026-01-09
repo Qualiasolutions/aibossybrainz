@@ -18,7 +18,7 @@ export const VOICE_CONFIGS: Record<BotType, VoiceConfig> = {
 	alexandria: {
 		voiceId:
 			process.env.ELEVENLABS_VOICE_ID_ALEXANDRIA ?? "kfxR5DufiGBogKn26hyv",
-		modelId: "eleven_flash_v2_5",
+		modelId: "eleven_multilingual_v2",
 		settings: {
 			stability: 0.65,
 			similarityBoost: 0.8,
@@ -28,7 +28,7 @@ export const VOICE_CONFIGS: Record<BotType, VoiceConfig> = {
 	},
 	kim: {
 		voiceId: process.env.ELEVENLABS_VOICE_ID_KIM ?? "wMmwtV1VyRNXQx00eD6W",
-		modelId: "eleven_flash_v2_5",
+		modelId: "eleven_multilingual_v2",
 		settings: {
 			stability: 0.75,
 			similarityBoost: 0.8,
@@ -40,7 +40,7 @@ export const VOICE_CONFIGS: Record<BotType, VoiceConfig> = {
 		// Use Alexandria's voice for collaborative mode
 		voiceId:
 			process.env.ELEVENLABS_VOICE_ID_ALEXANDRIA ?? "kfxR5DufiGBogKn26hyv",
-		modelId: "eleven_flash_v2_5",
+		modelId: "eleven_multilingual_v2",
 		settings: {
 			stability: 0.7,
 			similarityBoost: 0.8,
