@@ -116,7 +116,7 @@ export function FocusModeChips({
 							whileHover={{ scale: 1.02 }}
 							whileTap={{ scale: 0.98 }}
 							className={cn(
-								"flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200",
+								"flex flex-1 items-center justify-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium transition-all duration-200 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-xs",
 								"border shadow-sm",
 								isSelected
 									? "border-red-500/50 bg-red-500/10 text-red-600 shadow-red-500/10"
@@ -125,7 +125,7 @@ export function FocusModeChips({
 						>
 							<Icon
 								className={cn(
-									"h-3 w-3",
+									"h-2.5 w-2.5 sm:h-3 sm:w-3",
 									isSelected ? "text-red-500" : "text-zinc-400"
 								)}
 							/>
@@ -135,7 +135,7 @@ export function FocusModeChips({
 							{isSelected && (
 								<motion.div
 									layoutId="focus-indicator"
-									className="ml-0.5 h-1.5 w-1.5 rounded-full bg-red-500"
+									className="ml-0.5 h-1 w-1 rounded-full bg-red-500 sm:h-1.5 sm:w-1.5"
 								/>
 							)}
 						</motion.button>

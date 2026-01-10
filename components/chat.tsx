@@ -310,7 +310,7 @@ export function Chat({
 
 	return (
 		<>
-			<div className="relative flex h-screen w-full flex-col overflow-hidden bg-white dark:bg-black">
+			<div className="relative flex h-dvh w-full flex-col overflow-hidden bg-white dark:bg-black">
 				{/* Subtle red accent glow - minimalist */}
 				<div
 					aria-hidden
@@ -322,9 +322,9 @@ export function Chat({
 				<div className="relative z-10 flex h-full w-full flex-col">
 					{/* Premium Minimalist Header */}
 					<header className="flex-shrink-0 border-b border-neutral-100 bg-white/80 backdrop-blur-xl dark:border-neutral-800 dark:bg-black/80">
-						<div className="flex h-14 w-full items-center justify-between gap-4 px-4 sm:h-16 sm:px-6">
+						<div className="flex h-12 w-full items-center justify-between gap-2 px-2 sm:h-16 sm:gap-4 sm:px-6">
 							{/* Left: Navigation */}
-							<div className="flex items-center gap-3 sm:gap-4">
+							<div className="flex items-center gap-1.5 sm:gap-4">
 								<SidebarToggle />
 								<div className="hidden items-center gap-2 sm:flex" />
 								{(!open || isMobile) && (
@@ -443,8 +443,8 @@ export function Chat({
 
 					{/* Input Area - Clean minimalist */}
 					{!isReadonly && (
-						<div className="flex-shrink-0 border-t border-neutral-100 bg-white/80 px-4 pt-3 pb-4 backdrop-blur-xl dark:border-neutral-800 dark:bg-black/80 sm:px-6 sm:pt-4 sm:pb-6">
-							<div className="w-full space-y-2">
+						<div className="flex-shrink-0 border-t border-neutral-100 bg-white/80 px-3 pt-2 pb-2 backdrop-blur-xl dark:border-neutral-800 dark:bg-black/80 sm:px-6 sm:pt-4 sm:pb-6">
+							<div className="w-full space-y-1 sm:space-y-2">
 								{/* Focus Mode Chips */}
 								<FocusModeChips
 									botType={selectedBot}
