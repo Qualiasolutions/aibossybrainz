@@ -282,7 +282,7 @@ export default function MarketingLayout({
 	return (
 		<div className="min-h-screen bg-background">
 			<Header />
-			<main className="pt-24">{children}</main>
+			<main className="pt-28 sm:pt-32">{children}</main>
 			<Footer />
 		</div>
 	);
