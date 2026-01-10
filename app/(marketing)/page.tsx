@@ -107,7 +107,7 @@ function HeroSection() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="flex items-center justify-center lg:justify-end"
           >
-            <div className="w-full max-w-xl lg:max-w-2xl">
+            <div className="w-full max-w-2xl xl:max-w-3xl">
               <ChatDemo />
             </div>
           </motion.div>
@@ -230,7 +230,7 @@ function ChatDemo() {
         </div>
 
         {/* Chat Interface */}
-        <div className="h-[420px] overflow-hidden bg-gradient-to-b from-stone-50/50 to-white sm:h-[480px] lg:h-[520px]">
+        <div className="h-[380px] overflow-hidden bg-gradient-to-b from-stone-50/50 to-white sm:h-[400px]">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-stone-100 bg-white/80 px-4 py-2.5 backdrop-blur-sm">
             <div className="flex items-center gap-2.5">
