@@ -191,7 +191,7 @@ function ChatDemo() {
           </div>
           <div className="mx-auto flex items-center gap-2 rounded-md bg-white px-3 py-1 shadow-sm">
             <img
-              src="/images/AM_Logo_Horizontal_4C+(1).webp"
+              src="https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w"
               alt="AI Boss Brainz"
               className="h-4 w-auto"
             />

@@ -74,7 +74,7 @@ export function HeaderNavbar({
 						<img
 							alt="Alecci Media Logo"
 							className="h-8 w-auto max-w-[160px] object-contain lg:h-10 lg:max-w-[200px]"
-							src="/images/AM_Logo_Horizontal_4C+(1).webp"
+							src="https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w"
 						/>
 					</div>
 				</div>

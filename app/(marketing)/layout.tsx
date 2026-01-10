@@ -29,7 +29,7 @@ function Header() {
 					{/* Logo */}
 					<Link href="/" className="flex items-center">
 						<img
-							src="/images/AM_Logo_Horizontal_4C+(1).webp"
+							src="https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w"
 							alt="AI Boss Brainz"
 							className="h-8 w-auto sm:h-10"
 						/>
@@ -152,7 +152,7 @@ function Footer() {
 					<div className="sm:col-span-2 lg:col-span-1">
 						<Link href="/" className="flex items-center">
 							<img
-								src="/images/AM_Logo_Horizontal_4C+(1).webp"
+								src="https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w"
 								alt="AI Boss Brainz"
 								className="h-8 w-auto"
 							/>

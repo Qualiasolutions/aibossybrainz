@@ -11,8 +11,11 @@ const nextConfig: NextConfig = {
         hostname: "i.ibb.co",
       },
       {
-        hostname: "wubiidettbyavutahgjb.supabase.co", 
-      }
+        hostname: "wubiidettbyavutahgjb.supabase.co",
+      },
+      {
+        hostname: "images.squarespace-cdn.com",
+      },
     ],
   },
 
