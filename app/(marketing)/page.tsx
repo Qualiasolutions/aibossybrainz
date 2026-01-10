@@ -82,7 +82,7 @@ function ChatDemo() {
 						<div className="size-2.5 rounded-full bg-green-400" />
 					</div>
 					<div className="mx-auto flex items-center gap-2 rounded-md bg-white px-3 py-1 shadow-sm">
-						<img src="/images/AM_Logo_Horizontal_4C+(1).webp" alt="Bossy Brainz" className="h-4 w-auto" />
+						<img src="/images/AM_Logo_Horizontal_4C+(1).webp" alt="AI Boss Brainz" className="h-4 w-auto" />
 						<span className="text-[11px] text-stone-500">bossybrainz.ai</span>
 					</div>
 				</div>

@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, Home, CreditCard, Mail, LogOut, LogIn } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
@@ -9,6 +10,7 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -57,13 +59,36 @@ export function SidebarUserNav({ user }: { user: User }) {
                         </SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
-						className="w-(--radix-popper-anchor-width)"
+						className="w-56 rounded-xl border-neutral-200 bg-white p-1 shadow-lg"
 						data-testid="user-nav-menu"
 						side="top"
 					>
-						<DropdownMenuItem asChild data-testid="user-nav-item-auth">
+						<DropdownMenuItem asChild className="rounded-lg px-3 py-2.5 cursor-pointer focus:bg-rose-50 focus:text-rose-600">
+							<Link href="/">
+								<Home className="mr-2.5 h-4 w-4 text-rose-500" />
+								<span className="text-sm font-medium">Homepage</span>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild className="rounded-lg px-3 py-2.5 cursor-pointer focus:bg-rose-50 focus:text-rose-600">
+							<Link href="/pricing">
+								<CreditCard className="mr-2.5 h-4 w-4 text-rose-500" />
+								<span className="text-sm font-medium">Pricing</span>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild className="rounded-lg px-3 py-2.5 cursor-pointer focus:bg-rose-50 focus:text-rose-600">
+							<Link href="/contact">
+								<Mail className="mr-2.5 h-4 w-4 text-rose-500" />
+								<span className="text-sm font-medium">Contact</span>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuSeparator className="my-1" />
+						<DropdownMenuItem
+							asChild
+							data-testid="user-nav-item-auth"
+							className="rounded-lg px-3 py-2.5 cursor-pointer focus:bg-rose-50 focus:text-rose-600"
+						>
 							<button
-								className="w-full cursor-pointer"
+								className="w-full"
 								onClick={() => {
 									if (isGuest) {
 										router.push("/login");
@@ -73,7 +98,17 @@ export function SidebarUserNav({ user }: { user: User }) {
 								}}
 								type="button"
 							>
-								{isGuest ? "Login to your account" : "Sign out"}
+								{isGuest ? (
+									<>
+										<LogIn className="mr-2.5 h-4 w-4 text-rose-500" />
+										<span className="text-sm font-medium">Login to your account</span>
+									</>
+								) : (
+									<>
+										<LogOut className="mr-2.5 h-4 w-4 text-rose-500" />
+										<span className="text-sm font-medium">Sign out</span>
+									</>
+								)}
 							</button>
 						</DropdownMenuItem>
 					</DropdownMenuContent>

@@ -30,12 +30,12 @@ function Header() {
 					<Link href="/" className="flex items-center gap-3">
 						<img
 							src="/images/AM_Logo_Horizontal_4C+(1).webp"
-							alt="Bossy Brainz"
+							alt="AI Boss Brainz"
 							className="h-8 w-auto sm:h-9"
 						/>
 						<div className="flex flex-col">
 							<span className="font-bold text-sm tracking-tight text-foreground sm:text-base">
-								Bossy Brainz
+								AI Boss Brainz
 							</span>
 							<span className="hidden text-[10px] text-muted-foreground sm:block">
 								AI Executive Team
@@ -161,11 +161,11 @@ function Footer() {
 						<Link href="/" className="flex items-center gap-3">
 							<img
 								src="/images/AM_Logo_Horizontal_4C+(1).webp"
-								alt="Bossy Brainz"
+								alt="AI Boss Brainz"
 								className="h-8 w-auto"
 							/>
 							<span className="font-bold text-lg tracking-tight text-foreground">
-								Bossy Brainz
+								AI Boss Brainz
 							</span>
 						</Link>
 						<p className="mt-4 max-w-xs text-sm text-muted-foreground">
@@ -244,7 +244,7 @@ function Footer() {
 
 				<div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/50 pt-8 sm:flex-row">
 					<p className="text-sm text-muted-foreground">
-						&copy; {new Date().getFullYear()} Bossy Brainz. All rights reserved.
+						&copy; {new Date().getFullYear()} AI Boss Brainz. All rights reserved.
 					</p>
 					<div className="flex gap-4">
 						<a
