@@ -27,22 +27,21 @@ function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-[100svh] overflow-hidden bg-stone-900">
+    <section className="relative min-h-[100svh] overflow-hidden bg-white">
       {/* Cloud Animation Background */}
       <div className="absolute inset-0">
         <CloudAnimation
           className="absolute inset-0 h-full w-full"
-          particleColor="rgba(168, 162, 158, 0.4)"
-          particleCount={250}
+          particleColor="rgba(231, 229, 228, 0.9)"
+          particleCount={200}
         />
       </div>
 
-      {/* Gradient Overlays */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-stone-900/80 via-transparent to-stone-900/90" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-stone-900/60 via-transparent to-stone-900/60" />
+      {/* Subtle Gradient Overlays */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/80" />
 
       {/* Accent Glow */}
-      <div className="pointer-events-none absolute left-1/2 top-1/3 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/10 blur-[120px]" />
+      <div className="pointer-events-none absolute left-1/2 top-1/3 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-100/50 blur-[150px]" />
 
       {/* Content */}
       <div className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -53,9 +52,9 @@ function HeroSection() {
           className="text-center"
         >
           {/* Main Heading */}
-          <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
+          <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-stone-900 sm:text-6xl lg:text-7xl">
             Your Personal
-            <span className="mt-2 block bg-gradient-to-r from-red-400 via-rose-400 to-red-500 bg-clip-text text-transparent">
+            <span className="mt-2 block bg-gradient-to-r from-red-500 via-rose-500 to-red-600 bg-clip-text text-transparent">
               CMO & CSO Team
             </span>
           </h1>
@@ -65,7 +64,7 @@ function HeroSection() {
             initial={{ opacity: 0 }}
             animate={isVisible ? { opacity: 1 } : {}}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-stone-400 sm:text-xl"
+            className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-stone-600 sm:text-xl"
           >
             Strategic marketing and sales consulting powered by AI executives.
             Get actionable strategies and expert guidance on demand.
@@ -91,7 +90,7 @@ function HeroSection() {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-stone-600 bg-transparent px-8 text-base text-stone-300 hover:border-stone-500 hover:bg-stone-800/50 hover:text-white"
+                className="border-stone-300 bg-white/80 px-8 text-base text-stone-700 hover:border-stone-400 hover:bg-white hover:text-stone-900"
               >
                 View Pricing
               </Button>
@@ -111,10 +110,10 @@ function HeroSection() {
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             className="flex flex-col items-center gap-2"
           >
-            <span className="text-xs font-medium uppercase tracking-widest text-stone-500">
+            <span className="text-xs font-medium uppercase tracking-widest text-stone-400">
               Scroll
             </span>
-            <div className="h-8 w-px bg-gradient-to-b from-stone-500 to-transparent" />
+            <div className="h-8 w-px bg-gradient-to-b from-stone-300 to-transparent" />
           </motion.div>
         </motion.div>
       </div>
