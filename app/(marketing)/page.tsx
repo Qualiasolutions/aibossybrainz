@@ -107,7 +107,7 @@ function HeroSection() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="flex items-center justify-center lg:justify-end"
           >
-            <div className="w-full max-w-lg">
+            <div className="w-full max-w-xl lg:max-w-2xl">
               <ChatDemo />
             </div>
           </motion.div>
@@ -134,6 +134,21 @@ function HeroSection() {
       </motion.div>
     </section>
   );
+}
+
+// Helper to parse **bold** markdown
+function formatBoldText(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} className="font-semibold">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
 }
 
 // Compact Chat Demo Component
@@ -215,7 +230,7 @@ function ChatDemo() {
         </div>
 
         {/* Chat Interface */}
-        <div className="h-[400px] overflow-hidden bg-gradient-to-b from-stone-50/50 to-white lg:h-[450px]">
+        <div className="h-[420px] overflow-hidden bg-gradient-to-b from-stone-50/50 to-white sm:h-[480px] lg:h-[520px]">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-stone-100 bg-white/80 px-4 py-2.5 backdrop-blur-sm">
             <div className="flex items-center gap-2.5">
@@ -254,7 +269,7 @@ function ChatDemo() {
           </div>
 
           {/* Messages */}
-          <div className="h-[calc(100%-100px)] space-y-3 overflow-y-auto p-3">
+          <div className="h-[calc(100%-110px)] space-y-3 overflow-y-auto p-4">
             {visibleMessages.map((message, index) => (
               <motion.div
                 key={index}
@@ -294,7 +309,12 @@ function ChatDemo() {
                 >
                   {message.role === "assistant" ? (
                     <div className="whitespace-pre-wrap leading-relaxed">
-                      {message.content}
+                      {message.content.split("\n").map((line, i) => (
+                        <span key={i}>
+                          {formatBoldText(line)}
+                          {i < message.content.split("\n").length - 1 && <br />}
+                        </span>
+                      ))}
                     </div>
                   ) : (
                     <span>{message.content}</span>
