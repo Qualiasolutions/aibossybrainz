@@ -37,7 +37,7 @@ function PureChatHeader({
 					<Button
 						className="hover:-translate-y-0.5 order-2 ml-auto h-9 rounded-full border border-white/70 bg-white/85 px-3 font-medium text-slate-600 text-sm shadow-rose-100/40 shadow-sm transition-all hover:bg-white md:order-1 md:ml-0"
 						onClick={() => {
-							router.push("/");
+							router.push("/new");
 							router.refresh();
 						}}
 						variant="outline"

@@ -15,14 +15,14 @@ export default function ExecutivesPage() {
 			<header className="border-b border-zinc-200 bg-white">
 				<div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
 					<div className="flex items-center justify-between">
-						<Link href="/">
+						<Link href="/new">
 							<img
 								alt="Alecci Media Logo"
 								className="h-8 w-auto object-contain sm:h-10"
 								src="/images/AM_Logo_Horizontal_4C+(1).webp"
 							/>
 						</Link>
-						<Link href="/">
+						<Link href="/new">
 							<Button className="text-sm sm:text-base" variant="outline">
 								Back to Chat
 							</Button>
@@ -100,7 +100,7 @@ export default function ExecutivesPage() {
 								</div>
 
 								<div className="mt-6">
-									<Link href="/">
+									<Link href="/new">
 										<Button className="w-full bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 sm:w-auto">
 											<Mail className="mr-2 h-4 w-4" />
 											Consult with Alexandria
@@ -160,7 +160,7 @@ export default function ExecutivesPage() {
 								</div>
 
 								<div className="mt-6">
-									<Link href="/">
+									<Link href="/new">
 										<Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 sm:w-auto">
 											<Mail className="mr-2 h-4 w-4" />
 											Consult with Kim
@@ -184,7 +184,7 @@ export default function ExecutivesPage() {
 									Get aligned insights from both perspectives in one
 									conversation.
 								</p>
-								<Link href="/">
+								<Link href="/new">
 									<Button
 										className="mt-6 bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 hover:from-rose-600 hover:via-purple-700 hover:to-indigo-700"
 										size="lg"

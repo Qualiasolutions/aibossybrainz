@@ -18,7 +18,7 @@ export default function EmbedPage() {
 
 				if (session?.user) {
 					// Already logged in, go to chat
-					router.push("/");
+					router.push("/new");
 					return;
 				}
 

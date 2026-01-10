@@ -32,7 +32,7 @@ function ChatErrorFallback({ onReset }: ChatErrorFallbackProps) {
 						Try Again
 					</Button>
 					<Button asChild variant="default" className="gap-2">
-						<Link href="/">
+						<Link href="/new">
 							<Home className="size-4" />
 							New Chat
 						</Link>

@@ -331,7 +331,7 @@ export function Chat({
 									<Button
 										className="h-8 gap-2 rounded-md border-neutral-200 bg-white px-3 font-medium text-xs text-neutral-700 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-red-800 dark:hover:bg-red-950/50 dark:hover:text-red-400"
 										onClick={() => {
-											router.push("/");
+											router.push("/new");
 											router.refresh();
 										}}
 										variant="outline"

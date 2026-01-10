@@ -28,7 +28,7 @@ export function HeaderNavbar({
 	const { openMobileSidebar } = useMobileSidebar();
 
 	const handleNewChat = () => {
-		router.push("/");
+		router.push("/new");
 		router.refresh();
 	};
 

@@ -127,7 +127,7 @@ export default function StrategyCanvasPage() {
 					<div className="flex items-center justify-between">
 						{/* Logo and Back */}
 						<div className="flex items-center gap-4">
-							<Link href="/">
+							<Link href="/new">
 								<motion.button
 									whileHover={{ scale: 1.02 }}
 									whileTap={{ scale: 0.98 }}

@@ -110,7 +110,7 @@ export default function AnalyticsPage() {
 					<div className="flex items-center gap-4">
 						<Link
 							className="flex items-center gap-2 font-semibold text-stone-800"
-							href="/"
+							href="/new"
 						>
 							<BarChart3 className="size-5 text-rose-500" />
 							<span>Analytics Dashboard</span>

@@ -127,7 +127,7 @@ export default async function HistoryPage() {
 								Review your past consulting sessions
 							</p>
 						</div>
-						<Link href="/">
+						<Link href="/new">
 							<Button className="w-full sm:w-auto" variant="outline">
 								Back to Chat
 							</Button>
@@ -228,7 +228,7 @@ export default async function HistoryPage() {
 								<p className="mt-2 text-slate-600 text-sm sm:text-base">
 									Start your first conversation with our executive consultants
 								</p>
-								<Link href="/">
+								<Link href="/new">
 									<Button className="mt-6">Start New Conversation</Button>
 								</Link>
 							</CardContent>

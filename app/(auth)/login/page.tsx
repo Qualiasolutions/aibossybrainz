@@ -56,8 +56,8 @@ export default function Page() {
 		} else if (state.status === "success" && !hasRedirected.current) {
 			hasRedirected.current = true;
 			setIsSuccessful(true);
-			// Navigate to home after successful login - session will be refreshed
-			router.push("/");
+			// Navigate to chat app after successful login
+			router.push("/new");
 		}
 	}, [router, state.status]);
 

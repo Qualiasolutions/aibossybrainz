@@ -83,7 +83,7 @@ export default function SwotPage() {
 					<div className="flex items-center justify-between">
 						{/* Logo and Back */}
 						<div className="flex items-center gap-4">
-							<Link href="/">
+							<Link href="/new">
 								<Button className="gap-2" size="sm" variant="ghost">
 									<ArrowLeft className="size-4" />
 									<span className="hidden sm:inline">Back to Chat</span>

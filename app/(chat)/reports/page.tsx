@@ -109,7 +109,7 @@ export default async function ReportsPage() {
 								View and manage your AI-generated documents and artifacts
 							</p>
 						</div>
-						<Link href="/">
+						<Link href="/new">
 							<Button className="w-full sm:w-auto" variant="outline">
 								Back to Chat
 							</Button>
@@ -211,7 +211,7 @@ export default async function ReportsPage() {
 									Start a conversation with our executive consultants to
 									generate reports and documents
 								</p>
-								<Link href="/">
+								<Link href="/new">
 									<Button className="mt-6">Start New Conversation</Button>
 								</Link>
 							</CardContent>
