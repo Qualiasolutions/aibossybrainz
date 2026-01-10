@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { CloudAnimation } from "@/components/ui/cloud-animation";
 import { cn } from "@/lib/utils";
 
-// Hero Section with Cloud Animation
+// Hero Section with Cloud Animation - Split Layout
 function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -41,82 +41,97 @@ function HeroSection() {
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/80" />
 
       {/* Accent Glow */}
-      <div className="pointer-events-none absolute left-1/2 top-1/3 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-100/50 blur-[150px]" />
+      <div className="pointer-events-none absolute left-1/4 top-1/2 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-100/40 blur-[150px]" />
 
-      {/* Content */}
-      <div className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center"
-        >
-          {/* Main Heading */}
-          <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-stone-900 sm:text-6xl lg:text-7xl">
-            Your Personal
-            <span className="mt-2 block bg-gradient-to-r from-red-500 via-rose-500 to-red-600 bg-clip-text text-transparent">
-              CMO & CSO Team
-            </span>
-          </h1>
-
-          {/* Subheading */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={isVisible ? { opacity: 1 } : {}}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-stone-600 sm:text-xl"
-          >
-            Strategic marketing and sales consulting powered by AI executives.
-            Get actionable strategies and expert guidance on demand.
-          </motion.p>
-
-          {/* CTA Buttons */}
+      {/* Content - Split Layout */}
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl items-center px-4 pt-24 sm:px-6 lg:px-8">
+        <div className="grid w-full gap-12 lg:grid-cols-2 lg:gap-16">
+          {/* Left - Text Content */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+            initial={{ opacity: 0, x: -30 }}
+            animate={isVisible ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col justify-center"
           >
-            <Link href="/login">
-              <Button
-                size="lg"
-                className="group gap-2 bg-gradient-to-r from-red-500 to-red-600 px-8 text-base shadow-2xl shadow-red-500/25 transition-all hover:from-red-600 hover:to-red-700 hover:shadow-red-500/40"
-              >
-                Start Free Trial
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-            <Link href="/pricing">
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-stone-300 bg-white/80 px-8 text-base text-stone-700 hover:border-stone-400 hover:bg-white hover:text-stone-900"
-              >
-                View Pricing
-              </Button>
-            </Link>
-          </motion.div>
-        </motion.div>
+            {/* Main Heading */}
+            <h1 className="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl lg:text-6xl xl:text-7xl">
+              Your Personal
+              <span className="mt-2 block bg-gradient-to-r from-red-500 via-rose-500 to-red-600 bg-clip-text text-transparent">
+                CMO & CSO Team
+              </span>
+            </h1>
 
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isVisible ? { opacity: 1 } : {}}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-2"
-          >
-            <span className="text-xs font-medium uppercase tracking-widest text-stone-400">
-              Scroll
-            </span>
-            <div className="h-8 w-px bg-gradient-to-b from-stone-300 to-transparent" />
+            {/* Subheading */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : {}}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="mt-6 max-w-lg text-lg leading-relaxed text-stone-600 sm:text-xl"
+            >
+              Strategic marketing and sales consulting powered by AI executives.
+              Get actionable strategies and expert guidance on demand.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="mt-10 flex flex-col gap-4 sm:flex-row"
+            >
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  className="group gap-2 bg-gradient-to-r from-red-500 to-red-600 px-8 text-base shadow-2xl shadow-red-500/25 transition-all hover:from-red-600 hover:to-red-700 hover:shadow-red-500/40"
+                >
+                  Start Free Trial
+                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+              <Link href="/pricing">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-stone-300 bg-white/80 px-8 text-base text-stone-700 hover:border-stone-400 hover:bg-white hover:text-stone-900"
+                >
+                  View Pricing
+                </Button>
+              </Link>
+            </motion.div>
           </motion.div>
-        </motion.div>
+
+          {/* Right - Chat Demo */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={isVisible ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className="flex items-center justify-center lg:justify-end"
+          >
+            <div className="w-full max-w-lg">
+              <ChatDemo />
+            </div>
+          </motion.div>
+        </div>
       </div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isVisible ? { opacity: 1 } : {}}
+        transition={{ delay: 1, duration: 0.5 }}
+        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-2"
+        >
+          <span className="text-xs font-medium uppercase tracking-widest text-stone-400">
+            Scroll
+          </span>
+          <div className="h-8 w-px bg-gradient-to-b from-stone-300 to-transparent" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
@@ -348,44 +363,6 @@ function ChatDemo() {
   );
 }
 
-// Demo Section
-function DemoSection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  return (
-    <section ref={ref} className="bg-white py-20 sm:py-28 lg:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          className="mb-16 text-center"
-        >
-          <h2 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl lg:text-5xl">
-            See It in{" "}
-            <span className="bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-              Action
-            </span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-stone-600">
-            Watch how our AI executives collaborate to solve your business
-            challenges in real-time.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.2 }}
-          className="mx-auto max-w-3xl"
-        >
-          <ChatDemo />
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
 // Executive Cards
 function ExecutiveCards() {
   const ref = useRef(null);
@@ -593,7 +570,6 @@ export default function LandingPage() {
   return (
     <>
       <HeroSection />
-      <DemoSection />
       <ExecutiveCards />
       <BenefitsGrid />
       <CTASection />
