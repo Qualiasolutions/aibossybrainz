@@ -10,7 +10,6 @@ import {
   Target,
   TrendingUp,
   Zap,
-  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
@@ -53,19 +52,6 @@ function HeroSection() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center"
         >
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isVisible ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-stone-700/50 bg-stone-800/50 px-4 py-2 backdrop-blur-sm"
-          >
-            <Sparkles className="size-4 text-red-400" />
-            <span className="text-sm font-medium text-stone-300">
-              AI-Powered Executive Strategy
-            </span>
-          </motion.div>
-
           {/* Main Heading */}
           <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
             Your Personal

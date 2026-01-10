@@ -42,14 +42,18 @@ export default withSentryConfig(nextConfig, {
   // Upload source maps for better error tracking
   widenClientFileUpload: true,
 
-  // Automatically tree-shake Sentry SDK in production
-  disableLogger: true,
-
   // Source map configuration
   sourcemaps: {
     deleteSourcemapsAfterUpload: true,
   },
 
-  // Automatically instrument data fetching on Vercel
-  automaticVercelMonitors: true,
+  // Webpack configuration for Sentry
+  webpack: {
+    // Tree-shake Sentry debug logging in production
+    treeshake: {
+      removeDebugLogging: true,
+    },
+    // Automatically instrument data fetching on Vercel
+    automaticVercelMonitors: true,
+  },
 });
