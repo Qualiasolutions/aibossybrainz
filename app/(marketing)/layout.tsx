@@ -27,13 +27,15 @@ function Header() {
 					className="mt-4 flex items-center justify-between rounded-2xl border border-white/10 bg-white/80 px-4 py-3 shadow-lg shadow-black/5 backdrop-blur-xl dark:bg-black/80 sm:px-6"
 				>
 					{/* Logo */}
-					<Link href="/" className="flex items-center gap-2.5">
-						<div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-red-700 shadow-lg shadow-red-500/25">
-							<span className="font-bold text-lg text-white">A</span>
-						</div>
+					<Link href="/" className="flex items-center gap-3">
+						<img
+							src="/images/AM_Logo_Horizontal_4C+(1).webp"
+							alt="Bossy Brainz"
+							className="h-8 w-auto sm:h-9"
+						/>
 						<div className="flex flex-col">
 							<span className="font-bold text-sm tracking-tight text-foreground sm:text-base">
-								Alecci Media
+								Bossy Brainz
 							</span>
 							<span className="hidden text-[10px] text-muted-foreground sm:block">
 								AI Executive Team
@@ -156,12 +158,14 @@ function Footer() {
 				<div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
 					{/* Brand */}
 					<div className="sm:col-span-2 lg:col-span-1">
-						<Link href="/" className="flex items-center gap-2.5">
-							<div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-red-700 shadow-lg shadow-red-500/25">
-								<span className="font-bold text-lg text-white">A</span>
-							</div>
+						<Link href="/" className="flex items-center gap-3">
+							<img
+								src="/images/AM_Logo_Horizontal_4C+(1).webp"
+								alt="Bossy Brainz"
+								className="h-8 w-auto"
+							/>
 							<span className="font-bold text-lg tracking-tight text-foreground">
-								Alecci Media
+								Bossy Brainz
 							</span>
 						</Link>
 						<p className="mt-4 max-w-xs text-sm text-muted-foreground">
@@ -220,10 +224,10 @@ function Footer() {
 						<ul className="space-y-2.5">
 							<li>
 								<a
-									href="mailto:hello@aleccimedia.com"
+									href="mailto:hello@bossybrainz.ai"
 									className="text-sm text-muted-foreground transition-colors hover:text-foreground"
 								>
-									hello@aleccimedia.com
+									hello@bossybrainz.ai
 								</a>
 							</li>
 							<li>
@@ -240,7 +244,7 @@ function Footer() {
 
 				<div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/50 pt-8 sm:flex-row">
 					<p className="text-sm text-muted-foreground">
-						&copy; {new Date().getFullYear()} Alecci Media. All rights reserved.
+						&copy; {new Date().getFullYear()} Bossy Brainz. All rights reserved.
 					</p>
 					<div className="flex gap-4">
 						<a
@@ -278,7 +282,7 @@ export default function MarketingLayout({
 	return (
 		<div className="min-h-screen bg-background">
 			<Header />
-			<main>{children}</main>
+			<main className="pt-24">{children}</main>
 			<Footer />
 		</div>
 	);
