@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	clearAudioUrl,
-	isAudioPaused,
 	markAudioEnded,
 	pauseAudio,
 	resumeAudio,
@@ -18,7 +17,22 @@ import type { ChatMessage } from "@/lib/types";
 type AutoSpeakState = "idle" | "loading" | "playing" | "paused" | "error";
 
 // Track if voice service is unavailable (503) to avoid repeated failed requests
+// Reset after 60 seconds to allow retry
 let voiceServiceUnavailable = false;
+let voiceServiceUnavailableTime = 0;
+const VOICE_SERVICE_RETRY_INTERVAL = 60000; // 60 seconds
+
+function checkVoiceServiceAvailable(): boolean {
+	if (!voiceServiceUnavailable) return true;
+	// Auto-reset after retry interval
+	if (Date.now() - voiceServiceUnavailableTime > VOICE_SERVICE_RETRY_INTERVAL) {
+		voiceServiceUnavailable = false;
+		voiceServiceUnavailableTime = 0;
+		console.log("[AutoSpeak] Voice service retry - resetting unavailable flag");
+		return true;
+	}
+	return false;
+}
 
 /**
  * Hook that automatically speaks the latest assistant message when streaming completes.
@@ -43,7 +57,7 @@ export const useAutoSpeak = ({
 
 	// Subscribe to global audio state changes
 	useEffect(() => {
-		const unsubscribe = subscribeToAudioChanges((isPlaying, source) => {
+		const unsubscribe = subscribeToAudioChanges((isPlaying, _source) => {
 			// If audio stopped and we were playing, reset our state
 			if (!isPlaying && currentPlayIdRef.current !== null) {
 				currentPlayIdRef.current = null;
@@ -82,8 +96,9 @@ export const useAutoSpeak = ({
 	}, [state, pause, resume]);
 
 	const speak = useCallback(async (text: string, messageBotType: BotType) => {
-		// Skip if voice service is known to be unavailable
-		if (voiceServiceUnavailable) {
+		// Skip if voice service is known to be unavailable (with auto-retry)
+		if (!checkVoiceServiceAvailable()) {
+			console.log("[AutoSpeak] Voice service unavailable, skipping");
 			return;
 		}
 
@@ -98,6 +113,7 @@ export const useAutoSpeak = ({
 		currentPlayIdRef.current = playId;
 
 		setState("loading");
+		console.log("[AutoSpeak] Starting API request to /api/voice");
 
 		const abortController = new AbortController();
 		setAbortController(abortController);
@@ -117,9 +133,11 @@ export const useAutoSpeak = ({
 			}
 
 			if (!response.ok) {
-				// If voice service returns 503 (not configured), don't retry this session
+				// If voice service returns 503 (not configured), wait before retry
 				if (response.status === 503) {
 					voiceServiceUnavailable = true;
+					voiceServiceUnavailableTime = Date.now();
+					console.log("[AutoSpeak] Voice service returned 503, marking unavailable");
 					setState("idle");
 					currentPlayIdRef.current = null;
 					return;
@@ -136,6 +154,24 @@ export const useAutoSpeak = ({
 			}
 
 			const audio = new Audio(audioUrl);
+
+			// Apply volume and speed settings from localStorage
+			const savedVolume = localStorage.getItem("voice-playback-volume");
+			const savedSpeed = localStorage.getItem("voice-playback-speed");
+
+			if (savedVolume) {
+				const volume = Number.parseInt(savedVolume, 10);
+				if (!Number.isNaN(volume) && volume >= 0 && volume <= 100) {
+					audio.volume = volume / 100;
+				}
+			}
+
+			if (savedSpeed) {
+				const speed = Number.parseFloat(savedSpeed);
+				if (!Number.isNaN(speed) && speed >= 0.5 && speed <= 2) {
+					audio.playbackRate = speed;
+				}
+			}
 
 			audio.addEventListener("ended", () => {
 				if (currentPlayIdRef.current === playId) {
@@ -159,6 +195,7 @@ export const useAutoSpeak = ({
 			setCurrentAudio(audio, audioUrl, "auto-speak");
 
 			setState("playing");
+			console.log("[AutoSpeak] Starting audio playback");
 			await audio.play();
 		} catch (err) {
 			if (err instanceof Error && err.name === "AbortError") {
@@ -177,29 +214,34 @@ export const useAutoSpeak = ({
 
 	// Track when streaming starts
 	useEffect(() => {
+		console.log("[AutoSpeak] Status changed:", status, "wasStreaming:", wasStreamingRef.current, "enabled:", isAutoSpeakEnabled);
 		if (status === "streaming") {
 			wasStreamingRef.current = true;
 		}
-	}, [status]);
+	}, [status, isAutoSpeakEnabled]);
 
 	// Auto-speak when streaming completes
 	useEffect(() => {
 		if (!isAutoSpeakEnabled) {
+			console.log("[AutoSpeak] Auto-speak disabled, skipping");
 			return;
 		}
 
 		// Check if we just finished streaming (was streaming, now ready)
 		if (wasStreamingRef.current && status === "ready") {
+			console.log("[AutoSpeak] Streaming finished, attempting to speak");
 			wasStreamingRef.current = false;
 
 			// Get the latest assistant message
 			const lastMessage = messages.at(-1);
 			if (!lastMessage || lastMessage.role !== "assistant") {
+				console.log("[AutoSpeak] No assistant message found, skipping");
 				return;
 			}
 
 			// Don't speak the same message twice
 			if (lastSpokenMessageIdRef.current === lastMessage.id) {
+				console.log("[AutoSpeak] Already spoke this message, skipping");
 				return;
 			}
 
@@ -210,12 +252,17 @@ export const useAutoSpeak = ({
 				.join("\n")
 				.trim();
 
+			console.log("[AutoSpeak] Text content length:", textContent?.length || 0);
+
 			if (textContent) {
 				lastSpokenMessageIdRef.current = lastMessage.id;
 				// Use the botType from message metadata if available, otherwise use the current botType
 				const messageBotType =
 					(lastMessage.metadata?.botType as BotType) ?? botType;
+				console.log("[AutoSpeak] Speaking message for botType:", messageBotType);
 				speak(textContent, messageBotType);
+			} else {
+				console.log("[AutoSpeak] No text content to speak");
 			}
 		}
 	}, [messages, status, botType, isAutoSpeakEnabled, speak]);
