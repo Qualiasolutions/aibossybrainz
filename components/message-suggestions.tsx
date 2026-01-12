@@ -105,8 +105,8 @@ export function MessageSuggestions({
 					</span>
 				</div>
 
-				{/* Suggestions Grid - horizontal scroll, no wrap */}
-				<div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+				{/* Suggestions - 2x2 grid, full text visible */}
+				<div className="grid grid-cols-2 gap-2">
 					{suggestions.map((suggestion, index) => {
 						const Icon = CATEGORY_ICONS[suggestion.category];
 						const isCopied = copiedId === suggestion.id;
@@ -116,7 +116,7 @@ export function MessageSuggestions({
 								animate={{ opacity: 1, scale: 1, y: 0 }}
 								aria-label={`Ask: ${suggestion.text}`}
 								className={cn(
-									"group relative flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2",
+									"group relative flex items-start gap-2 rounded-xl border px-3 py-2",
 									"text-sm",
 									"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50 focus-visible:ring-offset-2",
 									"shadow-sm",
@@ -168,7 +168,7 @@ export function MessageSuggestions({
 
 								{/* Text */}
 								<span className={cn(
-									"whitespace-nowrap text-left font-medium text-stone-700 dark:text-stone-200",
+									"text-left font-medium text-stone-700 leading-snug dark:text-stone-200",
 									isCopied && "text-emerald-700 dark:text-emerald-300",
 								)}>
 									{suggestion.text}
