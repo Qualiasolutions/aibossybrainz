@@ -1,5 +1,5 @@
 import equal from "fast-deep-equal";
-import { Loader2, Maximize2 } from "lucide-react";
+import { Check, Loader2, Maximize2 } from "lucide-react";
 import { memo, useState } from "react";
 import { toast } from "sonner";
 import { useSWRConfig } from "swr";
@@ -10,6 +10,7 @@ import type { Vote } from "@/lib/supabase/types";
 import { exportToExcel } from "@/lib/excel-export";
 import { exportToPDF } from "@/lib/pdf-export";
 import type { ChatMessage } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { Action, Actions } from "./elements/actions";
 import {
 	CopyIcon,
@@ -43,6 +44,7 @@ export function PureMessageActions({
 	const [_, copyToClipboard] = useCopyToClipboard();
 	const [isExportingPdf, setIsExportingPdf] = useState(false);
 	const [isExportingExcel, setIsExportingExcel] = useState(false);
+	const [isCopied, setIsCopied] = useState(false);
 
 	if (isLoading) {
 		return null;
@@ -61,7 +63,13 @@ export function PureMessageActions({
 		}
 
 		await copyToClipboard(textFromParts);
+		setIsCopied(true);
 		toast.success("Copied to clipboard!");
+
+		// Reset after animation
+		setTimeout(() => {
+			setIsCopied(false);
+		}, 2000);
 	};
 
 	const handleExportPdf = async () => {
@@ -150,8 +158,19 @@ export function PureMessageActions({
 							<PencilEditIcon />
 						</Action>
 					)}
-					<Action onClick={handleCopy} tooltip="Copy">
-						<CopyIcon />
+					<Action
+						className={cn(
+							"transition-all duration-200",
+							isCopied && "text-emerald-600 hover:text-emerald-600",
+						)}
+						onClick={handleCopy}
+						tooltip={isCopied ? "Copied!" : "Copy"}
+					>
+						{isCopied ? (
+							<Check className="size-4 animate-in zoom-in-50 duration-200" />
+						) : (
+							<CopyIcon />
+						)}
 					</Action>
 				</div>
 			</Actions>
@@ -160,8 +179,19 @@ export function PureMessageActions({
 
 	return (
 		<Actions className="-ml-0.5">
-			<Action onClick={handleCopy} tooltip="Copy">
-				<CopyIcon />
+			<Action
+				className={cn(
+					"transition-all duration-200",
+					isCopied && "text-emerald-600 hover:text-emerald-600",
+				)}
+				onClick={handleCopy}
+				tooltip={isCopied ? "Copied!" : "Copy text"}
+			>
+				{isCopied ? (
+					<Check className="size-4 animate-in zoom-in-50 duration-200" />
+				) : (
+					<CopyIcon />
+				)}
 			</Action>
 
 			{onExpand && (
