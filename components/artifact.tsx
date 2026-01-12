@@ -463,26 +463,28 @@ function PureArtifact({
 							/>
 						</div>
 
-						<div className="h-full max-w-full! items-center overflow-y-scroll bg-white/90">
-							<artifactDefinition.content
-								content={
-									isCurrentVersion
-										? artifact.content
-										: getDocumentContentById(currentVersionIndex)
-								}
-								currentVersionIndex={currentVersionIndex}
-								getDocumentContentById={getDocumentContentById}
-								isCurrentVersion={isCurrentVersion}
-								isInline={false}
-								isLoading={isDocumentsFetching && !artifact.content}
-								metadata={metadata}
-								mode={mode}
-								onSaveContent={saveContent}
-								setMetadata={setMetadata}
-								status={artifact.status}
-								suggestions={[]}
-								title={artifact.title}
-							/>
+						<div className="flex-1 min-h-0 overflow-y-auto bg-white/90">
+							<div className="h-full w-full">
+								<artifactDefinition.content
+									content={
+										isCurrentVersion
+											? artifact.content
+											: getDocumentContentById(currentVersionIndex)
+									}
+									currentVersionIndex={currentVersionIndex}
+									getDocumentContentById={getDocumentContentById}
+									isCurrentVersion={isCurrentVersion}
+									isInline={false}
+									isLoading={isDocumentsFetching && !artifact.content}
+									metadata={metadata}
+									mode={mode}
+									onSaveContent={saveContent}
+									setMetadata={setMetadata}
+									status={artifact.status}
+									suggestions={[]}
+									title={artifact.title}
+								/>
+							</div>
 
 							<AnimatePresence>
 								{isCurrentVersion && (
