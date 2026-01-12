@@ -163,36 +163,13 @@ export function WelcomeTutorial() {
 					exit={{ opacity: 0 }}
 					className="fixed inset-0 z-[200] flex items-center justify-center"
 				>
-					{/* Backdrop with animated gradient */}
+					{/* Backdrop - soft white overlay */}
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
-						className="absolute inset-0 bg-black/85 backdrop-blur-md"
-					>
-						{/* Animated background particles */}
-						<div className="absolute inset-0 overflow-hidden">
-							{[...Array(20)].map((_, i) => (
-								<motion.div
-									key={i}
-									className="absolute size-1 rounded-full bg-red-500/30"
-									initial={{
-										x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000),
-										y: Math.random() * (typeof window !== "undefined" ? window.innerHeight : 800),
-									}}
-									animate={{
-										y: [null, Math.random() * -200 - 100],
-										opacity: [0.3, 0.8, 0],
-									}}
-									transition={{
-										duration: 3 + Math.random() * 2,
-										repeat: Infinity,
-										delay: Math.random() * 2,
-									}}
-								/>
-							))}
-						</div>
-					</motion.div>
+						className="absolute inset-0 bg-white/95 backdrop-blur-sm"
+					/>
 
 					{/* Tutorial Card */}
 					<motion.div
@@ -204,9 +181,9 @@ export function WelcomeTutorial() {
 						className="relative z-10 mx-4 w-full max-w-md"
 					>
 						{/* Card */}
-						<div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950/95 shadow-2xl backdrop-blur-xl">
+						<div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl shadow-neutral-200/50">
 							{/* Progress bar */}
-							<div className="h-1 bg-white/5">
+							<div className="h-1 bg-neutral-100">
 								<motion.div
 									className="h-full bg-gradient-to-r from-red-500 to-red-400"
 									initial={{ width: 0 }}
@@ -216,16 +193,16 @@ export function WelcomeTutorial() {
 							</div>
 
 							{/* Header */}
-							<div className="border-b border-white/10 p-6 pb-4">
+							<div className="border-b border-neutral-100 p-6 pb-4">
 								<div className="flex items-start justify-between">
 									<div className="flex items-center gap-4">
 										{/* Icon with pulse animation */}
 										<motion.div
-											className="flex size-14 items-center justify-center rounded-xl bg-gradient-to-br from-red-500/20 to-red-600/20 text-red-400"
+											className="flex size-14 items-center justify-center rounded-xl bg-gradient-to-br from-red-50 to-red-100 text-red-500"
 											animate={{
 												boxShadow: [
 													"0 0 0 0 rgba(239, 68, 68, 0)",
-													"0 0 0 8px rgba(239, 68, 68, 0.1)",
+													"0 0 0 8px rgba(239, 68, 68, 0.08)",
 													"0 0 0 0 rgba(239, 68, 68, 0)",
 												],
 											}}
@@ -234,10 +211,10 @@ export function WelcomeTutorial() {
 											{step.icon}
 										</motion.div>
 										<div>
-											<p className="mb-1 text-xs font-medium text-red-400">
+											<p className="mb-1 text-xs font-medium text-red-500">
 												Step {currentStep + 1} of {tutorialSteps.length}
 											</p>
-											<h2 className="text-xl font-semibold text-white">
+											<h2 className="text-xl font-semibold text-neutral-900">
 												{step.title}
 											</h2>
 										</div>
@@ -246,7 +223,7 @@ export function WelcomeTutorial() {
 										variant="ghost"
 										size="icon"
 										onClick={handleSkip}
-										className="size-8 rounded-lg text-neutral-500 hover:bg-white/5 hover:text-white"
+										className="size-8 rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
 									>
 										<X className="size-4" />
 									</Button>
@@ -260,7 +237,7 @@ export function WelcomeTutorial() {
 									initial={{ opacity: 0, x: 20 }}
 									animate={{ opacity: 1, x: 0 }}
 									transition={{ delay: 0.1 }}
-									className="text-base leading-relaxed text-neutral-300"
+									className="text-base leading-relaxed text-neutral-600"
 								>
 									{step.description}
 								</motion.p>
@@ -271,7 +248,7 @@ export function WelcomeTutorial() {
 										initial={{ opacity: 0, y: 10 }}
 										animate={{ opacity: 1, y: 0 }}
 										transition={{ delay: 0.2 }}
-										className="mt-4 flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-300"
+										className="mt-4 flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"
 									>
 										<ArrowRight className="size-4" />
 										<span>Look for this feature in your interface</span>
@@ -280,11 +257,11 @@ export function WelcomeTutorial() {
 							</div>
 
 							{/* Footer with navigation */}
-							<div className="flex items-center justify-between border-t border-white/10 bg-white/5 p-4">
+							<div className="flex items-center justify-between border-t border-neutral-100 bg-neutral-50 p-4">
 								<Button
 									variant="ghost"
 									onClick={handleSkip}
-									className="text-sm text-neutral-400 hover:text-white"
+									className="text-sm text-neutral-500 hover:text-neutral-700"
 								>
 									Skip Tour
 								</Button>
@@ -300,8 +277,8 @@ export function WelcomeTutorial() {
 													index === currentStep
 														? "w-6 bg-red-500"
 														: index < currentStep
-															? "w-1.5 bg-red-500/50"
-															: "w-1.5 bg-white/20"
+															? "w-1.5 bg-red-300"
+															: "w-1.5 bg-neutral-200"
 												}`}
 												whileHover={{ scale: 1.2 }}
 												whileTap={{ scale: 0.9 }}
@@ -314,7 +291,7 @@ export function WelcomeTutorial() {
 											variant="outline"
 											size="sm"
 											onClick={handlePrevious}
-											className="border-white/10 bg-white/5 text-white hover:bg-white/10"
+											className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
 										>
 											<ChevronLeft className="mr-1 size-4" />
 											Back
