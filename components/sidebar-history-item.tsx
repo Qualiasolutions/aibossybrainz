@@ -79,8 +79,8 @@ const PureChatItem = ({
 					className={cn(
 						"group relative my-1 flex h-10 items-center rounded-lg px-3",
 						"border border-transparent transition-all duration-200",
-						"hover:bg-rose-50 hover:border-rose-200",
-						isActive && "bg-rose-100 border-rose-300",
+						"hover:bg-red-100 hover:border-red-300 hover:shadow-sm",
+						isActive && "bg-red-100 border-red-400 shadow-sm",
 						isPinned && !isActive && "bg-amber-50/50 border-amber-200/50"
 					)}
 					href={`/chat/${chat.id}`}
