@@ -42,6 +42,7 @@ import type {
 	VisibilityType,
 	BotType,
 	ReactionType,
+	Json,
 } from "../supabase/types";
 
 
@@ -1154,6 +1155,89 @@ export async function getUserReactionForMessage({
 		throw new ChatSDKError(
 			"bad_request:database",
 			"Failed to get user reaction for message",
+		);
+	}
+}
+
+// Get all reactions by type for a user with message and chat details
+export async function getUserReactionsByType({
+	userId,
+	reactionType,
+}: {
+	userId: string;
+	reactionType: ReactionType;
+}): Promise<{
+	id: string;
+	messageId: string;
+	reactionType: string;
+	createdAt: string;
+	message: {
+		id: string;
+		chatId: string;
+		parts: Json;
+		role: string;
+		botType: string | null;
+		createdAt: string;
+	} | null;
+	chat: {
+		id: string;
+		title: string;
+		topic: string | null;
+		topicColor: string | null;
+	} | null;
+}[]> {
+	try {
+		const supabase = await createClient();
+
+		// Get reactions with message details
+		const { data: reactions, error } = await supabase
+			.from("MessageReaction")
+			.select("*")
+			.eq("userId", userId)
+			.eq("reactionType", reactionType)
+			.order("createdAt", { ascending: false });
+
+		if (error) throw error;
+		if (!reactions || reactions.length === 0) return [];
+
+		// Get message details for each reaction
+		const messageIds = reactions.map((r) => r.messageId);
+		const { data: messages, error: msgError } = await supabase
+			.from("Message_v2")
+			.select("id, chatId, parts, role, botType, createdAt")
+			.in("id", messageIds);
+
+		if (msgError) throw msgError;
+
+		// Get chat details
+		const chatIds = [...new Set(messages?.map((m) => m.chatId) || [])];
+		const { data: chats, error: chatError } = await supabase
+			.from("Chat")
+			.select("id, title, topic, topicColor")
+			.in("id", chatIds);
+
+		if (chatError) throw chatError;
+
+		// Combine the data
+		const messagesMap = new Map(messages?.map((m) => [m.id, m]) || []);
+		const chatsMap = new Map(chats?.map((c) => [c.id, c]) || []);
+
+		return reactions.map((r) => {
+			const message = messagesMap.get(r.messageId) || null;
+			const chat = message ? chatsMap.get(message.chatId) || null : null;
+			return {
+				id: r.id,
+				messageId: r.messageId,
+				reactionType: r.reactionType,
+				createdAt: r.createdAt || new Date().toISOString(),
+				message,
+				chat,
+			};
+		});
+	} catch (_error) {
+		throw new ChatSDKError(
+			"bad_request:database",
+			"Failed to get user reactions by type",
 		);
 	}
 }

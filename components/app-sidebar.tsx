@@ -3,9 +3,12 @@
 import { motion } from "framer-motion";
 import {
 	BarChart3,
+	Bookmark,
 	ChevronUp,
 	Clock,
+	HelpCircle,
 	LayoutGrid,
+	Lightbulb,
 	Plus,
 	Trash2,
 	Users,
@@ -61,6 +64,9 @@ const navItems = [
 	{ href: "/history", label: "Chat History", icon: Clock },
 	{ href: "/analytics", label: "Analytics", icon: BarChart3 },
 	{ href: "/strategy-canvas", label: "Strategy Canvas", icon: LayoutGrid },
+	{ href: "/actionable", label: "Action Items", icon: Lightbulb },
+	{ href: "/clarifications", label: "Clarifications", icon: HelpCircle },
+	{ href: "/saved", label: "Saved for Later", icon: Bookmark },
 ];
 
 export function AppSidebar({ user }: { user: User | undefined }) {
