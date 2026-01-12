@@ -40,9 +40,12 @@ function PureEditor({
 }: EditorProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const editorRef = useRef<EditorView | null>(null);
+	const initialContentRef = useRef<string>("");
 
 	useEffect(() => {
+		// Create editor if it doesn't exist
 		if (containerRef.current && !editorRef.current) {
+			initialContentRef.current = content;
 			const state = EditorState.create({
 				doc: buildDocumentFromContent(content),
 				plugins: [
@@ -66,10 +69,24 @@ function PureEditor({
 			});
 		}
 
+		// If editor exists but was created with empty content and now we have content, reinitialize
+		if (editorRef.current && initialContentRef.current === "" && content && content.length > 0) {
+			initialContentRef.current = content;
+			const newDocument = buildDocumentFromContent(content);
+			const transaction = editorRef.current.state.tr.replaceWith(
+				0,
+				editorRef.current.state.doc.content.size,
+				newDocument.content,
+			);
+			transaction.setMeta("no-save", true);
+			editorRef.current.dispatch(transaction);
+		}
+
 		return () => {
 			if (editorRef.current) {
 				editorRef.current.destroy();
 				editorRef.current = null;
+				initialContentRef.current = "";
 			}
 		};
 		// NOTE: we only want to run this effect once
