@@ -169,6 +169,40 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 				{/* Compact footer with dropup menu */}
 				<SidebarFooter className="border-t border-neutral-100 bg-white px-3 py-2">
 					<div className="flex flex-col gap-2">
+						{/* Quick access buttons for collections */}
+						<div className="flex gap-1.5">
+							<Link href="/actionable" onClick={handleNavClick} className="flex-1">
+								<Button
+									variant="ghost"
+									size="sm"
+									className="h-8 w-full rounded-lg border border-red-100 bg-red-50/50 px-2 text-red-600 hover:border-red-200 hover:bg-red-100"
+								>
+									<Lightbulb className="h-3.5 w-3.5 mr-1" />
+									<span className="text-[10px] font-medium">Actions</span>
+								</Button>
+							</Link>
+							<Link href="/clarifications" onClick={handleNavClick} className="flex-1">
+								<Button
+									variant="ghost"
+									size="sm"
+									className="h-8 w-full rounded-lg border border-orange-100 bg-orange-50/50 px-2 text-orange-600 hover:border-orange-200 hover:bg-orange-100"
+								>
+									<HelpCircle className="h-3.5 w-3.5 mr-1" />
+									<span className="text-[10px] font-medium">Clarify</span>
+								</Button>
+							</Link>
+							<Link href="/saved" onClick={handleNavClick} className="flex-1">
+								<Button
+									variant="ghost"
+									size="sm"
+									className="h-8 w-full rounded-lg border border-blue-100 bg-blue-50/50 px-2 text-blue-600 hover:border-blue-200 hover:bg-blue-100"
+								>
+									<Bookmark className="h-3.5 w-3.5 mr-1" />
+									<span className="text-[10px] font-medium">Saved</span>
+								</Button>
+							</Link>
+						</div>
+
 						{/* Navigation dropup */}
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>

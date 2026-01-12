@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import {
-	ArrowRight,
 	Check,
 	CornerDownLeft,
 	Lightbulb,
@@ -25,13 +24,13 @@ const CATEGORY_ICONS: Record<SuggestionCategory, typeof Lightbulb> = {
 	clarify: Sparkles,
 };
 
-// Executive-themed button styles
+// Executive-themed button styles (no hover effects)
 const EXECUTIVE_BUTTON_STYLES: Record<BotType, string> = {
 	alexandria:
-		"border-rose-200/60 bg-gradient-to-br from-white to-rose-50/50 hover:border-rose-300 hover:from-rose-50 hover:to-rose-100/50 dark:border-rose-800/40 dark:from-stone-900 dark:to-rose-950/30 dark:hover:border-rose-700",
-	kim: "border-red-200/60 bg-gradient-to-br from-white to-red-50/50 hover:border-red-300 hover:from-red-50 hover:to-red-100/50 dark:border-red-800/40 dark:from-stone-900 dark:to-red-950/30 dark:hover:border-red-700",
+		"border-rose-200/60 bg-gradient-to-br from-white to-rose-50/50 dark:border-rose-800/40 dark:from-stone-900 dark:to-rose-950/30",
+	kim: "border-red-200/60 bg-gradient-to-br from-white to-red-50/50 dark:border-red-800/40 dark:from-stone-900 dark:to-red-950/30",
 	collaborative:
-		"border-rose-200/60 bg-gradient-to-br from-white via-rose-50/30 to-red-50/50 hover:border-rose-300 hover:from-rose-50 hover:to-red-100/50 dark:border-rose-800/40 dark:from-stone-900 dark:via-rose-950/20 dark:to-red-950/30 dark:hover:border-rose-700",
+		"border-rose-200/60 bg-gradient-to-br from-white via-rose-50/30 to-red-50/50 dark:border-rose-800/40 dark:from-stone-900 dark:via-rose-950/20 dark:to-red-950/30",
 };
 
 // Executive-themed accent colors
@@ -106,8 +105,8 @@ export function MessageSuggestions({
 					</span>
 				</div>
 
-				{/* Suggestions Grid */}
-				<div className="flex flex-wrap gap-2">
+				{/* Suggestions Grid - horizontal scroll, no wrap */}
+				<div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 					{suggestions.map((suggestion, index) => {
 						const Icon = CATEGORY_ICONS[suggestion.category];
 						const isCopied = copiedId === suggestion.id;
@@ -117,10 +116,10 @@ export function MessageSuggestions({
 								animate={{ opacity: 1, scale: 1, y: 0 }}
 								aria-label={`Ask: ${suggestion.text}`}
 								className={cn(
-									"group relative flex items-center gap-2 rounded-xl border px-3 py-2",
-									"text-sm transition-all duration-200",
+									"group relative flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2",
+									"text-sm",
 									"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50 focus-visible:ring-offset-2",
-									"shadow-sm hover:shadow-md",
+									"shadow-sm",
 									EXECUTIVE_BUTTON_STYLES[botType],
 									isCopied && "border-emerald-400 bg-emerald-50 dark:border-emerald-600 dark:bg-emerald-950/40",
 								)}
@@ -135,8 +134,6 @@ export function MessageSuggestions({
 									damping: 30,
 								}}
 								type="button"
-								whileHover={{ scale: 1.02 }}
-								whileTap={{ scale: 0.98 }}
 							>
 								{/* Icon */}
 								<span className={cn(
@@ -171,37 +168,23 @@ export function MessageSuggestions({
 
 								{/* Text */}
 								<span className={cn(
-									"max-w-[200px] truncate text-left font-medium text-stone-700 transition-colors sm:max-w-[280px] dark:text-stone-200",
+									"whitespace-nowrap text-left font-medium text-stone-700 dark:text-stone-200",
 									isCopied && "text-emerald-700 dark:text-emerald-300",
 								)}>
 									{suggestion.text}
 								</span>
 
-								{/* Action indicator */}
-								<AnimatePresence mode="wait">
-									{isCopied ? (
-										<motion.span
-											key="copied"
-											initial={{ opacity: 0, x: -8 }}
-											animate={{ opacity: 1, x: 0 }}
-											exit={{ opacity: 0, x: 8 }}
-											className="ml-1 flex items-center gap-1 whitespace-nowrap text-xs text-emerald-600 dark:text-emerald-400"
-										>
-											<CornerDownLeft className="size-3" />
-											<span className="hidden sm:inline">Added to input</span>
-										</motion.span>
-									) : (
-										<motion.span
-											key="arrow"
-											className="ml-1 flex items-center opacity-0 transition-opacity group-hover:opacity-100"
-											initial={{ x: -4, opacity: 0 }}
-											animate={{ x: 0, opacity: 0 }}
-											whileHover={{ opacity: 1 }}
-										>
-											<ArrowRight className={cn("size-3.5", EXECUTIVE_ACCENT_STYLES[botType])} />
-										</motion.span>
-									)}
-								</AnimatePresence>
+								{/* Action indicator - only show when copied */}
+								{isCopied && (
+									<motion.span
+										initial={{ opacity: 0, x: -8 }}
+										animate={{ opacity: 1, x: 0 }}
+										className="ml-1 flex items-center gap-1 whitespace-nowrap text-xs text-emerald-600 dark:text-emerald-400"
+									>
+										<CornerDownLeft className="size-3" />
+										<span className="hidden sm:inline">Added to input</span>
+									</motion.span>
+								)}
 							</motion.button>
 						);
 					})}
