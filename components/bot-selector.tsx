@@ -80,17 +80,17 @@ export function BotSelector({
 					</TabsTrigger>
 					<TabsTrigger
 						className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 font-medium text-stone-500 text-xs transition-all duration-300 data-[state=active]:bg-stone-900 data-[state=active]:text-white data-[state=active]:shadow-sm sm:gap-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
-						value="kim"
-					>
-						<UserRound className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-						Kim
-					</TabsTrigger>
-					<TabsTrigger
-						className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 font-medium text-stone-500 text-xs transition-all duration-300 data-[state=active]:bg-stone-900 data-[state=active]:text-white data-[state=active]:shadow-sm sm:gap-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
 						value="collaborative"
 					>
 						<Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
 						Both
+					</TabsTrigger>
+					<TabsTrigger
+						className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 font-medium text-stone-500 text-xs transition-all duration-300 data-[state=active]:bg-stone-900 data-[state=active]:text-white data-[state=active]:shadow-sm sm:gap-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
+						value="kim"
+					>
+						<UserRound className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+						Kim
 					</TabsTrigger>
 				</TabsList>
 
@@ -100,16 +100,16 @@ export function BotSelector({
 						isSelected={selectedBot === "alexandria"}
 					/>
 				</TabsContent>
-				<TabsContent className="mt-6" value="kim">
-					<BotCard
-						bot={BOT_PERSONALITIES.kim}
-						isSelected={selectedBot === "kim"}
-					/>
-				</TabsContent>
 				<TabsContent className="mt-6" value="collaborative">
 					<BotCard
 						bot={BOT_PERSONALITIES.collaborative}
 						isSelected={selectedBot === "collaborative"}
+					/>
+				</TabsContent>
+				<TabsContent className="mt-6" value="kim">
+					<BotCard
+						bot={BOT_PERSONALITIES.kim}
+						isSelected={selectedBot === "kim"}
 					/>
 				</TabsContent>
 			</Tabs>
