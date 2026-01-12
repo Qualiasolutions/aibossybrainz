@@ -72,18 +72,18 @@ export function BotSelector({
 				<TabsList className="grid h-auto w-full grid-cols-3 gap-1 rounded-xl border border-stone-200 bg-stone-50 p-1 sm:gap-2 sm:rounded-2xl sm:p-2">
 					<TabsTrigger
 						className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 font-medium text-stone-500 text-xs transition-all duration-300 data-[state=active]:bg-stone-900 data-[state=active]:text-white data-[state=active]:shadow-sm sm:gap-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
+						value="collaborative"
+					>
+						<Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+						Both
+					</TabsTrigger>
+					<TabsTrigger
+						className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 font-medium text-stone-500 text-xs transition-all duration-300 data-[state=active]:bg-stone-900 data-[state=active]:text-white data-[state=active]:shadow-sm sm:gap-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
 						value="alexandria"
 					>
 						<Crown className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
 						<span className="hidden xs:inline sm:inline">Alexandria</span>
 						<span className="xs:hidden">Alex</span>
-					</TabsTrigger>
-					<TabsTrigger
-						className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 font-medium text-stone-500 text-xs transition-all duration-300 data-[state=active]:bg-stone-900 data-[state=active]:text-white data-[state=active]:shadow-sm sm:gap-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
-						value="collaborative"
-					>
-						<Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-						Both
 					</TabsTrigger>
 					<TabsTrigger
 						className="flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 font-medium text-stone-500 text-xs transition-all duration-300 data-[state=active]:bg-stone-900 data-[state=active]:text-white data-[state=active]:shadow-sm sm:gap-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
@@ -94,16 +94,16 @@ export function BotSelector({
 					</TabsTrigger>
 				</TabsList>
 
-				<TabsContent className="mt-6" value="alexandria">
-					<BotCard
-						bot={BOT_PERSONALITIES.alexandria}
-						isSelected={selectedBot === "alexandria"}
-					/>
-				</TabsContent>
 				<TabsContent className="mt-6" value="collaborative">
 					<BotCard
 						bot={BOT_PERSONALITIES.collaborative}
 						isSelected={selectedBot === "collaborative"}
+					/>
+				</TabsContent>
+				<TabsContent className="mt-6" value="alexandria">
+					<BotCard
+						bot={BOT_PERSONALITIES.alexandria}
+						isSelected={selectedBot === "alexandria"}
 					/>
 				</TabsContent>
 				<TabsContent className="mt-6" value="kim">
