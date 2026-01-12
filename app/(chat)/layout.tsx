@@ -4,6 +4,7 @@ import { DataStreamProvider } from "@/components/data-stream-provider";
 import { MobileSidebarProvider } from "@/components/mobile-sidebar-context";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TosPopup } from "@/components/tos-popup";
+import { WelcomeTutorial } from "@/components/welcome-tutorial";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function Layout({
@@ -23,6 +24,7 @@ export default async function Layout({
 				strategy="lazyOnload"
 			/>
 			<TosPopup />
+			<WelcomeTutorial />
 			<DataStreamProvider>
 				<MobileSidebarProvider>
 					<SidebarProvider defaultOpen={true}>
