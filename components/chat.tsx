@@ -56,6 +56,7 @@ import { getChatHistoryPaginationKey } from "./sidebar-history";
 import { toast } from "./toast";
 import { useSidebar } from "./ui/sidebar";
 import { VisibilitySelector, type VisibilityType } from "./visibility-selector";
+import { WelcomeModal } from "./welcome-modal";
 
 export interface ChatProps {
 	id: string;
@@ -645,6 +646,9 @@ export function Chat({
 					</div>
 				</DialogContent>
 			</Dialog>
+
+			{/* Welcome Modal - shows once for new users */}
+			<WelcomeModal />
 		</>
 	);
 }

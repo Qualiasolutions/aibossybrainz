@@ -191,7 +191,7 @@ export const VoicePlayerButton = ({
 								</div>
 								<Slider
 									className="w-full"
-									max={2}
+									max={3}
 									min={0.5}
 									onValueChange={([value]) => setSpeed(value)}
 									step={0.25}

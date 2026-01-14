@@ -154,7 +154,20 @@ export function ExecutiveLanding({
 					})}
 				</motion.div>
 
-				</div>
+				{/* Guidance Text */}
+				<motion.div
+					animate={{ opacity: 1, y: 0 }}
+					className="mx-auto max-w-md"
+					initial={{ opacity: 0, y: 10 }}
+					transition={{ duration: 0.5, delay: 0.2 }}
+				>
+					<p className="text-center text-muted-foreground text-xs sm:text-sm">
+						<span className="font-medium text-foreground/80">Pro tip:</span>{" "}
+						The more specific you are, the more we can guide you with strategies
+						that work.
+					</p>
+				</motion.div>
+			</div>
 		</section>
 	);
 }
