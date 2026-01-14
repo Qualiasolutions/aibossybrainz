@@ -11,9 +11,9 @@ type ExecutiveLandingProps = {
 };
 
 const executives: { key: BotType; icon: typeof Crown }[] = [
+	{ key: "collaborative", icon: Users },
 	{ key: "alexandria", icon: Crown },
 	{ key: "kim", icon: UserRound },
-	{ key: "collaborative", icon: Users },
 ];
 
 export function ExecutiveLanding({
@@ -79,8 +79,8 @@ export function ExecutiveLanding({
 								className={cn(
 									"group relative flex flex-col items-center rounded-2xl border-2 p-4 text-center transition-all duration-300 sm:p-5",
 									isSelected
-										? "border-red-500/50 bg-gradient-to-b from-neutral-950/30 to-neutral-900/10 shadow-xl shadow-red-500/20"
-										: "border-white/10 bg-white/5 hover:border-red-500/30 hover:bg-white/10 hover:shadow-lg hover:shadow-red-500/10",
+										? "border-red-400 bg-gradient-to-b from-red-50 to-white shadow-xl shadow-red-200/50"
+										: "border-neutral-200 bg-white hover:border-red-300 hover:bg-red-50/50 hover:shadow-lg hover:shadow-red-100/50",
 								)}
 								key={key}
 								onClick={() => onSelect(key)}
@@ -96,8 +96,8 @@ export function ExecutiveLanding({
 											className={cn(
 												"size-14 rounded-full border-2 object-cover transition-all sm:size-16 lg:size-18",
 												isSelected
-													? "border-red-500 shadow-md shadow-red-500/30"
-													: "border-white/20",
+													? "border-red-500 shadow-md shadow-red-200/50"
+													: "border-neutral-200",
 											)}
 											height={72}
 											src={personality.avatar}
@@ -108,8 +108,8 @@ export function ExecutiveLanding({
 											className={cn(
 												"flex size-14 items-center justify-center rounded-full transition-all sm:size-16 lg:size-18",
 												isSelected
-													? "red-gradient text-black shadow-md shadow-red-500/30"
-													: "bg-white/10 text-muted-foreground",
+													? "bg-gradient-to-br from-red-500 to-red-600 text-white shadow-md shadow-red-200/50"
+													: "bg-neutral-100 text-neutral-500",
 											)}
 										>
 											<Icon className="size-6 sm:size-7" />
@@ -118,11 +118,11 @@ export function ExecutiveLanding({
 									{isSelected && (
 										<motion.div
 											animate={{ scale: 1 }}
-											className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full red-gradient shadow-sm shadow-red-500/30"
+											className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-red-500 shadow-sm shadow-red-200/50"
 											initial={{ scale: 0 }}
 										>
 											<svg
-												className="size-3.5 text-black"
+												className="size-3.5 text-white"
 												fill="none"
 												stroke="currentColor"
 												viewBox="0 0 24 24"
@@ -142,7 +142,7 @@ export function ExecutiveLanding({
 								<h3
 									className={cn(
 										"font-semibold text-sm transition-colors sm:text-base px-3 py-1 rounded-lg border",
-										isSelected ? "text-red-400 border-red-500/30" : "text-foreground border-zinc-200",
+										isSelected ? "text-red-600 border-red-300 bg-red-50" : "text-neutral-700 border-neutral-200 bg-neutral-50",
 									)}
 								>
 									{key === "collaborative"

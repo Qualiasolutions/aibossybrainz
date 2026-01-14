@@ -161,8 +161,8 @@ export function ExecutiveSwitch({
 		<div className="relative">
 			<Button
 				className={cn(
-					"group relative flex h-9 items-center gap-2.5 rounded-md border border-neutral-200 bg-white px-3 text-left shadow-sm transition-all duration-200 sm:h-10 sm:gap-3 sm:px-4 dark:border-neutral-700 dark:bg-neutral-900",
-					"hover:border-red-200 hover:shadow dark:hover:border-red-800",
+					"group relative flex h-9 items-center gap-2.5 rounded-md border border-neutral-200 bg-white px-3 text-left shadow-sm transition-all duration-200 sm:h-10 sm:gap-3 sm:px-4",
+					"hover:border-red-200 hover:shadow hover:bg-red-50/30",
 					"focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:ring-offset-1",
 					disabled && "cursor-not-allowed opacity-60",
 				)}
@@ -182,23 +182,23 @@ export function ExecutiveSwitch({
 					</motion.div>
 
 					<div className="flex flex-col">
-						<span className="font-medium text-xs text-neutral-900 sm:text-sm dark:text-neutral-100">
+						<span className="font-medium text-xs text-neutral-900 sm:text-sm">
 							{selectedPersonality.name.split(" ")[0]}
 						</span>
-						<span className="hidden text-neutral-500 text-[10px] sm:block dark:text-neutral-400">
+						<span className="hidden text-neutral-500 text-[10px] sm:block">
 							{selectedPersonality.role.split("(")[0].trim()}
 						</span>
 					</div>
 				</div>
 
 				<div className="flex items-center gap-1.5 pl-1.5 sm:gap-2 sm:pl-3">
-					<span className="hidden rounded-full bg-red-50 px-2 py-0.5 font-medium text-red-600 text-[10px] sm:inline-flex dark:bg-red-950/50 dark:text-red-400">
+					<span className="hidden rounded-full bg-red-50 px-2 py-0.5 font-medium text-red-600 text-[10px] sm:inline-flex">
 						Active
 					</span>
 
 					<motion.div
 						animate={{ rotate: isOpen ? 180 : 0 }}
-						className="text-neutral-400 dark:text-neutral-500"
+						className="text-neutral-400"
 						transition={{ duration: 0.2 }}
 					>
 						<svg
@@ -227,7 +227,7 @@ export function ExecutiveSwitch({
 							{/* Modal Backdrop */}
 							<motion.div
 								animate={{ opacity: 1 }}
-								className="absolute inset-0 bg-black/70 backdrop-blur-sm dark:bg-black/80"
+								className="absolute inset-0 bg-neutral-100/80 backdrop-blur-sm"
 								exit={{ opacity: 0 }}
 								initial={{ opacity: 0 }}
 								onClick={() => setIsOpen(false)}
@@ -247,9 +247,9 @@ export function ExecutiveSwitch({
 									}}
 								>
 									{/* Modal Card */}
-									<Card className="overflow-hidden border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-950">
+									<Card className="overflow-hidden border border-neutral-200 bg-white shadow-2xl shadow-neutral-300/50">
 										{/* Modal Header */}
-										<div className="relative border-b border-neutral-100 bg-white px-4 py-5 sm:px-6 sm:py-6 lg:px-8 dark:border-neutral-800 dark:bg-neutral-950">
+										<div className="relative border-b border-neutral-100 bg-white px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
 											{/* Subtle red accent line */}
 											<div className="absolute top-0 left-0 h-0.5 w-full bg-gradient-to-r from-red-500 via-red-600 to-red-500" />
 
@@ -260,10 +260,10 @@ export function ExecutiveSwitch({
 															<Sparkles className="h-5 w-5 text-red-500 sm:h-6 sm:w-6" />
 														</div>
 														<div>
-															<h1 className="font-semibold text-base text-neutral-900 sm:text-xl lg:text-2xl dark:text-white">
+															<h1 className="font-semibold text-base text-neutral-900 sm:text-xl lg:text-2xl">
 																Select Executive
 															</h1>
-															<p className="mt-0.5 text-xs text-neutral-500 sm:mt-1 sm:text-sm dark:text-neutral-400">
+															<p className="mt-0.5 text-xs text-neutral-500 sm:mt-1 sm:text-sm">
 																Choose your AI consultant
 															</p>
 														</div>
@@ -271,7 +271,7 @@ export function ExecutiveSwitch({
 
 													{/* Close Button */}
 													<Button
-														className="h-8 w-8 flex-shrink-0 rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-sm transition-all duration-200 hover:bg-neutral-50 hover:text-neutral-900 sm:h-9 sm:w-9 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white"
+														className="h-8 w-8 flex-shrink-0 rounded-md border border-neutral-200 bg-white text-neutral-600 shadow-sm transition-all duration-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 sm:h-9 sm:w-9"
 														onClick={() => setIsOpen(false)}
 														size="icon"
 														variant="outline"
@@ -295,12 +295,12 @@ export function ExecutiveSwitch({
 										</div>
 
 										{/* Modal Body */}
-										<div className="max-h-[60vh] overflow-y-auto bg-neutral-50 p-4 sm:max-h-none sm:p-6 dark:bg-neutral-900/50">
+										<div className="max-h-[60vh] overflow-y-auto bg-neutral-50/50 p-4 sm:max-h-none sm:p-6">
 											<div className="grid gap-4 sm:gap-5 lg:grid-cols-2 lg:gap-6">
 												{/* Current Executive Section */}
 												<div className="space-y-3 sm:space-y-4">
 													<div className="flex items-center gap-2">
-														<div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
+														<div className="h-px flex-1 bg-neutral-200" />
 														<div className="flex items-center gap-2">
 															<Badge className="border-0 bg-red-500 px-2.5 py-0.5 font-medium text-white text-[10px] sm:text-xs">
 																ACTIVE
@@ -314,7 +314,7 @@ export function ExecutiveSwitch({
 																}}
 															/>
 														</div>
-														<div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
+														<div className="h-px flex-1 bg-neutral-200" />
 													</div>
 
 													<motion.div
@@ -323,7 +323,7 @@ export function ExecutiveSwitch({
 														initial={{ opacity: 0, x: -10 }}
 														transition={{ duration: 0.3 }}
 													>
-														<div className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 sm:p-5">
+														<div className="rounded-lg border border-red-200 bg-white p-4 shadow-sm shadow-red-100/50 sm:p-5">
 															<div className="flex items-center gap-3 sm:gap-4">
 																<div className="relative flex-shrink-0">
 																	{getExecutiveIcon(selectedExecutive, "md")}
@@ -346,13 +346,13 @@ export function ExecutiveSwitch({
 																	</div>
 																</div>
 																<div className="min-w-0 flex-1">
-																	<h3 className="truncate font-semibold text-sm text-neutral-900 sm:text-base dark:text-white">
+																	<h3 className="truncate font-semibold text-sm text-neutral-900 sm:text-base">
 																		{selectedPersonality.name}
 																	</h3>
-																	<p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
+																	<p className="truncate text-xs text-neutral-500">
 																		{selectedPersonality.role}
 																	</p>
-																	<p className="mt-2 line-clamp-2 text-xs text-neutral-600 leading-relaxed dark:text-neutral-300 sm:line-clamp-none sm:text-sm">
+																	<p className="mt-2 line-clamp-2 text-xs text-neutral-600 leading-relaxed sm:line-clamp-none sm:text-sm">
 																		{selectedPersonality.description}
 																	</p>
 																</div>
@@ -364,11 +364,11 @@ export function ExecutiveSwitch({
 												{/* Other Executives Section */}
 												<div className="space-y-3 sm:space-y-4">
 													<div className="flex items-center gap-2">
-														<div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
-														<Badge className="border-0 bg-neutral-200 px-2.5 py-0.5 font-medium text-neutral-600 text-[10px] sm:text-xs dark:bg-neutral-700 dark:text-neutral-300">
+														<div className="h-px flex-1 bg-neutral-200" />
+														<Badge className="border-0 bg-neutral-100 px-2.5 py-0.5 font-medium text-neutral-600 text-[10px] sm:text-xs">
 															AVAILABLE
 														</Badge>
-														<div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
+														<div className="h-px flex-1 bg-neutral-200" />
 													</div>
 
 													<div className="space-y-2">
@@ -390,19 +390,19 @@ export function ExecutiveSwitch({
 																	whileHover={{ scale: 1.01 }}
 																	whileTap={{ scale: 0.99 }}
 																>
-																	<div className="rounded-lg border border-neutral-200 bg-white p-3 transition-all duration-200 hover:border-red-200 hover:shadow dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-red-800 sm:p-4">
+																	<div className="rounded-lg border border-neutral-200 bg-white p-3 transition-all duration-200 hover:border-red-200 hover:shadow hover:bg-red-50/30 sm:p-4">
 																		<div className="flex items-center gap-3">
 																			{getExecutiveIcon(key as BotType, "sm")}
 																			<div className="min-w-0 flex-1">
-																				<h4 className="truncate font-medium text-sm text-neutral-900 dark:text-white">
+																				<h4 className="truncate font-medium text-sm text-neutral-900">
 																					{personality.name}
 																				</h4>
-																				<p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
+																				<p className="truncate text-xs text-neutral-500">
 																					{personality.role}
 																				</p>
 																			</div>
 																			<div className="flex-shrink-0 opacity-40 transition-all duration-200 group-hover:opacity-100">
-																				<div className="flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 transition-colors group-hover:bg-red-500 dark:bg-neutral-800 dark:group-hover:bg-red-600">
+																				<div className="flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 transition-colors group-hover:bg-red-500">
 																					<svg
 																						className="h-3.5 w-3.5 text-neutral-400 transition-colors group-hover:text-white"
 																						fill="none"
@@ -428,12 +428,12 @@ export function ExecutiveSwitch({
 											</div>
 
 											{/* Modal Footer */}
-											<div className="mt-4 hidden items-center justify-between border-t border-neutral-200 pt-4 sm:flex dark:border-neutral-700">
+											<div className="mt-4 hidden items-center justify-between border-t border-neutral-200 pt-4 sm:flex">
 												<p className="text-xs text-neutral-400">
 													Select an advisor to customize your conversation
 												</p>
 												<Button
-													className="h-8 rounded-md border border-neutral-200 bg-white px-4 font-medium text-neutral-600 text-xs shadow-sm transition-all duration-200 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+													className="h-8 rounded-md border border-neutral-200 bg-white px-4 font-medium text-neutral-600 text-xs shadow-sm transition-all duration-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
 													onClick={() => setIsOpen(false)}
 													variant="outline"
 												>

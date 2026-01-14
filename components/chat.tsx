@@ -310,18 +310,18 @@ export function Chat({
 
 	return (
 		<>
-			<div className="relative flex h-screen w-full flex-col overflow-hidden bg-white dark:bg-black">
+			<div className="relative flex h-screen w-full flex-col overflow-hidden bg-white">
 				{/* Subtle red accent glow - minimalist */}
 				<div
 					aria-hidden
 					className="pointer-events-none absolute inset-0 overflow-hidden"
 				>
-					<div className="absolute -top-40 left-1/3 h-[400px] w-[600px] rounded-full bg-red-500/[0.03] blur-[100px] dark:bg-red-500/[0.05]" />
+					<div className="absolute -top-40 left-1/3 h-[400px] w-[600px] rounded-full bg-red-100/50 blur-[100px]" />
 				</div>
 
 				<div className="relative z-10 flex h-full w-full flex-col">
 					{/* Premium Minimalist Header */}
-					<header className="flex-shrink-0 border-b border-neutral-100 bg-white/80 backdrop-blur-xl dark:border-neutral-800 dark:bg-black/80">
+					<header className="flex-shrink-0 border-b border-neutral-100 bg-white/95 backdrop-blur-xl">
 						<div className="flex h-14 w-full items-center justify-between gap-4 px-4 sm:h-16 sm:px-6">
 							{/* Left: Navigation */}
 							<div className="flex items-center gap-3 sm:gap-4">
@@ -329,7 +329,7 @@ export function Chat({
 								<div className="hidden items-center gap-2 sm:flex" />
 								{(!open || isMobile) && (
 									<Button
-										className="h-8 gap-2 rounded-md border-neutral-200 bg-white px-3 font-medium text-xs text-neutral-700 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-red-800 dark:hover:bg-red-950/50 dark:hover:text-red-400"
+										className="h-8 gap-2 rounded-lg border-neutral-200 bg-white px-3 font-medium text-xs text-neutral-700 shadow-sm transition-all hover:border-red-300 hover:bg-red-50 hover:text-red-600"
 										onClick={() => {
 											router.push("/new");
 											router.refresh();
@@ -350,7 +350,7 @@ export function Chat({
 								/>
 							</div>
 
-							{/* Right: Analytics, Voice, Export & Visibility */}
+							{/* Right: Analytics, Export & Visibility */}
 							<div className="flex items-center gap-1.5">
 								{messages.length > 0 && (
 									<div className="hidden lg:block">
@@ -370,21 +370,9 @@ export function Chat({
 									onToggle={toggleAutoSpeak}
 									onTogglePause={toggleSpeakPause}
 								/>
-								{isVoiceCallSupported && (
-									<Button
-										className="h-8 gap-1.5 rounded-md border-neutral-200 bg-white px-2.5 font-medium text-xs text-neutral-600 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:border-red-800 dark:hover:bg-red-950/50 dark:hover:text-red-400"
-										onClick={() => setVoiceCallOpen(true)}
-										title="Start voice call"
-										type="button"
-										variant="outline"
-									>
-										<Phone className="size-3.5" />
-										<span className="hidden sm:inline">Call</span>
-									</Button>
-								)}
 								{messages.length > 0 && (
 									<Button
-										className="h-8 gap-1.5 rounded-md border-neutral-200 bg-white px-2.5 font-medium text-xs text-neutral-600 shadow-sm transition-all hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:border-neutral-600 dark:hover:bg-neutral-800"
+										className="h-8 gap-1.5 rounded-lg border-neutral-200 bg-white px-2.5 font-medium text-xs text-neutral-600 shadow-sm transition-all hover:border-red-300 hover:bg-red-50 hover:text-red-600"
 										disabled={isExporting}
 										onClick={handleExportPDF}
 										title="Export conversation as PDF"

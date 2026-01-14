@@ -64,16 +64,16 @@
   --chart-4: hsl(0 50% 60%);
   --chart-5: hsl(0 0% 75%);
 
-  /* Sidebar */
-  --sidebar-background: hsl(0 0% 2%);
-  --sidebar-foreground: hsl(0 0% 90%);
-  --sidebar-primary: hsl(0 85% 55%);
+  /* Sidebar - BRIGHT white theme */
+  --sidebar-background: hsl(0 0% 99%);
+  --sidebar-foreground: hsl(0 0% 20%);
+  --sidebar-primary: hsl(0 85% 50%);
   --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(0 60% 18%);
-  --sidebar-accent-foreground: hsl(0 0% 98%);
-  --sidebar-border: hsl(0 0% 15%);
+  --sidebar-accent: hsl(0 85% 97%);
+  --sidebar-accent-foreground: hsl(0 85% 40%);
+  --sidebar-border: hsl(0 0% 92%);
   --sidebar-ring: hsl(0 85% 50%);
-  --sidebar: hsl(0 0% 2%);
+  --sidebar: hsl(0 0% 99%);
 
   /* Border radius */
   --radius: 0.5rem;

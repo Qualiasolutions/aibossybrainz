@@ -66,8 +66,8 @@ const DropdownMenuContent = React.forwardRef<
       sideOffset={sideOffset}
       className={cn(
         "z-[60] max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden",
-        "rounded-xl border border-white/10 bg-popover/95 backdrop-blur-xl p-1.5 text-popover-foreground",
-        "shadow-xl shadow-black/30",
+        "rounded-xl border border-neutral-200 bg-white p-1.5 text-neutral-900",
+        "shadow-xl shadow-neutral-200/50",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -93,11 +93,12 @@ const DropdownMenuItem = React.forwardRef<
     className={cn(
       "relative flex cursor-pointer select-none items-center gap-2.5 rounded-lg px-3 py-2 text-sm outline-none",
       "transition-all duration-200",
-      "focus:bg-white/10 focus:text-foreground",
-      "hover:bg-white/10 hover:text-foreground",
+      "text-neutral-700",
+      "focus:bg-red-50 focus:text-red-700",
+      "hover:bg-red-50 hover:text-red-700",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-muted-foreground",
-      "[&:hover_svg]:text-red-500",
+      "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-neutral-500",
+      "[&:hover_svg]:text-red-500 [&:focus_svg]:text-red-500",
       inset && "pl-8",
       className
     )}
@@ -176,7 +177,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1.5 my-1.5 h-px bg-white/10", className)}
+    className={cn("-mx-1.5 my-1.5 h-px bg-neutral-200", className)}
     {...props}
   />
 ))

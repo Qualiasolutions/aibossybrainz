@@ -11,20 +11,20 @@ const buttonVariants = cva(
       variant: {
         // Primary red gradient button
         default: "bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold hover:from-red-500 hover:to-red-600 shadow-lg shadow-red-500/20 hover:shadow-red-500/40",
-        // Premium dark button with red border
-        premium: "bg-gradient-to-r from-neutral-900 to-black text-white border border-red-500/30 hover:border-red-400/50 shadow-xl hover:shadow-red-500/10",
-        // Glass outline button
-        outline: "border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 text-foreground",
+        // Premium button with soft red tint
+        premium: "bg-gradient-to-r from-red-50 to-rose-100 text-red-700 border border-red-200/50 hover:border-red-300 shadow-lg hover:shadow-red-200/50",
+        // Glass outline button - bright theme
+        outline: "border border-neutral-200 bg-white hover:bg-neutral-50 hover:border-neutral-300 text-neutral-700",
         // Secondary muted button
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        // Ghost transparent button
-        ghost: "hover:bg-white/10 hover:text-foreground",
+        secondary: "bg-neutral-100 text-neutral-700 hover:bg-neutral-200/80",
+        // Ghost transparent button - bright hover
+        ghost: "hover:bg-neutral-100 hover:text-neutral-900 text-neutral-600",
         // Destructive red gradient
         destructive: "bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-500 hover:to-red-600 shadow-lg shadow-red-500/20",
         // Silver gradient button
-        silver: "bg-gradient-to-r from-slate-400 to-slate-500 text-slate-900 hover:from-slate-300 hover:to-slate-400 shadow-lg shadow-slate-400/20",
+        silver: "bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 hover:from-slate-50 hover:to-slate-100 shadow-md",
         // Link style
-        link: "text-red-500 underline-offset-4 hover:underline hover:text-red-400",
+        link: "text-red-600 underline-offset-4 hover:underline hover:text-red-500",
       },
       size: {
         default: "h-11 px-5 py-2",

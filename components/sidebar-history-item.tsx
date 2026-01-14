@@ -109,7 +109,7 @@ const PureChatItem = ({
 			<DropdownMenu modal={true}>
 				<DropdownMenuTrigger asChild>
 					<SidebarMenuAction
-						className="mr-1 rounded-lg transition-colors duration-200 hover:bg-white/10 data-[state=open]:bg-white/10 data-[state=open]:text-foreground"
+						className="mr-1 rounded-lg transition-colors duration-200 hover:bg-red-100 data-[state=open]:bg-red-100 data-[state=open]:text-red-700"
 						showOnHover={!isActive}
 					>
 						<div className="flex h-4 w-4 items-center justify-center">

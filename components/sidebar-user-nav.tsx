@@ -19,14 +19,9 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { guestRegex } from "@/lib/constants";
-import { LoaderIcon } from "./icons";
-
 export function SidebarUserNav({ user }: { user: User }) {
 	const router = useRouter();
 	const supabase = createClient();
-    // Assuming user is always provided if rendered, or we handle null.
-    // Assuming loading state is handled by parent or suspense.
-    const isLoading = false; // Simplified for now since we rely on passed user prop
 
 	const isGuest = guestRegex.test(user?.email ?? "");
 
@@ -52,7 +47,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                                 src={`https://avatar.vercel.sh/${user.email}`}
                                 width={24}
                             />
-                            <span className="truncate text-zinc-700" data-testid="user-email">
+                            <span className="truncate text-neutral-600" data-testid="user-email">
                                 {isGuest ? "Guest" : user?.email}
                             </span>
                             <ChevronUp className="ml-auto" />
