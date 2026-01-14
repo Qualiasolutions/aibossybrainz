@@ -468,14 +468,17 @@ function PureArtifact({
 								<artifactDefinition.content
 									content={
 										isCurrentVersion
-											? artifact.content
+											? (document?.content || artifact.content || "")
 											: getDocumentContentById(currentVersionIndex)
 									}
 									currentVersionIndex={currentVersionIndex}
 									getDocumentContentById={getDocumentContentById}
 									isCurrentVersion={isCurrentVersion}
 									isInline={false}
-									isLoading={!artifact.content && (isDocumentsFetching || !documents?.length)}
+									isLoading={
+										!(document?.content || artifact.content) &&
+										(isDocumentsFetching || !documents?.length)
+									}
 									metadata={metadata}
 									mode={mode}
 									onSaveContent={saveContent}
