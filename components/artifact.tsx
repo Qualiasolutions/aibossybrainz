@@ -392,7 +392,7 @@ function PureArtifact({
 										},
 									}
 						}
-						className="fixed flex h-dvh flex-col overflow-y-scroll border border-white/70 bg-white/95 shadow-2xl shadow-rose-200/50 backdrop-blur-xl md:border-l"
+						className="fixed flex h-dvh flex-col overflow-y-scroll border border-border/70 bg-background/95 shadow-2xl shadow-primary/10 backdrop-blur-xl dark:bg-background/95 dark:border-border/50 md:border-l"
 						exit={{
 							opacity: 0,
 							scale: 0.5,
@@ -423,21 +423,21 @@ function PureArtifact({
 									}
 						}
 					>
-						<div className="flex flex-row items-start justify-between border-white/60 border-b px-5 py-4">
+						<div className="flex flex-row items-start justify-between border-border/60 border-b px-5 py-4">
 							<div className="flex flex-row items-start gap-4">
 								<ArtifactCloseButton />
 
 								<div className="flex flex-col">
-									<div className="font-semibold text-base text-slate-800">
+									<div className="font-semibold text-base text-foreground">
 										{artifact.title}
 									</div>
 
 									{isContentDirty ? (
-										<div className="font-medium text-rose-500 text-xs uppercase tracking-wide">
+										<div className="font-medium text-primary text-xs uppercase tracking-wide">
 											Saving changes...
 										</div>
 									) : document ? (
-										<div className="font-medium text-slate-400 text-xs uppercase tracking-wide">
+										<div className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
 											{`Updated ${formatDistance(
 												new Date(document.createdAt),
 												new Date(),
@@ -447,7 +447,7 @@ function PureArtifact({
 											)}`}
 										</div>
 									) : (
-										<div className="mt-2 h-3 w-32 animate-pulse rounded-md bg-rose-100/50" />
+										<div className="mt-2 h-3 w-32 animate-pulse rounded-md bg-primary/20" />
 									)}
 								</div>
 							</div>
@@ -463,7 +463,7 @@ function PureArtifact({
 							/>
 						</div>
 
-						<div className="flex-1 min-h-0 overflow-y-auto bg-white/90">
+						<div className="flex-1 min-h-0 overflow-y-auto bg-background/90 dark:bg-background/90">
 							<div className="h-full w-full">
 								<artifactDefinition.content
 									content={
