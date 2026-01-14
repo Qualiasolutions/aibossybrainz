@@ -185,6 +185,8 @@ const PureHitboxLayer = ({
 							title: result.title,
 							documentId: result.id,
 							kind: result.kind,
+							content: "", // Reset content to trigger fresh load
+							status: "idle", // Ensure status is idle so document fetch happens
 							isVisible: true,
 							boundingBox: {
 								left: boundingBox.x,
