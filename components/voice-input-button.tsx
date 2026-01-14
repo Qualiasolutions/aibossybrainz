@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, Mic, MicOff } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -10,6 +11,16 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+
+// Use native SpeechRecognition types with webkit prefix support
+type SpeechRecognitionType = typeof window.SpeechRecognition;
+
+// Get SpeechRecognition constructor (handles webkit prefix)
+function getSpeechRecognition(): SpeechRecognitionType | null {
+	if (typeof window === "undefined") return null;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	return (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition || null;
+}
 
 interface VoiceInputButtonProps {
 	onTranscript: (transcript: string) => void;
@@ -26,14 +37,9 @@ export function VoiceInputButton({
 }: VoiceInputButtonProps) {
 	const [isListening, setIsListening] = useState(false);
 	const [isProcessing, setIsProcessing] = useState(false);
-	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-	const audioChunksRef = useRef<Blob[]>([]);
-
-	const sizeClasses = {
-		sm: "h-8 w-8",
-		md: "h-10 w-10",
-		lg: "h-12 w-12",
-	};
+	const [isSupported, setIsSupported] = useState(true);
+	const recognitionRef = useRef<globalThis.SpeechRecognition | null>(null);
+	const transcriptRef = useRef<string>("");
 
 	const iconSizes = {
 		sm: "h-3 w-3",
@@ -41,62 +47,112 @@ export function VoiceInputButton({
 		lg: "h-5 w-5",
 	};
 
+	// Check for browser support on mount
+	useEffect(() => {
+		const SpeechRecognitionAPI = getSpeechRecognition();
+		if (!SpeechRecognitionAPI) {
+			setIsSupported(false);
+		}
+	}, []);
+
+	// Cleanup on unmount
 	useEffect(() => {
 		return () => {
-			if (mediaRecorderRef.current && isListening) {
-				mediaRecorderRef.current.stop();
+			if (recognitionRef.current) {
+				recognitionRef.current.abort();
 			}
 		};
-	}, [isListening]);
+	}, []);
 
-	const startListening = async () => {
+	const startListening = useCallback(() => {
+		const SpeechRecognitionAPI = getSpeechRecognition();
+		if (!SpeechRecognitionAPI) {
+			toast.error("Speech recognition is not supported in your browser");
+			return;
+		}
+
 		try {
-			const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-			const mediaRecorder = new MediaRecorder(stream);
-			mediaRecorderRef.current = mediaRecorder;
-			audioChunksRef.current = [];
+			const recognition = new SpeechRecognitionAPI();
+			recognitionRef.current = recognition;
+			transcriptRef.current = "";
 
-			mediaRecorder.ondataavailable = (event) => {
-				if (event.data.size > 0) {
-					audioChunksRef.current.push(event.data);
+			recognition.continuous = true;
+			recognition.interimResults = true;
+			recognition.lang = "en-US";
+
+			recognition.onstart = () => {
+				setIsListening(true);
+				setIsProcessing(false);
+			};
+
+			recognition.onresult = (event) => {
+				let finalTranscript = "";
+
+				for (let i = event.resultIndex; i < event.results.length; i++) {
+					const transcript = event.results[i][0].transcript;
+					if (event.results[i].isFinal) {
+						finalTranscript += transcript;
+					}
+				}
+
+				if (finalTranscript) {
+					transcriptRef.current += finalTranscript;
 				}
 			};
 
-			mediaRecorder.onstop = async () => {
-				setIsProcessing(true);
+			recognition.onerror = (event) => {
+				console.error("Speech recognition error:", event.error);
+				setIsListening(false);
+				setIsProcessing(false);
 
-				// Simulate voice processing
-				setTimeout(() => {
-					const mockTranscript =
-						"This is a voice input transcript. Implement with a real speech-to-text service.";
-					onTranscript(mockTranscript);
-					setIsProcessing(false);
-				}, 1000);
-
-				stream.getTracks().forEach((track) => track.stop());
+				if (event.error === "not-allowed") {
+					toast.error("Microphone access denied. Please enable microphone permissions.");
+				} else if (event.error === "no-speech") {
+					toast.info("No speech detected. Try again.");
+				} else if (event.error !== "aborted") {
+					toast.error(`Speech recognition error: ${event.error}`);
+				}
 			};
 
-			mediaRecorder.start();
-			setIsListening(true);
-		} catch (error) {
-			console.error("Error accessing microphone:", error);
-		}
-	};
+			recognition.onend = () => {
+				setIsListening(false);
+				if (transcriptRef.current.trim()) {
+					setIsProcessing(true);
+					// Small delay for UX
+					setTimeout(() => {
+						onTranscript(transcriptRef.current.trim());
+						setIsProcessing(false);
+						transcriptRef.current = "";
+					}, 200);
+				}
+			};
 
-	const stopListening = () => {
-		if (mediaRecorderRef.current && isListening) {
-			mediaRecorderRef.current.stop();
+			recognition.start();
+		} catch (error) {
+			console.error("Error starting speech recognition:", error);
+			toast.error("Failed to start speech recognition");
 			setIsListening(false);
 		}
-	};
+	}, [onTranscript]);
 
-	const handleClick = () => {
+	const stopListening = useCallback(() => {
+		if (recognitionRef.current) {
+			recognitionRef.current.stop();
+		}
+	}, []);
+
+	const handleClick = useCallback(() => {
 		if (isListening) {
 			stopListening();
 		} else {
 			startListening();
 		}
-	};
+	}, [isListening, startListening, stopListening]);
+
+	// Don't render if speech recognition is not supported
+	if (!isSupported) {
+		return null;
+	}
 
 	return (
 		<Tooltip>
