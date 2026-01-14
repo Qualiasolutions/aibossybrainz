@@ -376,18 +376,21 @@ export type Database = {
           id: string
           password: string | null
           userType: string | null
+          tosAcceptedAt: string | null
         }
         Insert: {
           email: string
           id?: string
           password?: string | null
           userType?: string | null
+          tosAcceptedAt?: string | null
         }
         Update: {
           email?: string
           id?: string
           password?: string | null
           userType?: string | null
+          tosAcceptedAt?: string | null
         }
         Relationships: []
       }

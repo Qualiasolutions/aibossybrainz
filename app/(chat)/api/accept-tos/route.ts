@@ -1,0 +1,54 @@
+import { createClient } from "@/lib/supabase/server";
+import { ChatSDKError } from "@/lib/errors";
+
+export async function POST() {
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		return new ChatSDKError("unauthorized:auth").toResponse();
+	}
+
+	// Update user's TOS acceptance timestamp
+	const { error } = await supabase
+		.from("User")
+		.update({ tosAcceptedAt: new Date().toISOString() })
+		.eq("id", user.id);
+
+	if (error) {
+		console.error("Failed to update TOS acceptance:", error);
+		return new ChatSDKError("bad_request:database", "Failed to accept Terms of Service").toResponse();
+	}
+
+	return Response.json({ success: true, acceptedAt: new Date().toISOString() });
+}
+
+export async function GET() {
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		return new ChatSDKError("unauthorized:auth").toResponse();
+	}
+
+	// Get user's TOS acceptance status
+	const { data, error } = await supabase
+		.from("User")
+		.select("tosAcceptedAt")
+		.eq("id", user.id)
+		.single();
+
+	if (error) {
+		console.error("Failed to get TOS acceptance status:", error);
+		return new ChatSDKError("bad_request:database", "Failed to get Terms of Service status").toResponse();
+	}
+
+	return Response.json({
+		accepted: !!data?.tosAcceptedAt,
+		acceptedAt: data?.tosAcceptedAt || null,
+	});
+}
