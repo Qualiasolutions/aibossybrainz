@@ -1,26 +1,16 @@
 import { Star } from "lucide-react";
 import Link from "next/link";
 import { memo, useState } from "react";
-import { useChatVisibility } from "@/hooks/use-chat-visibility";
-import type { VisibilityType } from "@/components/visibility-selector";
 import type { Chat } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import {
-	CheckCircleFillIcon,
-	GlobeIcon,
-	LockIcon,
 	MoreHorizontalIcon,
-	ShareIcon,
 	TrashIcon,
 } from "./icons";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuPortal,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import {
@@ -42,10 +32,6 @@ const PureChatItem = ({
 	setOpenMobile: (open: boolean) => void;
 	onPinToggle?: (chatId: string, isPinned: boolean) => void;
 }) => {
-	const { visibilityType, setVisibilityType } = useChatVisibility({
-		chatId: chat.id,
-		initialVisibilityType: chat.visibility as VisibilityType,
-	});
 	const [isPinned, setIsPinned] = useState(chat.isPinned ?? false);
 	const [isPinLoading, setIsPinLoading] = useState(false);
 
@@ -123,53 +109,6 @@ const PureChatItem = ({
 					align="end"
 					side="bottom"
 				>
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger className="cursor-pointer">
-							<div className="mr-2 flex h-4 w-4 items-center justify-center">
-								<ShareIcon size={16} />
-							</div>
-							<span className="font-medium text-sm">Share</span>
-						</DropdownMenuSubTrigger>
-						<DropdownMenuPortal>
-							<DropdownMenuSubContent>
-								<DropdownMenuItem
-									className="flex-row justify-between"
-									onClick={() => {
-										setVisibilityType("private");
-									}}
-								>
-									<div className="flex flex-row items-center gap-2">
-										<LockIcon size={14} />
-										<span className="font-medium text-sm">Private</span>
-									</div>
-									{visibilityType === "private" ? (
-										<CheckCircleFillIcon
-											className="text-emerald-400"
-											size={16}
-										/>
-									) : null}
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									className="flex-row justify-between"
-									onClick={() => {
-										setVisibilityType("public");
-									}}
-								>
-									<div className="flex flex-row items-center gap-2">
-										<GlobeIcon size={16} />
-										<span className="font-medium text-sm">Public</span>
-									</div>
-									{visibilityType === "public" ? (
-										<CheckCircleFillIcon
-											className="text-emerald-400"
-											size={16}
-										/>
-									) : null}
-								</DropdownMenuItem>
-							</DropdownMenuSubContent>
-						</DropdownMenuPortal>
-					</DropdownMenuSub>
-
 					<DropdownMenuItem
 						className={cn(
 							isPinned && "text-red-500",

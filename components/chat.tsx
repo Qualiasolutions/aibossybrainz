@@ -55,7 +55,7 @@ import { MultimodalInput } from "./multimodal-input";
 import { getChatHistoryPaginationKey } from "./sidebar-history";
 import { toast } from "./toast";
 import { useSidebar } from "./ui/sidebar";
-import { VisibilitySelector, type VisibilityType } from "./visibility-selector";
+import type { VisibilityType } from "./visibility-selector";
 import { WelcomeModal } from "./welcome-modal";
 
 export interface ChatProps {
@@ -426,12 +426,6 @@ export function Chat({
 										)}
 										<span className="hidden sm:inline">Export</span>
 									</Button>
-								)}
-								{!isReadonly && (
-									<VisibilitySelector
-										chatId={id}
-										selectedVisibilityType={visibilityType}
-									/>
 								)}
 							</div>
 						</div>
