@@ -130,7 +130,7 @@ export function FocusModeChips({
 								)}
 							/>
 							<span className="whitespace-nowrap">
-								{mode.name === "General Consulting" ? "General" : mode.name}
+								{mode.name}
 							</span>
 							{isSelected && (
 								<motion.div
@@ -212,7 +212,7 @@ export function FocusModeCompact({
 									)}
 								>
 									<ModeIcon className="h-2.5 w-2.5" />
-									<span>{mode.name === "General Consulting" ? "General" : mode.name}</span>
+									<span>{mode.name}</span>
 								</motion.button>
 							);
 						})}
@@ -233,7 +233,7 @@ export function FocusModeCompact({
 						)}
 					>
 						<Icon className="h-2.5 w-2.5" />
-						<span>{currentModeConfig.name === "General Consulting" ? "General" : currentModeConfig.name}</span>
+						<span>{currentModeConfig.name}</span>
 						<ChevronRight className="h-2.5 w-2.5 opacity-50" />
 					</motion.button>
 				)}

@@ -41,12 +41,12 @@ export const postRequestBodySchema = z
 		focusMode: z
 			.enum([
 				"default",
-				"brand_crisis",
-				"launch_campaign",
-				"pipeline_audit",
-				"deal_closing",
-				"market_entry",
-				"team_scaling",
+				"business_analysis",
+				"pricing",
+				"key_messaging",
+				"customer_journey",
+				"social_media",
+				"launch_strategy",
 			])
 			.default("default"),
 	})

@@ -3,12 +3,12 @@ export type BotType = "alexandria" | "kim" | "collaborative";
 // Executive Focus Modes - specialized contexts for targeted advice
 export type FocusMode =
 	| "default"
-	| "brand_crisis"
-	| "launch_campaign"
-	| "pipeline_audit"
-	| "deal_closing"
-	| "market_entry"
-	| "team_scaling";
+	| "business_analysis"
+	| "pricing"
+	| "key_messaging"
+	| "customer_journey"
+	| "social_media"
+	| "launch_strategy";
 
 export interface FocusModeConfig {
 	id: FocusMode;
@@ -23,108 +23,108 @@ export interface FocusModeConfig {
 export const FOCUS_MODES: Record<FocusMode, FocusModeConfig> = {
 	default: {
 		id: "default",
-		name: "General Consulting",
+		name: "General",
 		description: "Broad strategic advice across all business areas",
 		icon: "Briefcase",
 		color: "bg-slate-500",
 		applicableTo: ["alexandria", "kim", "collaborative"],
 		promptEnhancement: "",
 	},
-	brand_crisis: {
-		id: "brand_crisis",
-		name: "Brand Crisis",
-		description: "Urgent reputation management and crisis communications",
+	business_analysis: {
+		id: "business_analysis",
+		name: "Business Analysis",
+		description: "Deep dive into your business model, metrics, and strategy",
+		icon: "Search",
+		color: "bg-blue-500",
+		applicableTo: ["alexandria", "kim", "collaborative"],
+		promptEnhancement: `
+## FOCUS MODE: BUSINESS ANALYSIS
+You are conducting a comprehensive business analysis.
+- Ask diagnostic questions about the business model and metrics
+- Identify strengths, weaknesses, and opportunities
+- Analyze competitive positioning and market dynamics
+- Provide data-driven recommendations
+- Focus on actionable insights with measurable impact`,
+	},
+	pricing: {
+		id: "pricing",
+		name: "Pricing",
+		description: "Pricing strategy, positioning, and optimization",
+		icon: "Target",
+		color: "bg-green-500",
+		applicableTo: ["alexandria", "kim", "collaborative"],
+		promptEnhancement: `
+## FOCUS MODE: PRICING STRATEGY
+You are helping develop and optimize pricing strategy.
+- Analyze current pricing model and positioning
+- Discuss value-based pricing approaches
+- Consider competitive pricing dynamics
+- Suggest pricing tiers, packaging, and bundling strategies
+- Focus on maximizing revenue while maintaining value perception`,
+	},
+	key_messaging: {
+		id: "key_messaging",
+		name: "Key Messaging",
+		description: "Core messaging, value propositions, and brand voice",
 		icon: "AlertTriangle",
+		color: "bg-purple-500",
+		applicableTo: ["alexandria", "kim", "collaborative"],
+		promptEnhancement: `
+## FOCUS MODE: KEY MESSAGING
+You are helping develop compelling key messaging.
+- Craft clear, differentiated value propositions
+- Develop messaging frameworks for different audiences
+- Create taglines, headlines, and elevator pitches
+- Ensure consistency across all touchpoints
+- Focus on emotional resonance and clarity`,
+	},
+	customer_journey: {
+		id: "customer_journey",
+		name: "Customer Journey",
+		description: "Map and optimize the end-to-end customer experience",
+		icon: "Users",
+		color: "bg-indigo-500",
+		applicableTo: ["alexandria", "kim", "collaborative"],
+		promptEnhancement: `
+## FOCUS MODE: CUSTOMER JOURNEY
+You are mapping and optimizing the customer journey.
+- Identify all touchpoints from awareness to advocacy
+- Analyze pain points and friction in the current journey
+- Suggest improvements for each stage of the funnel
+- Focus on conversion optimization and retention
+- Balance acquisition with customer lifetime value`,
+	},
+	social_media: {
+		id: "social_media",
+		name: "Social Media Planning",
+		description: "Social media strategy, content planning, and engagement",
+		icon: "Globe",
 		color: "bg-red-500",
 		applicableTo: ["alexandria", "collaborative"],
 		promptEnhancement: `
-## FOCUS MODE: BRAND CRISIS MANAGEMENT
-You are now in crisis mode. The user is dealing with a reputation or brand crisis.
-- Prioritize immediate damage control strategies
-- Provide specific crisis communication templates
-- Focus on stakeholder management and messaging
-- Be calm but urgent - time is critical
-- Suggest both short-term fixes and long-term reputation rebuilding`,
+## FOCUS MODE: SOCIAL MEDIA PLANNING
+You are developing a comprehensive social media strategy.
+- Identify the right platforms for the target audience
+- Create content pillars and posting calendars
+- Suggest engagement tactics and community building
+- Discuss paid vs organic strategies
+- Focus on measurable goals and ROI tracking`,
 	},
-	launch_campaign: {
-		id: "launch_campaign",
-		name: "Launch Campaign",
+	launch_strategy: {
+		id: "launch_strategy",
+		name: "Launch Strategy",
 		description: "Product launch planning and go-to-market execution",
 		icon: "Rocket",
-		color: "bg-purple-500",
-		applicableTo: ["alexandria", "collaborative"],
+		color: "bg-orange-500",
+		applicableTo: ["alexandria", "kim", "collaborative"],
 		promptEnhancement: `
-## FOCUS MODE: LAUNCH CAMPAIGN
+## FOCUS MODE: LAUNCH STRATEGY
 You are focused on helping with a product or service launch.
 - Provide comprehensive launch planning frameworks
 - Include pre-launch, launch day, and post-launch phases
 - Suggest specific marketing channels and tactics
 - Include timeline and milestone recommendations
 - Focus on building anticipation and maximizing impact`,
-	},
-	pipeline_audit: {
-		id: "pipeline_audit",
-		name: "Pipeline Audit",
-		description: "Sales pipeline health check and optimization",
-		icon: "Search",
-		color: "bg-blue-500",
-		applicableTo: ["kim", "collaborative"],
-		promptEnhancement: `
-## FOCUS MODE: PIPELINE AUDIT
-You are conducting a comprehensive pipeline review.
-- Ask diagnostic questions about pipeline metrics
-- Identify bottlenecks and conversion drop-offs
-- Suggest specific improvements for each pipeline stage
-- Provide benchmarks and industry standards
-- Focus on actionable changes with measurable impact`,
-	},
-	deal_closing: {
-		id: "deal_closing",
-		name: "Deal Closing",
-		description: "High-stakes negotiation and deal acceleration",
-		icon: "Target",
-		color: "bg-green-500",
-		applicableTo: ["kim", "collaborative"],
-		promptEnhancement: `
-## FOCUS MODE: DEAL CLOSING
-You are helping close a specific high-value deal.
-- Ask about the deal specifics, stakeholders, and blockers
-- Provide specific negotiation tactics and scripts
-- Suggest strategies to accelerate decision-making
-- Help identify and address buyer objections
-- Focus on creating urgency and demonstrating value`,
-	},
-	market_entry: {
-		id: "market_entry",
-		name: "Market Entry",
-		description: "New market expansion and positioning strategy",
-		icon: "Globe",
-		color: "bg-red-500",
-		applicableTo: ["alexandria", "kim", "collaborative"],
-		promptEnhancement: `
-## FOCUS MODE: MARKET ENTRY
-You are helping plan entry into a new market.
-- Conduct market analysis and competitive landscape review
-- Develop positioning strategy for the new market
-- Create go-to-market timeline and milestones
-- Identify key risks and mitigation strategies
-- Balance marketing and sales considerations for market fit`,
-	},
-	team_scaling: {
-		id: "team_scaling",
-		name: "Team Scaling",
-		description: "Growing and optimizing sales/marketing teams",
-		icon: "Users",
-		color: "bg-indigo-500",
-		applicableTo: ["alexandria", "kim", "collaborative"],
-		promptEnhancement: `
-## FOCUS MODE: TEAM SCALING
-You are advising on team growth and structure.
-- Provide org design recommendations
-- Suggest hiring priorities and role definitions
-- Share compensation and incentive best practices
-- Advise on training and onboarding frameworks
-- Focus on building sustainable, high-performance teams`,
 	},
 };
 
