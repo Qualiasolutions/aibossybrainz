@@ -482,7 +482,7 @@ function BMCSection({
 								section.iconBg,
 							)}
 						>
-							<Icon className="size-4.5 text-white" />
+							<Icon className="size-4 text-white" />
 						</motion.div>
 						<h3 className="font-semibold text-sm text-neutral-800 dark:text-white">
 							{section.label}
