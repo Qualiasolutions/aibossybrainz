@@ -1,4 +1,4 @@
-import { Crown, Mail, Target, TrendingUp, UserRound } from "lucide-react";
+import { Crown, Mail, Target, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -36,11 +36,11 @@ export default function ExecutivesPage() {
 				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center">
 						<h1 className="bg-gradient-to-r from-rose-600 via-purple-600 to-indigo-600 bg-clip-text font-bold text-4xl text-transparent sm:text-5xl lg:text-6xl">
-							Meet Your Executive Team
+							Meet the dream team behind Boss Brainz
 						</h1>
 						<p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg lg:text-xl">
-							AI-powered strategic guidance from seasoned marketing and sales
-							executives
+							40+ years of proven sales and marketing expertise to scale your
+							brand with strategy that sells.
 						</p>
 					</div>
 				</div>
@@ -81,7 +81,37 @@ export default function ExecutivesPage() {
 									</div>
 								</div>
 
-								<div className="mt-8">
+								{/* Bio Highlights */}
+								<div className="mt-6">
+									<h3 className="mb-3 flex items-center gap-2 font-semibold text-slate-700 text-sm uppercase tracking-wide sm:text-base">
+										<TrendingUp className="h-4 w-4 text-rose-500 sm:h-5 sm:w-5" />
+										Bio
+									</h3>
+									<ul className="space-y-2 text-slate-600 text-sm">
+										<li className="flex items-start gap-2">
+											<span className="mt-1.5 inline-block size-2 flex-shrink-0 rounded-full bg-rose-500" />
+											Worked with Fortune 500s to startups to grow their
+											visibility
+										</li>
+										<li className="flex items-start gap-2">
+											<span className="mt-1.5 inline-block size-2 flex-shrink-0 rounded-full bg-rose-500" />
+											Drove content marketing engine contributing to $100M+ and
+											acquisition
+										</li>
+										<li className="flex items-start gap-2">
+											<span className="mt-1.5 inline-block size-2 flex-shrink-0 rounded-full bg-rose-500" />
+											Launched Alecci Media - a full-scale marketing and
+											branding agency with a global portfolio of clients
+										</li>
+										<li className="flex items-start gap-2">
+											<span className="mt-1.5 inline-block size-2 flex-shrink-0 rounded-full bg-rose-500" />
+											Built content + investor strategy securing $90M in funding
+											and driving a $700M valuation for a NYC FinTech
+										</li>
+									</ul>
+								</div>
+
+								<div className="mt-6">
 									<h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-700 text-sm uppercase tracking-wide sm:text-base">
 										<Target className="h-4 w-4 text-rose-500 sm:h-5 sm:w-5" />
 										Core Expertise
@@ -141,7 +171,38 @@ export default function ExecutivesPage() {
 									</div>
 								</div>
 
-								<div className="mt-8">
+								{/* Bio Highlights */}
+								<div className="mt-6">
+									<h3 className="mb-3 flex items-center gap-2 font-semibold text-slate-700 text-sm uppercase tracking-wide sm:text-base">
+										<TrendingUp className="h-4 w-4 text-blue-500 sm:h-5 sm:w-5" />
+										Bio
+									</h3>
+									<ul className="space-y-2 text-slate-600 text-sm">
+										<li className="flex items-start gap-2">
+											<span className="mt-1.5 inline-block size-2 flex-shrink-0 rounded-full bg-blue-500" />
+											Serial entrepreneur across brick and mortar, non-profits,
+											and e-commerce businesses
+										</li>
+										<li className="flex items-start gap-2">
+											<span className="mt-1.5 inline-block size-2 flex-shrink-0 rounded-full bg-blue-500" />
+											Launched and scaled 5 businesses
+										</li>
+										<li className="flex items-start gap-2">
+											<span className="mt-1.5 inline-block size-2 flex-shrink-0 rounded-full bg-blue-500" />
+											International bestselling author
+										</li>
+										<li className="flex items-start gap-2">
+											<span className="mt-1.5 inline-block size-2 flex-shrink-0 rounded-full bg-blue-500" />
+											Generated over $15M in online sales
+										</li>
+										<li className="flex items-start gap-2">
+											<span className="mt-1.5 inline-block size-2 flex-shrink-0 rounded-full bg-blue-500" />
+											Worked with top leaders from The Secret
+										</li>
+									</ul>
+								</div>
+
+								<div className="mt-6">
 									<h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-700 text-sm uppercase tracking-wide sm:text-base">
 										<Target className="h-4 w-4 text-blue-500 sm:h-5 sm:w-5" />
 										Core Expertise
@@ -176,13 +237,15 @@ export default function ExecutivesPage() {
 						<CardContent className="p-6 text-center sm:p-8 lg:p-10">
 							<div className="mx-auto max-w-3xl">
 								<h2 className="font-bold text-2xl text-slate-900 sm:text-3xl lg:text-4xl">
-									Get the Full Executive Perspective
+									Get the Full Perspective{" "}
+									<span className="bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+										(aka the Power Combo)
+									</span>
 								</h2>
 								<p className="mt-4 text-slate-600 text-sm leading-relaxed sm:text-base lg:text-lg">
-									Work with both Alexandria and Kim simultaneously for
-									integrated marketing and sales strategies that drive growth.
-									Get aligned insights from both perspectives in one
-									conversation.
+									Work with Alexandria and Kim at the same time for powerhouse
+									sales and marketing strategy that actually moves the needle.
+									Two expert perspectives, one aligned plan, zero BS.
 								</p>
 								<Link href="/new">
 									<Button

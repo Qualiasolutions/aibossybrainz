@@ -3,7 +3,6 @@
 import { motion, useInView } from "framer-motion";
 import {
   ArrowRight,
-  MessageSquare,
   Mic,
   Paperclip,
   Send,
@@ -55,9 +54,9 @@ function HeroSection() {
           >
             {/* Main Heading */}
             <h1 className="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl lg:text-6xl xl:text-7xl">
-              Your Personal
+              AI Boss Brainz
               <span className="mt-2 block bg-gradient-to-r from-red-500 via-rose-500 to-red-600 bg-clip-text text-transparent">
-                CMO & CSO Team
+                Your Sales & Marketing Experts 24/7
               </span>
             </h1>
 
@@ -68,8 +67,9 @@ function HeroSection() {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="mt-6 max-w-lg text-lg leading-relaxed text-stone-600 sm:text-xl"
             >
-              Strategic marketing and sales consulting powered by AI executives.
-              Get actionable strategies and expert guidance on demand.
+              AI-powered. Expert-led. Get high-level sales and marketing
+              strategy built to grow your brand, results-obsessed, and ready to
+              drop strategies that work.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -417,11 +417,13 @@ function ExecutiveCards() {
           <h2 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl lg:text-5xl">
             Meet Your{" "}
             <span className="bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-              Executive Team
+              Sales and Marketing Masterminds
             </span>
           </h2>
-          <p className="mt-4 text-lg text-stone-600">
-            35+ years of combined Fortune 500 experience
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-stone-600">
+            40+ years bringing Fortune 500 strategy to founders to the next
+            level. Now laser-focused on scaling your brand with strategy that
+            actually sells.
           </p>
         </motion.div>
 
@@ -480,23 +482,23 @@ function BenefitsGrid() {
   const benefits = [
     {
       icon: Zap,
-      title: "Instant Advice",
-      desc: "Get answers in seconds, not weeks",
+      title: "Rapid-Fire Strategy",
+      desc: "At your fingertips so you never stall on sales or marketing again",
     },
     {
-      icon: MessageSquare,
-      title: "Natural Chat",
-      desc: "Voice & text supported",
+      icon: Mic,
+      title: "Talk It Out or Type It In",
+      desc: "'Live' call feature - hear our voices in real-time. Feel like you're talking to Alexandria and Kim.",
     },
     {
       icon: Target,
-      title: "Actionable Plans",
-      desc: "Ready-to-use frameworks",
+      title: "Plug-and-Play Plans",
+      desc: "Sales and marketing plans built to convert, no generic BS",
     },
     {
       icon: TrendingUp,
-      title: "Proven Tactics",
-      desc: "Real-world experience",
+      title: "40+ Years of Proof",
+      desc: "Fortune 500 and founder success - proven strategies from hundreds of brands and teams",
     },
   ];
 
@@ -509,8 +511,11 @@ function BenefitsGrid() {
           className="mb-16 text-center"
         >
           <h2 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl lg:text-5xl">
-            Why Leaders Choose Us
+            Get the Move-the-Needle Strategies Now
           </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-stone-600">
+            Watch your business grow with expert guidance on demand
+          </p>
         </motion.div>
 
         <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -553,11 +558,13 @@ function CTASection() {
 
           <div className="relative z-10">
             <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
-              Ready to Transform Your Strategy?
+              This Is How You Grow Without Being Great at Sales or Marketing
             </h2>
-            <p className="mx-auto mt-6 max-w-lg text-lg text-stone-300">
-              Join thousands of leaders getting executive-level guidance at a
-              fraction of the cost.
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-stone-300">
+              You don't need to be a sales expert or marketing genius to grow -
+              you just need the right messaging and strategy. Thousands of
+              entrepreneurs are using our proven tools to scale. Stop
+              second-guessing every move. Start dominating.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/login">
