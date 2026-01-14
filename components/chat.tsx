@@ -308,18 +308,18 @@ export function Chat({
 
 	return (
 		<>
-			<div className="relative flex h-screen w-full flex-col overflow-hidden bg-white">
+			<div className="relative flex h-screen w-full flex-col overflow-hidden bg-background">
 				{/* Subtle red accent glow - minimalist */}
 				<div
 					aria-hidden
 					className="pointer-events-none absolute inset-0 overflow-hidden"
 				>
-					<div className="absolute -top-40 left-1/3 h-[400px] w-[600px] rounded-full bg-red-100/50 blur-[100px]" />
+					<div className="absolute -top-40 left-1/3 h-[400px] w-[600px] rounded-full bg-primary/10 blur-[100px]" />
 				</div>
 
 				<div className="relative z-10 flex h-full w-full flex-col">
 					{/* Premium Minimalist Header */}
-					<header className="flex-shrink-0 border-b border-neutral-100 bg-white/95 backdrop-blur-xl">
+					<header className="flex-shrink-0 border-b border-border bg-background/95 backdrop-blur-xl">
 						<div className="flex h-14 w-full items-center justify-between gap-4 px-4 sm:h-16 sm:px-6">
 							{/* Left: Navigation */}
 							<div className="flex items-center gap-3 sm:gap-4">
@@ -327,7 +327,7 @@ export function Chat({
 								<div className="hidden items-center gap-2 sm:flex" />
 								{(!open || isMobile) && (
 									<Button
-										className="h-8 gap-2 rounded-lg border-neutral-200 bg-white px-3 font-medium text-xs text-neutral-700 shadow-sm transition-all hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+										className="h-8 gap-2 rounded-lg border-border bg-background px-3 font-medium text-xs text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 										onClick={() => {
 											router.push("/new");
 											router.refresh();
@@ -354,7 +354,7 @@ export function Chat({
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
 										<Button
-											className="h-8 gap-1.5 rounded-lg border-neutral-200 bg-white px-2.5 font-medium text-xs text-neutral-600 shadow-sm transition-all hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+											className="h-8 gap-1.5 rounded-lg border-border bg-background px-2.5 font-medium text-xs text-muted-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 											variant="outline"
 										>
 											<MoreHorizontal className="size-3.5" />
@@ -393,7 +393,7 @@ export function Chat({
 								)}
 								{messages.length > 0 && (
 									<Button
-										className="h-8 gap-1.5 rounded-lg border-neutral-200 bg-white px-2.5 font-medium text-xs text-neutral-600 shadow-sm transition-all hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+										className="h-8 gap-1.5 rounded-lg border-border bg-background px-2.5 font-medium text-xs text-muted-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 										disabled={isExporting}
 										onClick={handleExportPDF}
 										title="Export conversation as PDF"
@@ -452,7 +452,7 @@ export function Chat({
 
 					{/* Input Area - Clean minimalist */}
 					{!isReadonly && (
-						<div className="flex-shrink-0 border-t border-neutral-100 bg-white/80 px-4 pt-3 pb-4 backdrop-blur-xl dark:border-neutral-800 dark:bg-black/80 sm:px-6 sm:pt-4 sm:pb-6">
+						<div className="flex-shrink-0 border-t border-border bg-background/80 px-4 pt-3 pb-4 backdrop-blur-xl sm:px-6 sm:pt-4 sm:pb-6">
 							<div className="w-full space-y-2">
 								{/* Focus Mode Chips */}
 								<FocusModeChips

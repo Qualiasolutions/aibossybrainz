@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      AuditLog: {
+        Row: {
+          id: string
+          userId: string | null
+          action: string
+          resource: string
+          resourceId: string | null
+          details: Json
+          ipAddress: string | null
+          userAgent: string | null
+          createdAt: string
+        }
+        Insert: {
+          id?: string
+          userId?: string | null
+          action: string
+          resource: string
+          resourceId?: string | null
+          details?: Json
+          ipAddress?: string | null
+          userAgent?: string | null
+          createdAt?: string
+        }
+        Update: {
+          id?: string
+          userId?: string | null
+          action?: string
+          resource?: string
+          resourceId?: string | null
+          details?: Json
+          ipAddress?: string | null
+          userAgent?: string | null
+          createdAt?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "AuditLog_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Chat: {
         Row: {
           createdAt: string
@@ -477,6 +521,7 @@ export type Database = {
 }
 
 // Convenience types for easier usage
+export type AuditLog = Database["public"]["Tables"]["AuditLog"]["Row"]
 export type User = Database["public"]["Tables"]["User"]["Row"]
 export type Chat = Database["public"]["Tables"]["Chat"]["Row"]
 export type DBMessage = Database["public"]["Tables"]["Message_v2"]["Row"]

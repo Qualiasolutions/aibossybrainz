@@ -108,8 +108,8 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 
 	return (
 		<>
-			<Sidebar className="w-72 border-r border-neutral-200 bg-white">
-				<SidebarHeader className="border-b border-neutral-100 bg-white px-4 py-3">
+			<Sidebar className="w-72 border-r border-border bg-background">
+				<SidebarHeader className="border-b border-border bg-background px-4 py-3">
 					<SidebarMenu>
 						<div className="flex flex-col gap-3">
 							{/* Logo */}
@@ -137,7 +137,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 							<div className="flex gap-2">
 								{user && (
 									<Button
-										className="h-9 flex-1 rounded-lg border border-neutral-200 bg-white text-neutral-600 shadow-none hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+										className="h-9 flex-1 rounded-lg border border-border bg-background text-muted-foreground shadow-none hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 										onClick={() => setShowDeleteAllDialog(true)}
 										variant="ghost"
 										size="sm"
@@ -160,14 +160,14 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 				</SidebarHeader>
 
 				{/* Expanded chat history area */}
-				<SidebarContent className="flex-1 overflow-hidden bg-white px-3 py-4">
+				<SidebarContent className="flex-1 overflow-hidden bg-background px-3 py-4">
 					<div className="h-full overflow-y-auto">
 						<SidebarHistory user={user} />
 					</div>
 				</SidebarContent>
 
 				{/* Compact footer with dropup menu */}
-				<SidebarFooter className="border-t border-neutral-100 bg-white px-3 py-2">
+				<SidebarFooter className="border-t border-border bg-background px-3 py-2">
 					<div className="flex flex-col gap-2">
 						{/* Navigation dropup */}
 						<DropdownMenu>
@@ -175,7 +175,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 								<Button
 									variant="ghost"
 									size="sm"
-									className="h-9 w-full justify-between rounded-lg border border-neutral-200 bg-neutral-50 px-3 text-neutral-600 hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+									className="h-9 w-full justify-between rounded-lg border border-border bg-muted px-3 text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 								>
 									<span className="flex items-center gap-2">
 										<LayoutGrid className="h-3.5 w-3.5" />
@@ -187,13 +187,13 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 							<DropdownMenuContent
 								align="start"
 								side="top"
-								className="w-[200px] rounded-xl border-neutral-200 bg-white p-1 shadow-lg"
+								className="w-[200px] rounded-xl border-border bg-background p-1 shadow-lg"
 							>
 								{navItems.map((item) => (
 									<DropdownMenuItem
 										key={item.href}
 										asChild
-										className="rounded-lg px-3 py-2.5 text-neutral-700 focus:bg-red-50 focus:text-red-600 cursor-pointer"
+										className="rounded-lg px-3 py-2.5 text-foreground focus:bg-primary/10 focus:text-primary cursor-pointer"
 									>
 										<Link href={item.href} onClick={handleNavClick}>
 											<item.icon className="mr-2.5 h-4 w-4 text-red-500" />
@@ -218,10 +218,10 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 			<div className="lg:hidden">
 				<Sheet onOpenChange={setIsMobileSidebarOpen} open={isMobileSidebarOpen}>
 					<SheetContent
-						className="w-72 border-r border-neutral-200 bg-white p-0"
+						className="w-72 border-r border-border bg-background p-0"
 						side="left"
 					>
-						<SheetHeader className="border-b border-neutral-100 bg-white px-4 py-3">
+						<SheetHeader className="border-b border-border bg-background px-4 py-3">
 							<SheetTitle className="sr-only">Navigation Menu</SheetTitle>
 							<div className="flex flex-col gap-3">
 								<Link
@@ -241,7 +241,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 								<div className="flex gap-2">
 									{user && (
 										<Button
-											className="h-9 flex-1 rounded-lg border border-neutral-200 bg-white text-neutral-600 shadow-none hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+											className="h-9 flex-1 rounded-lg border border-border bg-background text-muted-foreground shadow-none hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 											onClick={() => setShowDeleteAllDialog(true)}
 											variant="ghost"
 											size="sm"
@@ -268,14 +268,14 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 							</div>
 						</div>
 
-						<div className="border-t border-neutral-100 bg-white px-3 py-2">
+						<div className="border-t border-border bg-background px-3 py-2">
 							<div className="flex flex-col gap-2">
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
 										<Button
 											variant="ghost"
 											size="sm"
-											className="h-9 w-full justify-between rounded-lg border border-neutral-200 bg-neutral-50 px-3 text-neutral-600 hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+											className="h-9 w-full justify-between rounded-lg border border-border bg-muted px-3 text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 										>
 											<span className="flex items-center gap-2">
 												<LayoutGrid className="h-3.5 w-3.5" />
@@ -287,13 +287,13 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 									<DropdownMenuContent
 										align="start"
 										side="top"
-										className="w-[200px] rounded-xl border-neutral-200 bg-white p-1 shadow-lg"
+										className="w-[200px] rounded-xl border-border bg-background p-1 shadow-lg"
 									>
 										{navItems.map((item) => (
 											<DropdownMenuItem
 												key={item.href}
 												asChild
-												className="rounded-lg px-3 py-2.5 text-neutral-700 focus:bg-red-50 focus:text-red-600 cursor-pointer"
+												className="rounded-lg px-3 py-2.5 text-foreground focus:bg-primary/10 focus:text-primary cursor-pointer"
 											>
 												<Link href={item.href} onClick={handleNavClick}>
 													<item.icon className="mr-2.5 h-4 w-4 text-red-500" />
@@ -319,12 +319,12 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 				onOpenChange={setShowDeleteAllDialog}
 				open={showDeleteAllDialog}
 			>
-				<AlertDialogContent className="mx-4 max-w-md rounded-2xl border-neutral-200 bg-white">
+				<AlertDialogContent className="mx-4 max-w-md rounded-2xl border-border bg-background">
 					<AlertDialogHeader>
-						<AlertDialogTitle className="font-semibold text-lg text-neutral-900">
+						<AlertDialogTitle className="font-semibold text-lg text-foreground">
 							Delete all chats?
 						</AlertDialogTitle>
-						<AlertDialogDescription className="text-neutral-500">
+						<AlertDialogDescription className="text-muted-foreground">
 							This action cannot be undone. This will permanently delete all
 							your chats and remove them from our servers.
 						</AlertDialogDescription>

@@ -323,7 +323,7 @@ function PureMultimodalInput({
 					/>
 					<PromptInputTextarea
 						autoFocus
-						className="grow resize-none border-0! border-none! bg-transparent py-0.5 pl-0 text-xs leading-normal text-zinc-700 caret-red-500 outline-none ring-0 [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-zinc-400 placeholder:text-xs placeholder:pl-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 [&::-webkit-scrollbar]:hidden"
+						className="grow resize-none border-0! border-none! bg-transparent py-0.5 pl-0 text-xs leading-normal text-foreground caret-primary outline-none ring-0 [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-muted-foreground placeholder:text-xs placeholder:pl-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 [&::-webkit-scrollbar]:hidden"
 						data-testid="multimodal-input"
 						disableAutoResize={true}
 						maxHeight={28}

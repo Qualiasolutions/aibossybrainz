@@ -1,6 +1,7 @@
 "use client";
 
 import equal from "fast-deep-equal";
+import dynamic from "next/dynamic";
 import {
 	type MouseEvent,
 	memo,
@@ -14,13 +15,30 @@ import { useArtifact } from "@/hooks/use-artifact";
 import type { Document } from "@/lib/supabase/types";
 import { cn, fetcher } from "@/lib/utils";
 import type { ArtifactKind, UIArtifact } from "./artifact";
-import { CodeEditor } from "./code-editor";
 import { DocumentToolCall, DocumentToolResult } from "./document";
 import { InlineDocumentSkeleton } from "./document-skeleton";
 import { FileIcon, FullscreenIcon, ImageIcon, LoaderIcon } from "./icons";
-import { ImageEditor } from "./image-editor";
-import { SpreadsheetEditor } from "./sheet-editor";
-import { Editor } from "./text-editor";
+
+// Lazy load heavy editor components to reduce initial bundle size
+const CodeEditor = dynamic(() => import("./code-editor").then(mod => mod.CodeEditor), {
+	loading: () => <InlineDocumentSkeleton />,
+	ssr: false,
+});
+
+const SpreadsheetEditor = dynamic(() => import("./sheet-editor").then(mod => mod.SpreadsheetEditor), {
+	loading: () => <InlineDocumentSkeleton />,
+	ssr: false,
+});
+
+const ImageEditor = dynamic(() => import("./image-editor").then(mod => mod.ImageEditor), {
+	loading: () => <div className="h-[257px] w-full animate-pulse bg-muted-foreground/20" />,
+	ssr: false,
+});
+
+const Editor = dynamic(() => import("./text-editor").then(mod => mod.Editor), {
+	loading: () => <InlineDocumentSkeleton />,
+	ssr: false,
+});
 
 type DocumentPreviewProps = {
 	isReadonly: boolean;
