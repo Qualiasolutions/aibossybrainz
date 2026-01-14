@@ -29,6 +29,7 @@ import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
 import { updateDocument } from "@/lib/ai/tools/update-document";
 import { webSearch } from "@/lib/ai/tools/web-search";
 import { classifyTopic } from "@/lib/ai/topic-classifier";
+import { generateConversationSummary } from "@/lib/ai/conversation-summarizer";
 import { isProductionEnvironment } from "@/lib/constants";
 import {
 	createStreamId,
@@ -38,6 +39,7 @@ import {
 	getMessageCountByUserId,
 	getMessagesByChatId,
 	saveChat,
+	saveConversationSummary,
 	saveMessages,
 	updateChatLastContextById,
 	updateChatPinStatus,
@@ -277,19 +279,23 @@ export async function POST(request: Request) {
 			createStreamId({ streamId, chatId: id }),
 		]);
 
+		// Build system prompt with personalization (now async)
+		const systemPromptText = await systemPrompt({
+			selectedChatModel,
+			requestHints,
+			botType: selectedBotType,
+			focusMode: focusMode,
+			knowledgeBaseContent,
+			userId: user.id,
+		});
+
 		let finalMergedUsage: AppUsage | undefined;
 
 		const stream = createUIMessageStream({
 			execute: ({ writer: dataStream }) => {
 				const result = streamText({
 					model: myProvider.languageModel(selectedChatModel),
-					system: systemPrompt({
-						selectedChatModel,
-						requestHints,
-						botType: selectedBotType,
-						focusMode: focusMode,
-						knowledgeBaseContent,
-					}),
+					system: systemPromptText,
 					messages: convertToModelMessages(uiMessages),
 					maxOutputTokens: 4096, // Prevent long responses from timing out
 					stopWhen: stepCountIs(3), // Reduced from 5 to 3 - prevents deep recursion latency
@@ -392,6 +398,34 @@ export async function POST(request: Request) {
 						console.warn("Unable to persist last usage for chat", id, err);
 					}
 				}
+
+				// Generate conversation summary for cross-chat memory (in background)
+				after(async () => {
+					try {
+						// Get all messages for this chat
+						const allMessages = await getMessagesByChatId({ id });
+						// Only summarize if conversation has substantive content (4+ messages)
+						if (allMessages.length >= 4) {
+							const summary = await generateConversationSummary(
+								allMessages.map((m) => ({
+									role: m.role,
+									parts: m.parts as unknown[],
+								})),
+							);
+							if (summary) {
+								await saveConversationSummary({
+									userId: user.id,
+									chatId: id,
+									summary: summary.text,
+									topics: summary.topics,
+									importance: summary.importance,
+								});
+							}
+						}
+					} catch (err) {
+						console.warn("Failed to generate conversation summary:", err);
+					}
+				});
 			},
 			onError: () => {
 				return "Oops, an error occurred!";

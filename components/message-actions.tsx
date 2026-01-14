@@ -21,6 +21,7 @@ import {
 	ThumbUpIcon,
 } from "./icons";
 import { MessageReactions } from "./message-reactions";
+import { VoicePlayerButton } from "./voice-player-button";
 
 export function PureMessageActions({
 	chatId,
@@ -192,6 +193,14 @@ export function PureMessageActions({
 					<CopyIcon />
 				)}
 			</Action>
+
+			{/* Voice Player with Volume & Speed Controls */}
+			{textFromParts && (
+				<VoicePlayerButton
+					botType={botType}
+					text={textFromParts}
+				/>
+			)}
 
 			{onExpand && (
 				<Action onClick={onExpand} tooltip="Expand">

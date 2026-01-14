@@ -377,6 +377,13 @@ export type Database = {
           password: string | null
           userType: string | null
           tosAcceptedAt: string | null
+          displayName: string | null
+          companyName: string | null
+          industry: string | null
+          businessGoals: string | null
+          preferredBotType: string | null
+          onboardedAt: string | null
+          profileUpdatedAt: string | null
         }
         Insert: {
           email: string
@@ -384,6 +391,13 @@ export type Database = {
           password?: string | null
           userType?: string | null
           tosAcceptedAt?: string | null
+          displayName?: string | null
+          companyName?: string | null
+          industry?: string | null
+          businessGoals?: string | null
+          preferredBotType?: string | null
+          onboardedAt?: string | null
+          profileUpdatedAt?: string | null
         }
         Update: {
           email?: string
@@ -391,8 +405,113 @@ export type Database = {
           password?: string | null
           userType?: string | null
           tosAcceptedAt?: string | null
+          displayName?: string | null
+          companyName?: string | null
+          industry?: string | null
+          businessGoals?: string | null
+          preferredBotType?: string | null
+          onboardedAt?: string | null
+          profileUpdatedAt?: string | null
         }
         Relationships: []
+      }
+      StrategyCanvas: {
+        Row: {
+          id: string
+          userId: string
+          canvasType: string
+          name: string
+          data: Json
+          isDefault: boolean | null
+          createdAt: string
+          updatedAt: string
+          deletedAt: string | null
+        }
+        Insert: {
+          id?: string
+          userId: string
+          canvasType: string
+          name?: string
+          data?: Json
+          isDefault?: boolean | null
+          createdAt?: string
+          updatedAt?: string
+          deletedAt?: string | null
+        }
+        Update: {
+          id?: string
+          userId?: string
+          canvasType?: string
+          name?: string
+          data?: Json
+          isDefault?: boolean | null
+          createdAt?: string
+          updatedAt?: string
+          deletedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "StrategyCanvas_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ConversationSummary: {
+        Row: {
+          id: string
+          userId: string
+          chatId: string | null
+          summary: string
+          topics: string[] | null
+          keyInsights: Json | null
+          importance: number | null
+          createdAt: string
+          expiresAt: string | null
+          deletedAt: string | null
+        }
+        Insert: {
+          id?: string
+          userId: string
+          chatId?: string | null
+          summary: string
+          topics?: string[] | null
+          keyInsights?: Json | null
+          importance?: number | null
+          createdAt?: string
+          expiresAt?: string | null
+          deletedAt?: string | null
+        }
+        Update: {
+          id?: string
+          userId?: string
+          chatId?: string | null
+          summary?: string
+          topics?: string[] | null
+          keyInsights?: Json | null
+          importance?: number | null
+          createdAt?: string
+          expiresAt?: string | null
+          deletedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ConversationSummary_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ConversationSummary_chatId_fkey"
+            columns: ["chatId"]
+            isOneToOne: false
+            referencedRelation: "Chat"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       UserAnalytics: {
         Row: {
@@ -548,10 +667,17 @@ export type VisibilityType = "public" | "private"
 export type BotType = "alexandria" | "kim" | "collaborative"
 
 // Reaction types
-export type ReactionType = 
+export type ReactionType =
   | "actionable"
   | "needs_clarification"
   | "ready_to_implement"
   | "save_for_later"
   | "brilliant"
   | "helpful"
+
+// Strategy Canvas types
+export type StrategyCanvas = Database["public"]["Tables"]["StrategyCanvas"]["Row"]
+export type StrategyCanvasInsert = Database["public"]["Tables"]["StrategyCanvas"]["Insert"]
+export type ConversationSummary = Database["public"]["Tables"]["ConversationSummary"]["Row"]
+export type ConversationSummaryInsert = Database["public"]["Tables"]["ConversationSummary"]["Insert"]
+export type CanvasType = "swot" | "bmc" | "journey" | "brainstorm"

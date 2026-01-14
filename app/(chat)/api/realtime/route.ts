@@ -29,20 +29,23 @@ export async function POST(request: Request) {
 		// Get knowledge base content for the bot
 		const knowledgeBaseContent = await getKnowledgeBaseContent(botType);
 
+		// Build system prompt (now async)
+		const systemPromptText = await systemPrompt({
+			selectedChatModel: "chat-model",
+			requestHints: {
+				latitude: undefined,
+				longitude: undefined,
+				city: undefined,
+				country: undefined,
+			},
+			botType: botType as "alexandria" | "kim" | "collaborative",
+			knowledgeBaseContent,
+		});
+
 		// Generate AI response
 		const result = await generateText({
 			model: myProvider.languageModel("chat-model"),
-			system: systemPrompt({
-				selectedChatModel: "chat-model",
-				requestHints: {
-					latitude: undefined,
-					longitude: undefined,
-					city: undefined,
-					country: undefined,
-				},
-				botType: botType as "alexandria" | "kim" | "collaborative",
-				knowledgeBaseContent,
-			}),
+			system: systemPromptText,
 			messages: [
 				{
 					role: "user",

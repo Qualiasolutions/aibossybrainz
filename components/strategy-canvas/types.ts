@@ -6,6 +6,7 @@ export interface StickyNote {
 	color: NoteColor;
 	x?: number;
 	y?: number;
+	category?: string;
 }
 
 export type NoteColor =

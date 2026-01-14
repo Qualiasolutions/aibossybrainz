@@ -2,6 +2,10 @@ import type { Geo } from "@vercel/functions";
 import type { ArtifactKind } from "@/components/artifact";
 import type { BotType, FocusMode } from "@/lib/bot-personalities";
 import { getSystemPrompt } from "@/lib/bot-personalities";
+import {
+	buildPersonalizationContext,
+	formatPersonalizationPrompt,
+} from "./personalization";
 
 export const webSearchPrompt = `
 ## WEB SEARCH TOOL
@@ -97,25 +101,41 @@ About the origin of user's request:
 - country: ${requestHints.country}
 `;
 
-export const systemPrompt = ({
+export const systemPrompt = async ({
 	selectedChatModel,
 	requestHints,
 	botType = "collaborative",
 	focusMode = "default",
 	knowledgeBaseContent = "",
+	userId,
 }: {
 	selectedChatModel: string;
 	requestHints: RequestHints;
 	botType?: BotType;
 	focusMode?: FocusMode;
 	knowledgeBaseContent?: string;
-}) => {
+	userId?: string;
+}): Promise<string> => {
 	const requestPrompt = getRequestPromptFromHints(requestHints);
 	let botSystemPrompt = getSystemPrompt(botType, focusMode);
 
 	// Add smart context detection for collaborative mode
 	if (botType === "collaborative") {
 		botSystemPrompt += `\n\nSMART CONTEXT DETECTION: If the user specifically addresses one executive (e.g., "Kim, what do you think?" or "@alexandria your take?" or "Alexandria alone"), respond ONLY as that executive. Look for natural cues like names, "you" directed at one person, or explicit requests. When responding as one executive, start with their name and don't include the other's perspective.`;
+	}
+
+	// Add personalization context if userId provided
+	if (userId) {
+		try {
+			const personalizationContext = await buildPersonalizationContext(userId);
+			const personalizationPrompt =
+				formatPersonalizationPrompt(personalizationContext);
+			if (personalizationPrompt) {
+				botSystemPrompt += personalizationPrompt;
+			}
+		} catch (error) {
+			console.warn("[Prompts] Failed to load personalization:", error);
+		}
 	}
 
 	// Append knowledge base content with first-person ownership framing
