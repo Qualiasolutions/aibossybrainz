@@ -2,12 +2,11 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { Download, Loader2, Mic, Phone, PhoneOff, Volume2 } from "lucide-react";
+import { Bookmark, Download, HelpCircle, Lightbulb, Loader2, Mic, MoreHorizontal, Phone, PhoneOff, Volume2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import { unstable_serialize } from "swr/infinite";
-import { AutoSpeakToggle } from "@/components/auto-speak-toggle";
 import { ExecutiveSwitch } from "@/components/executive-switch";
 import { SidebarToggle } from "@/components/sidebar-toggle";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 import { useArtifact, useArtifactSelector, initialArtifactData } from "@/hooks/use-artifact";
 import { useAutoResume } from "@/hooks/use-auto-resume";
 import { useAutoSpeak } from "@/hooks/use-auto-speak";
@@ -235,20 +241,12 @@ export function Chat({
 		setMessages,
 	});
 
-	// Auto-speak functionality - speaks assistant responses when streaming completes
-	const {
-		isAutoSpeakEnabled,
-		toggleAutoSpeak,
-		stop: stopSpeaking,
-		togglePause: toggleSpeakPause,
-		isLoading: isSpeakLoading,
-		isPlaying: isSpeakPlaying,
-		isPaused: isSpeakPaused,
-	} = useAutoSpeak({
+	// Auto-speak functionality - speaks assistant responses automatically when streaming completes
+	useAutoSpeak({
 		messages,
 		status,
 		botType: activeBotTypeForStreaming,
-		enabled: true, // Enabled by default
+		enabled: true, // Always enabled - controlled from message actions
 	});
 
 	// Export conversation handlers
@@ -350,8 +348,40 @@ export function Chat({
 								/>
 							</div>
 
-							{/* Right: Analytics, Export & Visibility */}
+							{/* Right: Quick Nav, Analytics, Export & Visibility */}
 							<div className="flex items-center gap-1.5">
+								{/* Quick Navigation Dropdown */}
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<Button
+											className="h-8 gap-1.5 rounded-lg border-neutral-200 bg-white px-2.5 font-medium text-xs text-neutral-600 shadow-sm transition-all hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+											variant="outline"
+										>
+											<MoreHorizontal className="size-3.5" />
+											<span className="hidden sm:inline">Menu</span>
+										</Button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent align="end" className="w-44">
+										<DropdownMenuItem asChild className="cursor-pointer">
+											<Link href="/actionable" className="flex items-center gap-2">
+												<Lightbulb className="size-4 text-red-500" />
+												<span>Actions</span>
+											</Link>
+										</DropdownMenuItem>
+										<DropdownMenuItem asChild className="cursor-pointer">
+											<Link href="/clarifications" className="flex items-center gap-2">
+												<HelpCircle className="size-4 text-orange-500" />
+												<span>Clarify</span>
+											</Link>
+										</DropdownMenuItem>
+										<DropdownMenuItem asChild className="cursor-pointer">
+											<Link href="/saved" className="flex items-center gap-2">
+												<Bookmark className="size-4 text-blue-500" />
+												<span>Saved</span>
+											</Link>
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
 								{messages.length > 0 && (
 									<div className="hidden lg:block">
 										<ConversationAnalytics
@@ -361,15 +391,6 @@ export function Chat({
 										/>
 									</div>
 								)}
-								<AutoSpeakToggle
-									isEnabled={isAutoSpeakEnabled}
-									isLoading={isSpeakLoading}
-									isPaused={isSpeakPaused}
-									isPlaying={isSpeakPlaying}
-									onStop={stopSpeaking}
-									onToggle={toggleAutoSpeak}
-									onTogglePause={toggleSpeakPause}
-								/>
 								{messages.length > 0 && (
 									<Button
 										className="h-8 gap-1.5 rounded-lg border-neutral-200 bg-white px-2.5 font-medium text-xs text-neutral-600 shadow-sm transition-all hover:border-red-300 hover:bg-red-50 hover:text-red-600"
