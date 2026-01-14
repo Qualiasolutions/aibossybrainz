@@ -52,6 +52,7 @@ import { FocusModeChips } from "./focus-mode-chips";
 import { PlusIcon } from "./icons";
 import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
+import { OnboardingModal } from "./onboarding-modal";
 import { getChatHistoryPaginationKey } from "./sidebar-history";
 import { toast } from "./toast";
 import { useSidebar } from "./ui/sidebar";
@@ -643,6 +644,9 @@ export function Chat({
 
 			{/* Welcome Modal - shows once for new users */}
 			<WelcomeModal />
+
+			{/* Onboarding Modal - collects user profile info if not set */}
+			<OnboardingModal />
 		</>
 	);
 }
