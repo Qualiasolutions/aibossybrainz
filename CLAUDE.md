@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Alecci Media AI Chatbot** - Executive personality-driven AI consultancy platform. Fork of Vercel's Chat SDK with three executive personas (Alexandria, Kim, Collaborative) providing specialized business consulting.
 
-**Supabase Project:** `wubiidettbyavutahgjb`
+**Supabase Project:** `esymbjpzjjkffpfqukxw`
 
 ## Commands
 
