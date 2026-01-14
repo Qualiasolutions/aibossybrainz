@@ -107,32 +107,24 @@ export function MessageSuggestions({
 
 				{/* Suggestions - 2x2 grid, full text visible */}
 				<div className="grid grid-cols-2 gap-2">
-					{suggestions.map((suggestion, index) => {
+					{suggestions.map((suggestion) => {
 						const Icon = CATEGORY_ICONS[suggestion.category];
 						const isCopied = copiedId === suggestion.id;
 
 						return (
-							<motion.button
-								animate={{ opacity: 1, scale: 1, y: 0 }}
+							<button
 								aria-label={`Ask: ${suggestion.text}`}
 								className={cn(
 									"group relative flex items-start gap-2 rounded-xl border px-3 py-2",
-									"text-sm",
+									"text-sm transition-colors",
 									"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50 focus-visible:ring-offset-2",
 									"shadow-sm",
 									EXECUTIVE_BUTTON_STYLES[botType],
 									isCopied && "border-emerald-400 bg-emerald-50 dark:border-emerald-600 dark:bg-emerald-950/40",
 								)}
-								initial={{ opacity: 0, scale: 0.95, y: 8 }}
 								key={suggestion.id}
 								onClick={() => handleSelect(suggestion)}
 								onKeyDown={(e) => handleKeyDown(e, suggestion)}
-								transition={{
-									delay: index * 0.05,
-									type: "spring",
-									stiffness: 500,
-									damping: 30,
-								}}
 								type="button"
 							>
 								{/* Icon */}
@@ -185,7 +177,7 @@ export function MessageSuggestions({
 										<span className="hidden sm:inline">Added to input</span>
 									</motion.span>
 								)}
-							</motion.button>
+							</button>
 						);
 					})}
 				</div>
