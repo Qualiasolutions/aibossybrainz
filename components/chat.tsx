@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { BarChart3, Bookmark, Clock, Download, HelpCircle, LayoutGrid, Lightbulb, Loader2, Mic, MoreHorizontal, Phone, PhoneOff, Users, Volume2 } from "lucide-react";
+import { BarChart3, Bookmark, Download, HelpCircle, LayoutGrid, Lightbulb, Loader2, Mic, MoreHorizontal, Phone, PhoneOff, Volume2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
@@ -348,8 +348,20 @@ export function Chat({
 								/>
 							</div>
 
-							{/* Right: Quick Nav, Analytics, Export & Visibility */}
+							{/* Right: Strategy Canvas, Menu, Analytics, Export & Visibility */}
 							<div className="flex items-center gap-1.5">
+								{/* Strategy Canvas - Individual Button */}
+								<Button
+									asChild
+									className="h-8 gap-1.5 rounded-lg border-border bg-background px-2.5 font-medium text-xs text-muted-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
+									variant="outline"
+								>
+									<Link href="/strategy-canvas">
+										<LayoutGrid className="size-3.5" />
+										<span className="hidden sm:inline">Strategy</span>
+									</Link>
+								</Button>
+
 								{/* Quick Navigation Dropdown */}
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
@@ -361,29 +373,11 @@ export function Chat({
 											<span className="hidden sm:inline">Menu</span>
 										</Button>
 									</DropdownMenuTrigger>
-									<DropdownMenuContent align="end" className="w-48">
-										<DropdownMenuItem asChild className="cursor-pointer">
-											<Link href="/executives" className="flex items-center gap-2">
-												<Users className="size-4 text-primary" />
-												<span>Meet the Team</span>
-											</Link>
-										</DropdownMenuItem>
-										<DropdownMenuItem asChild className="cursor-pointer">
-											<Link href="/history" className="flex items-center gap-2">
-												<Clock className="size-4 text-primary" />
-												<span>Chat History</span>
-											</Link>
-										</DropdownMenuItem>
+									<DropdownMenuContent align="end" className="w-44">
 										<DropdownMenuItem asChild className="cursor-pointer">
 											<Link href="/analytics" className="flex items-center gap-2">
 												<BarChart3 className="size-4 text-primary" />
 												<span>Analytics</span>
-											</Link>
-										</DropdownMenuItem>
-										<DropdownMenuItem asChild className="cursor-pointer">
-											<Link href="/strategy-canvas" className="flex items-center gap-2">
-												<LayoutGrid className="size-4 text-primary" />
-												<span>Strategy Canvas</span>
 											</Link>
 										</DropdownMenuItem>
 										<DropdownMenuItem asChild className="cursor-pointer">

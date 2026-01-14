@@ -1,7 +1,8 @@
 "use client";
 
 import { isToday, isYesterday, subMonths, subWeeks } from "date-fns";
-import { Filter, Search, X } from "lucide-react";
+import { Clock, Filter, Search, X } from "lucide-react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -625,12 +626,21 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
 					<div className="h-4" ref={loadMoreRef} />
 
+					{/* View Full History Link */}
+					<Link
+						href="/history"
+						className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10 hover:border-primary/30"
+					>
+						<Clock className="size-4" />
+						<span>View Full History</span>
+					</Link>
+
 					{hasReachedEnd ? (
-						<div className="mt-8 flex w-full flex-row items-center justify-center gap-2 rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-4 text-center text-neutral-500 text-sm">
+						<div className="mt-4 flex w-full flex-row items-center justify-center gap-2 rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-4 text-center text-neutral-500 text-sm">
 							You've reached the end of your chat history.
 						</div>
 					) : (
-						<div className="mt-8 flex flex-row items-center gap-2 rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-4 text-neutral-500 text-sm">
+						<div className="mt-4 flex flex-row items-center gap-2 rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-4 text-neutral-500 text-sm">
 							<div className="animate-spin text-red-500">
 								<LoaderIcon />
 							</div>
