@@ -88,12 +88,12 @@ export function TosPopup({ onAccept }: TosPopupProps) {
 					exit={{ opacity: 0 }}
 					className="fixed inset-0 z-[100] flex items-center justify-center p-4"
 				>
-					{/* Backdrop - soft blur */}
+					{/* Backdrop - soft blur, pointer-events-none to allow clicks through to modal */}
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
-						className="absolute inset-0 bg-neutral-100/80 backdrop-blur-md dark:bg-neutral-950/80"
+						className="absolute inset-0 bg-neutral-100/80 backdrop-blur-md dark:bg-neutral-950/80 pointer-events-none"
 					/>
 
 					{/* Modal - Bright premium design */}
@@ -102,7 +102,7 @@ export function TosPopup({ onAccept }: TosPopupProps) {
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.95, y: 20 }}
 						transition={{ type: "spring", duration: 0.5 }}
-						className="relative w-full max-w-2xl bg-white rounded-2xl overflow-hidden shadow-2xl shadow-neutral-300/50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800 dark:shadow-black/30"
+						className="relative z-10 w-full max-w-2xl bg-white rounded-2xl overflow-hidden shadow-2xl shadow-neutral-300/50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800 dark:shadow-black/30"
 					>
 						{/* Red accent line */}
 						<div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-red-600" />

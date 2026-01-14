@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { ChatSDKError } from "@/lib/errors";
+import { ensureUserExists } from "@/lib/db/queries";
 
 export async function POST() {
 	const supabase = await createClient();
@@ -7,9 +8,12 @@ export async function POST() {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	if (!user) {
+	if (!user || !user.email) {
 		return new ChatSDKError("unauthorized:auth").toResponse();
 	}
+
+	// Ensure User record exists (syncs from Supabase Auth)
+	await ensureUserExists({ id: user.id, email: user.email });
 
 	// Update user's TOS acceptance timestamp
 	const { error } = await supabase
@@ -41,6 +45,14 @@ export async function GET() {
 		.select("tosAcceptedAt")
 		.eq("id", user.id)
 		.single();
+
+	// If user doesn't exist in User table yet (new user), return not accepted
+	if (error && error.code === "PGRST116") {
+		return Response.json({
+			accepted: false,
+			acceptedAt: null,
+		});
+	}
 
 	if (error) {
 		console.error("Failed to get TOS acceptance status:", error);

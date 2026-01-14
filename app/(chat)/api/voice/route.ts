@@ -75,6 +75,7 @@ export async function POST(request: Request) {
 		const apiKey = process.env.ELEVENLABS_API_KEY;
 
 		if (!apiKey) {
+			console.error("[Voice API] ELEVENLABS_API_KEY not found in environment");
 			return Response.json(
 				{ error: "Voice service not configured" },
 				{ status: 503 },
