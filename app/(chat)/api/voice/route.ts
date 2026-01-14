@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getVoiceConfig, MAX_TTS_TEXT_LENGTH } from "@/lib/ai/voice-config";
+import { getVoiceConfig, MAX_TTS_TEXT_LENGTH, detectSpeaker } from "@/lib/ai/voice-config";
 import type { BotType } from "@/lib/bot-personalities";
 import { ChatSDKError } from "@/lib/errors";
 import {
@@ -82,7 +82,13 @@ export async function POST(request: Request) {
 			);
 		}
 
-		const voiceConfig = getVoiceConfig(botType);
+		// For collaborative mode, detect which executive is speaking and use their voice
+		let effectiveBotType: BotType = botType;
+		if (botType === "collaborative") {
+			effectiveBotType = detectSpeaker(cleanText);
+		}
+
+		const voiceConfig = getVoiceConfig(effectiveBotType);
 
 		// Use resilience wrapper for ElevenLabs API calls
 		const response = await withElevenLabsResilience(async () => {
@@ -182,10 +188,6 @@ const MARKDOWN_PATTERNS = {
 
 // Helper function to strip markdown for cleaner TTS
 function stripMarkdown(text: string): string {
-	// Track if we've already added verbal references to avoid repetition
-	let hasTableReference = false;
-	let hasCodeReference = false;
-
 	let result = text
 		// Remove executive name prefixes (collaborative mode)
 		.replace(MARKDOWN_PATTERNS.executiveAlexandria, "")
@@ -205,14 +207,8 @@ function stripMarkdown(text: string): string {
 		.replace(MARKDOWN_PATTERNS.links, "$1")
 		// Remove images
 		.replace(MARKDOWN_PATTERNS.images, "")
-		// Replace code blocks with verbal reference (only first occurrence)
-		.replace(MARKDOWN_PATTERNS.codeBlocks, () => {
-			if (!hasCodeReference) {
-				hasCodeReference = true;
-				return "\n\nSee the code example displayed above.\n\n";
-			}
-			return "";
-		})
+		// Remove code blocks entirely - don't reference them verbally as it confuses users
+		.replace(MARKDOWN_PATTERNS.codeBlocks, "")
 		// Remove inline code
 		.replace(MARKDOWN_PATTERNS.inlineCode, "$1")
 		// Remove blockquotes
@@ -220,24 +216,10 @@ function stripMarkdown(text: string): string {
 		// Remove horizontal rules
 		.replace(MARKDOWN_PATTERNS.horizontalRules, "");
 
-	// Replace tables with verbal reference (detect if tables exist first)
-	const hasTable = MARKDOWN_PATTERNS.tableRows.test(result);
-	if (hasTable && !hasTableReference) {
-		hasTableReference = true;
-		// Remove table content and add reference
-		result = result
-			.replace(MARKDOWN_PATTERNS.tableRows, "")
-			.replace(MARKDOWN_PATTERNS.tableSeparators, "");
-		// Add verbal reference before the cleaned content
-		result = result.replace(
-			/\n\n+/,
-			"\n\nPlease see the table displayed above for the detailed breakdown.\n\n",
-		);
-	} else {
-		result = result
-			.replace(MARKDOWN_PATTERNS.tableRows, "")
-			.replace(MARKDOWN_PATTERNS.tableSeparators, "");
-	}
+	// Remove tables entirely - don't reference them verbally as it confuses users
+	result = result
+		.replace(MARKDOWN_PATTERNS.tableRows, "")
+		.replace(MARKDOWN_PATTERNS.tableSeparators, "");
 
 	// Clean up multiple newlines
 	return result.replace(MARKDOWN_PATTERNS.multipleNewlines, "\n\n").trim();
