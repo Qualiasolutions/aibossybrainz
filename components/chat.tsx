@@ -333,14 +333,14 @@ export function Chat({
 
 							{/* Right: Strategy Canvas, Menu, Analytics, Export & Visibility */}
 							<div className="flex items-center gap-1.5">
-								{/* SWOT Analysis - Opens slide panel */}
+								{/* Strategy Canvas - Opens slide panel */}
 								<Button
 									className="h-8 gap-1.5 rounded-lg border-border bg-background px-2.5 font-medium text-xs text-muted-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 									variant="outline"
 									onClick={() => setIsSwotPanelOpen(true)}
 								>
 									<LayoutGrid className="size-3.5" />
-									<span className="hidden sm:inline">SWOT</span>
+									<span className="hidden sm:inline">Strategy</span>
 								</Button>
 
 								{/* Quick Navigation Dropdown */}
