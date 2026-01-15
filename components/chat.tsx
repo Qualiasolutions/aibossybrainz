@@ -4,7 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { BarChart3, Bookmark, Download, HelpCircle, LayoutGrid, Lightbulb, Loader2, Mic, MoreHorizontal, Phone, PhoneOff, Volume2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import { unstable_serialize } from "swr/infinite";
 import { ExecutiveSwitch } from "@/components/executive-switch";
@@ -35,17 +35,13 @@ import {
 	type BotType,
 	type FocusMode,
 } from "@/lib/bot-personalities";
-import {
-	exportConversationToExcel,
-	exportConversationToPDF,
-} from "@/lib/conversation-export";
+import { exportConversationToPDF } from "@/lib/conversation-export";
 import type { Vote } from "@/lib/supabase/types";
 import { ChatSDKError } from "@/lib/errors";
 import type { Attachment, ChatMessage } from "@/lib/types";
 import type { AppUsage } from "@/lib/usage";
 import { fetcher, fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
 import { Artifact } from "./artifact";
-import { ConversationAnalytics } from "./conversation-analytics";
 import { useDataStream } from "./data-stream-provider";
 import { ExecutiveLanding } from "./executive-landing";
 import { FocusModeChips } from "./focus-mode-chips";
@@ -53,6 +49,7 @@ import { PlusIcon } from "./icons";
 import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
 import { OnboardingModal } from "./onboarding-modal";
+import { ReactionItemsPopup } from "./reaction-items-popup";
 import { getChatHistoryPaginationKey } from "./sidebar-history";
 import { toast } from "./toast";
 import { useSidebar } from "./ui/sidebar";
@@ -102,6 +99,7 @@ export function Chat({
 	const [currentModelId, setCurrentModelId] = useState(initialChatModel);
 	const [selectedBot, setSelectedBot] = useState<BotType>(initialBotType);
 	const [focusMode, setFocusMode] = useState<FocusMode>("default");
+	const [reactionPopup, setReactionPopup] = useState<"actionable" | "needs_clarification" | "save_for_later" | null>(null);
 	const currentModelIdRef = useRef(currentModelId);
 	const selectedBotRef = useRef(initialBotType);
 
@@ -129,9 +127,6 @@ export function Chat({
 	const handleSuggestionSelect = (text: string) => {
 		setInput(text);
 	};
-
-	// Create a stable reference to the current bot type for message sending
-	const getCurrentBotType = () => selectedBotRef.current;
 
 	// Track the botType that was active when the last message was sent
 	// This ensures assistant responses show the correct executive even during streaming
@@ -244,11 +239,11 @@ export function Chat({
 	});
 
 	// Auto-speak functionality - speaks assistant responses automatically when streaming completes
+	// Defaults to ON and persists user preference to localStorage
 	useAutoSpeak({
 		messages,
 		status,
 		botType: activeBotTypeForStreaming,
-		enabled: true, // Always enabled - controlled from message actions
 	});
 
 	// Export conversation handlers
@@ -272,21 +267,6 @@ export function Chat({
 		}
 	};
 
-	const handleExportExcel = async () => {
-		if (messages.length === 0) return;
-		try {
-			const chatTitle =
-				messages[0]?.parts
-					?.find((p) => p.type === "text")
-					?.text?.slice(0, 50) || "Conversation";
-			await exportConversationToExcel(messages, chatTitle, selectedBot);
-			toast({ type: "success", description: "Conversation exported to Excel" });
-		} catch (error) {
-			console.error("Export failed:", error);
-			toast({ type: "error", description: "Failed to export conversation" });
-		}
-	};
-
 	// Voice call functionality (extracted to custom hook)
 	const {
 		voiceCallOpen,
@@ -294,7 +274,6 @@ export function Chat({
 		voiceTranscript,
 		voiceCallError,
 		voiceCallDuration,
-		isVoiceCallSupported,
 		setVoiceCallOpen,
 		startVoiceCall,
 		endVoiceCall,
@@ -352,16 +331,35 @@ export function Chat({
 
 							{/* Right: Strategy Canvas, Menu, Analytics, Export & Visibility */}
 							<div className="flex items-center gap-1.5">
-								{/* Strategy Canvas - Individual Button */}
+								{/* Strategy Canvas - Opens side panel */}
 								<Button
-									asChild
 									className="h-8 gap-1.5 rounded-lg border-border bg-background px-2.5 font-medium text-xs text-muted-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 									variant="outline"
+									onClick={(e) => {
+										const rect = e.currentTarget.getBoundingClientRect();
+										setArtifact({
+											documentId: generateUUID(),
+											title: "SWOT Analysis",
+											kind: "strategy-canvas",
+											content: JSON.stringify({
+												strengths: [],
+												weaknesses: [],
+												opportunities: [],
+												threats: [],
+											}),
+											status: "idle",
+											isVisible: true,
+											boundingBox: {
+												top: rect.top,
+												left: rect.left,
+												width: rect.width,
+												height: rect.height,
+											},
+										});
+									}}
 								>
-									<Link href="/strategy-canvas">
-										<LayoutGrid className="size-3.5" />
-										<span className="hidden sm:inline">Strategy</span>
-									</Link>
+									<LayoutGrid className="size-3.5" />
+									<span className="hidden sm:inline">Strategy</span>
 								</Button>
 
 								{/* Quick Navigation Dropdown */}
@@ -382,35 +380,29 @@ export function Chat({
 												<span>Analytics</span>
 											</Link>
 										</DropdownMenuItem>
-										<DropdownMenuItem asChild className="cursor-pointer">
-											<Link href="/actionable" className="flex items-center gap-2">
-												<Lightbulb className="size-4 text-primary" />
-												<span>Action Items</span>
-											</Link>
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onClick={() => setReactionPopup("actionable")}
+										>
+											<Lightbulb className="size-4 text-primary" />
+											<span>Action Items</span>
 										</DropdownMenuItem>
-										<DropdownMenuItem asChild className="cursor-pointer">
-											<Link href="/clarifications" className="flex items-center gap-2">
-												<HelpCircle className="size-4 text-primary" />
-												<span>Clarifications</span>
-											</Link>
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onClick={() => setReactionPopup("needs_clarification")}
+										>
+											<HelpCircle className="size-4 text-primary" />
+											<span>Clarifications</span>
 										</DropdownMenuItem>
-										<DropdownMenuItem asChild className="cursor-pointer">
-											<Link href="/saved" className="flex items-center gap-2">
-												<Bookmark className="size-4 text-primary" />
-												<span>Saved for Later</span>
-											</Link>
+										<DropdownMenuItem
+											className="cursor-pointer"
+											onClick={() => setReactionPopup("save_for_later")}
+										>
+											<Bookmark className="size-4 text-primary" />
+											<span>Saved for Later</span>
 										</DropdownMenuItem>
 									</DropdownMenuContent>
 								</DropdownMenu>
-								{messages.length > 0 && (
-									<div className="hidden lg:block">
-										<ConversationAnalytics
-											messages={messages}
-											currentBot={selectedBot}
-											compact
-										/>
-									</div>
-								)}
 								{messages.length > 0 && (
 									<Button
 										className="h-8 gap-1.5 rounded-lg border-border bg-background px-2.5 font-medium text-xs text-muted-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
@@ -647,6 +639,15 @@ export function Chat({
 
 			{/* Onboarding Modal - collects user profile info if not set */}
 			<OnboardingModal />
+
+			{/* Reaction Items Popup - Action Items, Clarifications, Saved */}
+			{reactionPopup && (
+				<ReactionItemsPopup
+					type={reactionPopup}
+					open={!!reactionPopup}
+					onOpenChange={(open) => !open && setReactionPopup(null)}
+				/>
+			)}
 		</>
 	);
 }
