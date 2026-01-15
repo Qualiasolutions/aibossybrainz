@@ -92,12 +92,12 @@ export function UsersTable({
 			{/* Search and Actions */}
 			<div className="flex items-center justify-between gap-4">
 				<div className="relative flex-1 max-w-sm">
-					<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+					<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
 					<Input
 						placeholder="Search users..."
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
-						className="pl-9 bg-zinc-800/50 border-zinc-700 text-white placeholder:text-zinc-500"
+						className="pl-9"
 					/>
 				</div>
 				<Button
@@ -110,33 +110,33 @@ export function UsersTable({
 			</div>
 
 			{/* Table */}
-			<div className="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+			<div className="rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
 				<table className="w-full">
 					<thead>
-						<tr className="border-b border-zinc-800 bg-zinc-800/50">
-							<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+						<tr className="border-b border-neutral-100 bg-neutral-50">
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								User
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Company
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Activity
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Status
 							</th>
-							<th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase tracking-wider">
+							<th className="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Actions
 							</th>
 						</tr>
 					</thead>
-					<tbody className="divide-y divide-zinc-800">
+					<tbody className="divide-y divide-neutral-100">
 						{filteredUsers.length === 0 ? (
 							<tr>
 								<td
 									colSpan={5}
-									className="px-6 py-8 text-center text-zinc-500"
+									className="px-6 py-8 text-center text-neutral-500"
 								>
 									No users found
 								</td>
@@ -145,30 +145,30 @@ export function UsersTable({
 							filteredUsers.map((user) => (
 								<tr
 									key={user.id}
-									className="hover:bg-zinc-800/30 transition-colors"
+									className="hover:bg-neutral-50 transition-colors"
 								>
 									<td className="px-6 py-4">
 										<div>
-											<p className="text-sm font-medium text-white">
+											<p className="text-sm font-medium text-neutral-900">
 												{user.displayName || "No name"}
 											</p>
-											<p className="text-sm text-zinc-500">{user.email}</p>
+											<p className="text-sm text-neutral-500">{user.email}</p>
 										</div>
 									</td>
 									<td className="px-6 py-4">
-										<p className="text-sm text-zinc-300">
+										<p className="text-sm text-neutral-700">
 											{user.companyName || "-"}
 										</p>
-										<p className="text-xs text-zinc-500">
+										<p className="text-xs text-neutral-500">
 											{user.industry || "No industry"}
 										</p>
 									</td>
 									<td className="px-6 py-4">
 										<div className="space-y-1">
-											<p className="text-sm text-zinc-300">
+											<p className="text-sm text-neutral-700">
 												{user.chatCount} chats
 											</p>
-											<p className="text-xs text-zinc-500">
+											<p className="text-xs text-neutral-500">
 												{user.messageCount} messages
 											</p>
 										</div>
@@ -176,17 +176,17 @@ export function UsersTable({
 									<td className="px-6 py-4">
 										<div className="flex flex-col gap-1">
 											{user.isAdmin && (
-												<span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-rose-500/20 text-rose-400">
+												<span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-rose-50 text-rose-600">
 													<Shield className="h-3 w-3" />
 													Admin
 												</span>
 											)}
 											{user.onboardedAt ? (
-												<span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-500/20 text-emerald-400">
+												<span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-600">
 													Onboarded
 												</span>
 											) : (
-												<span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-zinc-500/20 text-zinc-400">
+												<span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-100 text-neutral-500">
 													Pending
 												</span>
 											)}
@@ -198,20 +198,17 @@ export function UsersTable({
 												<Button
 													variant="ghost"
 													size="sm"
-													className="h-8 w-8 p-0 text-zinc-400 hover:text-white"
+													className="h-8 w-8 p-0 text-neutral-500 hover:text-neutral-900"
 												>
 													<MoreHorizontal className="h-4 w-4" />
 												</Button>
 											</DropdownMenuTrigger>
-											<DropdownMenuContent
-												align="end"
-												className="bg-zinc-900 border-zinc-800"
-											>
+											<DropdownMenuContent align="end">
 												<DropdownMenuItem
 													onClick={() =>
 														window.open(`/admin/users/${user.id}`, "_self")
 													}
-													className="text-zinc-300 focus:bg-zinc-800 focus:text-white cursor-pointer"
+													className="cursor-pointer"
 												>
 													<Eye className="h-4 w-4 mr-2" />
 													View Details
@@ -220,7 +217,7 @@ export function UsersTable({
 													onClick={() =>
 														handleToggleAdmin(user.id, user.isAdmin || false)
 													}
-													className="text-zinc-300 focus:bg-zinc-800 focus:text-white cursor-pointer"
+													className="cursor-pointer"
 												>
 													{user.isAdmin ? (
 														<>
@@ -234,10 +231,10 @@ export function UsersTable({
 														</>
 													)}
 												</DropdownMenuItem>
-												<DropdownMenuSeparator className="bg-zinc-800" />
+												<DropdownMenuSeparator />
 												<DropdownMenuItem
 													onClick={() => setDeleteUserId(user.id)}
-													className="text-rose-400 focus:bg-rose-500/20 focus:text-rose-400 cursor-pointer"
+													className="text-rose-600 focus:text-rose-600 cursor-pointer"
 												>
 													<Trash2 className="h-4 w-4 mr-2" />
 													Delete User
@@ -257,10 +254,10 @@ export function UsersTable({
 				open={!!deleteUserId}
 				onOpenChange={() => setDeleteUserId(null)}
 			>
-				<DialogContent className="bg-zinc-900 border-zinc-800">
+				<DialogContent>
 					<DialogHeader>
-						<DialogTitle className="text-white">Delete User</DialogTitle>
-						<DialogDescription className="text-zinc-400">
+						<DialogTitle>Delete User</DialogTitle>
+						<DialogDescription>
 							This will permanently delete the user and all their data including
 							chats, messages, and documents. This action cannot be undone.
 						</DialogDescription>
@@ -269,7 +266,6 @@ export function UsersTable({
 						<Button
 							variant="ghost"
 							onClick={() => setDeleteUserId(null)}
-							className="text-zinc-400 hover:text-white"
 						>
 							Cancel
 						</Button>
@@ -286,16 +282,16 @@ export function UsersTable({
 
 			{/* Create User Dialog */}
 			<Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-				<DialogContent className="bg-zinc-900 border-zinc-800">
+				<DialogContent>
 					<DialogHeader>
-						<DialogTitle className="text-white">Add New User</DialogTitle>
-						<DialogDescription className="text-zinc-400">
+						<DialogTitle>Add New User</DialogTitle>
+						<DialogDescription>
 							Create a new user account. They will be able to login via email.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="space-y-4 py-4">
 						<div className="space-y-2">
-							<Label htmlFor="email" className="text-zinc-300">
+							<Label htmlFor="email">
 								Email *
 							</Label>
 							<Input
@@ -306,11 +302,10 @@ export function UsersTable({
 								onChange={(e) =>
 									setNewUser({ ...newUser, email: e.target.value })
 								}
-								className="bg-zinc-800/50 border-zinc-700 text-white"
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="displayName" className="text-zinc-300">
+							<Label htmlFor="displayName">
 								Display Name
 							</Label>
 							<Input
@@ -320,11 +315,10 @@ export function UsersTable({
 								onChange={(e) =>
 									setNewUser({ ...newUser, displayName: e.target.value })
 								}
-								className="bg-zinc-800/50 border-zinc-700 text-white"
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="companyName" className="text-zinc-300">
+							<Label htmlFor="companyName">
 								Company Name
 							</Label>
 							<Input
@@ -334,7 +328,6 @@ export function UsersTable({
 								onChange={(e) =>
 									setNewUser({ ...newUser, companyName: e.target.value })
 								}
-								className="bg-zinc-800/50 border-zinc-700 text-white"
 							/>
 						</div>
 					</div>
@@ -342,7 +335,6 @@ export function UsersTable({
 						<Button
 							variant="ghost"
 							onClick={() => setShowCreateDialog(false)}
-							className="text-zinc-400 hover:text-white"
 						>
 							Cancel
 						</Button>

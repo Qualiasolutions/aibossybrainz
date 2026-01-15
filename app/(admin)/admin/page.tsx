@@ -16,8 +16,8 @@ export default async function AdminDashboard() {
 		<div className="p-8">
 			{/* Header */}
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-white">Dashboard</h1>
-				<p className="text-zinc-400 mt-1">
+				<h1 className="text-3xl font-bold text-neutral-900">Dashboard</h1>
+				<p className="text-neutral-500 mt-1">
 					Welcome back, here's what's happening with your AI consultants.
 				</p>
 			</div>
@@ -30,13 +30,11 @@ export default async function AdminDashboard() {
 					change={`${stats.activeUsers} onboarded`}
 					changeType="neutral"
 					icon={Users}
-					gradient="from-zinc-800/80 to-zinc-900"
 				/>
 				<StatsCard
 					title="Total Conversations"
 					value={stats.totalChats}
 					icon={MessageSquare}
-					gradient="from-zinc-800/80 to-zinc-900"
 				/>
 				<StatsCard
 					title="Total Messages"
@@ -44,13 +42,11 @@ export default async function AdminDashboard() {
 					change={`${stats.messagesLast24h} in last 24h`}
 					changeType="positive"
 					icon={Sparkles}
-					gradient="from-zinc-800/80 to-zinc-900"
 				/>
 				<StatsCard
 					title="7-Day Messages"
 					value={stats.messagesLast7d.toLocaleString()}
 					icon={TrendingUp}
-					gradient="from-zinc-800/80 to-zinc-900"
 				/>
 			</div>
 

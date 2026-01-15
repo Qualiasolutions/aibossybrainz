@@ -40,8 +40,8 @@ export default async function AnalyticsPage() {
 	return (
 		<div className="p-8">
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-white">Analytics</h1>
-				<p className="text-zinc-400 mt-1">
+				<h1 className="text-3xl font-bold text-neutral-900">Analytics</h1>
+				<p className="text-neutral-500 mt-1">
 					Platform usage statistics and insights.
 				</p>
 			</div>
@@ -52,13 +52,11 @@ export default async function AnalyticsPage() {
 					title="Avg Messages/User"
 					value={avgMessagesPerUser}
 					icon={Users}
-					gradient="from-zinc-800/80 to-zinc-900"
 				/>
 				<StatsCard
 					title="Avg Messages/Chat"
 					value={avgMessagesPerChat}
 					icon={MessageSquare}
-					gradient="from-zinc-800/80 to-zinc-900"
 				/>
 				<StatsCard
 					title="Onboarding Rate"
@@ -66,7 +64,6 @@ export default async function AnalyticsPage() {
 					change={`${stats.activeUsers} of ${stats.totalUsers} users`}
 					changeType="neutral"
 					icon={TrendingUp}
-					gradient="from-zinc-800/80 to-zinc-900"
 				/>
 				<StatsCard
 					title="Daily Avg (7d)"
@@ -74,7 +71,6 @@ export default async function AnalyticsPage() {
 					change="messages per day"
 					changeType="neutral"
 					icon={Activity}
-					gradient="from-zinc-800/80 to-zinc-900"
 				/>
 			</div>
 
@@ -86,26 +82,26 @@ export default async function AnalyticsPage() {
 				/>
 
 				{/* User Engagement */}
-				<div className="rounded-xl border border-zinc-800 bg-zinc-900/50">
-					<div className="border-b border-zinc-800 px-6 py-4">
-						<h2 className="text-lg font-semibold text-white">
+				<div className="rounded-xl border border-neutral-200 bg-white shadow-sm">
+					<div className="border-b border-neutral-200 px-6 py-4">
+						<h2 className="text-lg font-semibold text-neutral-900">
 							User Engagement
 						</h2>
 					</div>
 					<div className="p-6 space-y-6">
 						{/* Engagement Stats */}
 						<div className="grid grid-cols-2 gap-4">
-							<div className="rounded-lg bg-zinc-800/50 p-4">
-								<p className="text-2xl font-bold text-white">
+							<div className="rounded-lg bg-neutral-50 p-4">
+								<p className="text-2xl font-bold text-neutral-900">
 									{activeUsersWithChats}
 								</p>
-								<p className="text-sm text-zinc-400">Users with chats</p>
+								<p className="text-sm text-neutral-500">Users with chats</p>
 							</div>
-							<div className="rounded-lg bg-zinc-800/50 p-4">
-								<p className="text-2xl font-bold text-white">
+							<div className="rounded-lg bg-neutral-50 p-4">
+								<p className="text-2xl font-bold text-neutral-900">
 									{usersWithManyMessages}
 								</p>
-								<p className="text-sm text-zinc-400">Power users (10+ msgs)</p>
+								<p className="text-sm text-neutral-500">Power users (10+ msgs)</p>
 							</div>
 						</div>
 
@@ -113,10 +109,10 @@ export default async function AnalyticsPage() {
 						<div className="space-y-4">
 							<div>
 								<div className="flex justify-between mb-2">
-									<span className="text-sm text-zinc-400">
+									<span className="text-sm text-neutral-600">
 										Users with conversations
 									</span>
-									<span className="text-sm text-zinc-300">
+									<span className="text-sm text-neutral-900 font-medium">
 										{stats.totalUsers > 0
 											? Math.round(
 													(activeUsersWithChats / stats.totalUsers) * 100,
@@ -125,7 +121,7 @@ export default async function AnalyticsPage() {
 										%
 									</span>
 								</div>
-								<div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+								<div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
 									<div
 										className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"
 										style={{
@@ -136,10 +132,10 @@ export default async function AnalyticsPage() {
 							</div>
 							<div>
 								<div className="flex justify-between mb-2">
-									<span className="text-sm text-zinc-400">
+									<span className="text-sm text-neutral-600">
 										Power users (10+ messages)
 									</span>
-									<span className="text-sm text-zinc-300">
+									<span className="text-sm text-neutral-900 font-medium">
 										{stats.totalUsers > 0
 											? Math.round(
 													(usersWithManyMessages / stats.totalUsers) * 100,
@@ -148,7 +144,7 @@ export default async function AnalyticsPage() {
 										%
 									</span>
 								</div>
-								<div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+								<div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
 									<div
 										className="h-full bg-gradient-to-r from-rose-500 to-rose-600 rounded-full"
 										style={{
@@ -163,52 +159,52 @@ export default async function AnalyticsPage() {
 			</div>
 
 			{/* Top Users */}
-			<div className="rounded-xl border border-zinc-800 bg-zinc-900/50">
-				<div className="border-b border-zinc-800 px-6 py-4">
-					<h2 className="text-lg font-semibold text-white">Top Users by Activity</h2>
+			<div className="rounded-xl border border-neutral-200 bg-white shadow-sm">
+				<div className="border-b border-neutral-200 px-6 py-4">
+					<h2 className="text-lg font-semibold text-neutral-900">Top Users by Activity</h2>
 				</div>
 				<div className="overflow-x-auto">
 					<table className="w-full">
 						<thead>
-							<tr className="border-b border-zinc-800 bg-zinc-800/30">
-								<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
+							<tr className="border-b border-neutral-100 bg-neutral-50">
+								<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
 									User
 								</th>
-								<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
+								<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
 									Company
 								</th>
-								<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
+								<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
 									Chats
 								</th>
-								<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
+								<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
 									Messages
 								</th>
 							</tr>
 						</thead>
-						<tbody className="divide-y divide-zinc-800">
+						<tbody className="divide-y divide-neutral-100">
 							{users
 								.sort((a, b) => b.messageCount - a.messageCount)
 								.slice(0, 10)
 								.map((user) => (
 									<tr
 										key={user.id}
-										className="hover:bg-zinc-800/30 transition-colors"
+										className="hover:bg-neutral-50 transition-colors"
 									>
 										<td className="px-6 py-4">
 											<div>
-												<p className="text-sm font-medium text-white">
+												<p className="text-sm font-medium text-neutral-900">
 													{user.displayName || "No name"}
 												</p>
-												<p className="text-xs text-zinc-500">{user.email}</p>
+												<p className="text-xs text-neutral-500">{user.email}</p>
 											</div>
 										</td>
-										<td className="px-6 py-4 text-sm text-zinc-300">
+										<td className="px-6 py-4 text-sm text-neutral-600">
 											{user.companyName || "-"}
 										</td>
-										<td className="px-6 py-4 text-sm text-zinc-300">
+										<td className="px-6 py-4 text-sm text-neutral-600">
 											{user.chatCount}
 										</td>
-										<td className="px-6 py-4 text-sm text-zinc-300">
+										<td className="px-6 py-4 text-sm text-neutral-600">
 											{user.messageCount}
 										</td>
 									</tr>

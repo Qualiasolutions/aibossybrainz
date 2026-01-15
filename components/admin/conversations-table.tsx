@@ -18,12 +18,12 @@ interface ConversationsTableProps {
 }
 
 const topicColors: Record<string, string> = {
-	Marketing: "bg-rose-500/20 text-rose-400",
-	Sales: "bg-red-500/20 text-red-400",
-	Strategy: "bg-purple-500/20 text-purple-400",
-	Brand: "bg-pink-500/20 text-pink-400",
-	Growth: "bg-emerald-500/20 text-emerald-400",
-	default: "bg-zinc-500/20 text-zinc-400",
+	Marketing: "bg-rose-50 text-rose-600",
+	Sales: "bg-red-50 text-red-600",
+	Strategy: "bg-purple-50 text-purple-600",
+	Brand: "bg-pink-50 text-pink-600",
+	Growth: "bg-emerald-50 text-emerald-600",
+	default: "bg-neutral-100 text-neutral-500",
 };
 
 export function ConversationsTable({ conversations }: ConversationsTableProps) {
@@ -40,46 +40,46 @@ export function ConversationsTable({ conversations }: ConversationsTableProps) {
 		<div className="space-y-4">
 			{/* Search */}
 			<div className="relative max-w-sm">
-				<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+				<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
 				<Input
 					placeholder="Search conversations..."
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}
-					className="pl-9 bg-zinc-800/50 border-zinc-700 text-white placeholder:text-zinc-500"
+					className="pl-9"
 				/>
 			</div>
 
 			{/* Table */}
-			<div className="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+			<div className="rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
 				<table className="w-full">
 					<thead>
-						<tr className="border-b border-zinc-800 bg-zinc-800/50">
-							<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+						<tr className="border-b border-neutral-100 bg-neutral-50">
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Conversation
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								User
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Topic
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Messages
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Created
 							</th>
-							<th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase tracking-wider">
+							<th className="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Actions
 							</th>
 						</tr>
 					</thead>
-					<tbody className="divide-y divide-zinc-800">
+					<tbody className="divide-y divide-neutral-100">
 						{filteredConversations.length === 0 ? (
 							<tr>
 								<td
 									colSpan={6}
-									className="px-6 py-8 text-center text-zinc-500"
+									className="px-6 py-8 text-center text-neutral-500"
 								>
 									No conversations found
 								</td>
@@ -88,25 +88,25 @@ export function ConversationsTable({ conversations }: ConversationsTableProps) {
 							filteredConversations.map((conv) => (
 								<tr
 									key={conv.id}
-									className="hover:bg-zinc-800/30 transition-colors"
+									className="hover:bg-neutral-50 transition-colors"
 								>
 									<td className="px-6 py-4">
 										<div className="flex items-start gap-3">
-											<div className="rounded-lg bg-zinc-800 p-2">
-												<MessageSquare className="h-4 w-4 text-zinc-400" />
+											<div className="rounded-lg bg-neutral-100 p-2">
+												<MessageSquare className="h-4 w-4 text-neutral-500" />
 											</div>
 											<div className="min-w-0">
-												<p className="text-sm font-medium text-white truncate max-w-xs">
+												<p className="text-sm font-medium text-neutral-900 truncate max-w-xs">
 													{conv.title || "Untitled"}
 												</p>
-												<p className="text-xs text-zinc-500 font-mono">
+												<p className="text-xs text-neutral-400 font-mono">
 													{conv.id.slice(0, 8)}...
 												</p>
 											</div>
 										</div>
 									</td>
 									<td className="px-6 py-4">
-										<p className="text-sm text-zinc-300">{conv.userEmail}</p>
+										<p className="text-sm text-neutral-700">{conv.userEmail}</p>
 									</td>
 									<td className="px-6 py-4">
 										{conv.topic ? (
@@ -119,16 +119,16 @@ export function ConversationsTable({ conversations }: ConversationsTableProps) {
 												{conv.topic}
 											</span>
 										) : (
-											<span className="text-zinc-500 text-sm">-</span>
+											<span className="text-neutral-400 text-sm">-</span>
 										)}
 									</td>
 									<td className="px-6 py-4">
-										<p className="text-sm text-zinc-300">
+										<p className="text-sm text-neutral-700">
 											{conv.messageCount}
 										</p>
 									</td>
 									<td className="px-6 py-4">
-										<p className="text-sm text-zinc-400">
+										<p className="text-sm text-neutral-500">
 											{formatDistanceToNow(new Date(conv.createdAt), {
 												addSuffix: true,
 											})}
@@ -139,7 +139,7 @@ export function ConversationsTable({ conversations }: ConversationsTableProps) {
 											<Button
 												variant="ghost"
 												size="sm"
-												className="text-zinc-400 hover:text-white"
+												className="text-neutral-500 hover:text-neutral-900"
 											>
 												<Eye className="h-4 w-4 mr-1" />
 												View

@@ -15,20 +15,20 @@ const executiveConfig: Record<
 > = {
 	alexandria: {
 		name: "Alexandria",
-		color: "text-rose-400",
-		bgColor: "bg-rose-500/20",
+		color: "text-rose-600",
+		bgColor: "bg-rose-50",
 		icon: Sparkles,
 	},
 	kim: {
 		name: "Kim",
-		color: "text-red-400",
-		bgColor: "bg-red-500/20",
+		color: "text-red-600",
+		bgColor: "bg-red-50",
 		icon: Crown,
 	},
 	collaborative: {
 		name: "Collaborative",
-		color: "text-purple-400",
-		bgColor: "bg-purple-500/20",
+		color: "text-purple-600",
+		bgColor: "bg-purple-50",
 		icon: Users,
 	},
 };
@@ -68,16 +68,16 @@ export default async function ConversationDetailPage({
 				<Link href="/admin/conversations">
 					<Button
 						variant="ghost"
-						className="mb-4 text-zinc-400 hover:text-white -ml-2"
+						className="mb-4 text-neutral-500 hover:text-neutral-900 -ml-2"
 					>
 						<ArrowLeft className="h-4 w-4 mr-2" />
 						Back to Conversations
 					</Button>
 				</Link>
-				<h1 className="text-2xl font-bold text-white">
+				<h1 className="text-2xl font-bold text-neutral-900">
 					{chat.title || "Untitled Conversation"}
 				</h1>
-				<div className="mt-2 flex items-center gap-4 text-sm text-zinc-400">
+				<div className="mt-2 flex items-center gap-4 text-sm text-neutral-500">
 					<span>User: {chat.userEmail}</span>
 					<span>|</span>
 					<span>
@@ -104,15 +104,15 @@ export default async function ConversationDetailPage({
 			</div>
 
 			{/* Messages */}
-			<div className="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
-				<div className="border-b border-zinc-800 px-6 py-4 bg-zinc-800/50">
-					<h2 className="text-lg font-semibold text-white">
+			<div className="rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
+				<div className="border-b border-neutral-200 px-6 py-4 bg-neutral-50">
+					<h2 className="text-lg font-semibold text-neutral-900">
 						Messages ({messages.length})
 					</h2>
 				</div>
-				<div className="divide-y divide-zinc-800 max-h-[600px] overflow-y-auto">
+				<div className="divide-y divide-neutral-100 max-h-[600px] overflow-y-auto">
 					{messages.length === 0 ? (
-						<div className="p-6 text-center text-zinc-500">
+						<div className="p-6 text-center text-neutral-500">
 							No messages in this conversation
 						</div>
 					) : (
@@ -120,8 +120,8 @@ export default async function ConversationDetailPage({
 							const isUser = message.role === "user";
 							const exec = executiveConfig[message.botType || ""] || {
 								name: "Assistant",
-								color: "text-zinc-400",
-								bgColor: "bg-zinc-500/20",
+								color: "text-neutral-500",
+								bgColor: "bg-neutral-100",
 								icon: Sparkles,
 							};
 							const Icon = isUser ? User : exec.icon;
@@ -132,20 +132,20 @@ export default async function ConversationDetailPage({
 									key={message.id}
 									className={cn(
 										"px-6 py-4",
-										isUser ? "bg-zinc-900/50" : "bg-zinc-800/20",
+										isUser ? "bg-white" : "bg-neutral-50/50",
 									)}
 								>
 									<div className="flex items-start gap-4">
 										<div
 											className={cn(
 												"flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-												isUser ? "bg-zinc-700" : exec.bgColor,
+												isUser ? "bg-neutral-200" : exec.bgColor,
 											)}
 										>
 											<Icon
 												className={cn(
 													"h-4 w-4",
-													isUser ? "text-zinc-300" : exec.color,
+													isUser ? "text-neutral-600" : exec.color,
 												)}
 											/>
 										</div>
@@ -154,20 +154,20 @@ export default async function ConversationDetailPage({
 												<span
 													className={cn(
 														"text-sm font-medium",
-														isUser ? "text-zinc-300" : exec.color,
+														isUser ? "text-neutral-700" : exec.color,
 													)}
 												>
 													{isUser ? "User" : exec.name}
 												</span>
-												<span className="text-xs text-zinc-500">
+												<span className="text-xs text-neutral-400">
 													{formatDistanceToNow(new Date(message.createdAt), {
 														addSuffix: true,
 													})}
 												</span>
 											</div>
-											<div className="text-sm text-zinc-300 whitespace-pre-wrap break-words">
+											<div className="text-sm text-neutral-700 whitespace-pre-wrap break-words">
 												{text || (
-													<span className="text-zinc-500 italic">
+													<span className="text-neutral-400 italic">
 														[No text content]
 													</span>
 												)}

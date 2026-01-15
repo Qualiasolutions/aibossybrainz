@@ -9,8 +9,8 @@ export default async function ConversationsPage() {
 	return (
 		<div className="p-8">
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-white">Conversations</h1>
-				<p className="text-zinc-400 mt-1">
+				<h1 className="text-3xl font-bold text-neutral-900">Conversations</h1>
+				<p className="text-neutral-500 mt-1">
 					View all user conversations with the AI executives. {conversations.length} conversations.
 				</p>
 			</div>

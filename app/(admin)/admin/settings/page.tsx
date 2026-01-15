@@ -9,53 +9,53 @@ export default async function SettingsPage() {
 	return (
 		<div className="p-8">
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-white">Settings</h1>
-				<p className="text-zinc-400 mt-1">
+				<h1 className="text-3xl font-bold text-neutral-900">Settings</h1>
+				<p className="text-neutral-500 mt-1">
 					Manage platform configuration and preferences.
 				</p>
 			</div>
 
 			<div className="grid gap-6 md:grid-cols-2">
 				{/* Platform Settings */}
-				<Card className="bg-zinc-900/50 border-zinc-800">
+				<Card className="border-neutral-200 bg-white shadow-sm">
 					<CardHeader>
 						<div className="flex items-center gap-3">
-							<div className="rounded-lg bg-rose-500/20 p-2">
-								<Settings className="h-5 w-5 text-rose-400" />
+							<div className="rounded-lg bg-rose-50 p-2">
+								<Settings className="h-5 w-5 text-rose-500" />
 							</div>
 							<div>
-								<CardTitle className="text-white">Platform Settings</CardTitle>
-								<CardDescription className="text-zinc-400">
+								<CardTitle className="text-neutral-900">Platform Settings</CardTitle>
+								<CardDescription className="text-neutral-500">
 									General platform configuration
 								</CardDescription>
 							</div>
 						</div>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<div className="flex items-center justify-between py-2 border-b border-zinc-800">
+						<div className="flex items-center justify-between py-2 border-b border-neutral-100">
 							<div>
-								<p className="text-sm font-medium text-zinc-200">Maintenance Mode</p>
-								<p className="text-xs text-zinc-500">Temporarily disable access</p>
+								<p className="text-sm font-medium text-neutral-700">Maintenance Mode</p>
+								<p className="text-xs text-neutral-500">Temporarily disable access</p>
 							</div>
-							<div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium">
+							<div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-medium">
 								Off
 							</div>
 						</div>
-						<div className="flex items-center justify-between py-2 border-b border-zinc-800">
+						<div className="flex items-center justify-between py-2 border-b border-neutral-100">
 							<div>
-								<p className="text-sm font-medium text-zinc-200">Rate Limiting</p>
-								<p className="text-xs text-zinc-500">Message limits per user</p>
+								<p className="text-sm font-medium text-neutral-700">Rate Limiting</p>
+								<p className="text-xs text-neutral-500">Message limits per user</p>
 							</div>
-							<div className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-medium">
+							<div className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium">
 								Enabled
 							</div>
 						</div>
 						<div className="flex items-center justify-between py-2">
 							<div>
-								<p className="text-sm font-medium text-zinc-200">New Registrations</p>
-								<p className="text-xs text-zinc-500">Allow new user signups</p>
+								<p className="text-sm font-medium text-neutral-700">New Registrations</p>
+								<p className="text-xs text-neutral-500">Allow new user signups</p>
 							</div>
-							<div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium">
+							<div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-medium">
 								Open
 							</div>
 						</div>
@@ -63,43 +63,43 @@ export default async function SettingsPage() {
 				</Card>
 
 				{/* Security */}
-				<Card className="bg-zinc-900/50 border-zinc-800">
+				<Card className="border-neutral-200 bg-white shadow-sm">
 					<CardHeader>
 						<div className="flex items-center gap-3">
-							<div className="rounded-lg bg-purple-500/20 p-2">
-								<Shield className="h-5 w-5 text-purple-400" />
+							<div className="rounded-lg bg-purple-50 p-2">
+								<Shield className="h-5 w-5 text-purple-500" />
 							</div>
 							<div>
-								<CardTitle className="text-white">Security</CardTitle>
-								<CardDescription className="text-zinc-400">
+								<CardTitle className="text-neutral-900">Security</CardTitle>
+								<CardDescription className="text-neutral-500">
 									Access and authentication settings
 								</CardDescription>
 							</div>
 						</div>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<div className="flex items-center justify-between py-2 border-b border-zinc-800">
+						<div className="flex items-center justify-between py-2 border-b border-neutral-100">
 							<div>
-								<p className="text-sm font-medium text-zinc-200">Two-Factor Auth</p>
-								<p className="text-xs text-zinc-500">Require 2FA for admins</p>
+								<p className="text-sm font-medium text-neutral-700">Two-Factor Auth</p>
+								<p className="text-xs text-neutral-500">Require 2FA for admins</p>
 							</div>
-							<div className="px-3 py-1 rounded-full bg-zinc-500/20 text-zinc-400 text-xs font-medium">
+							<div className="px-3 py-1 rounded-full bg-neutral-100 text-neutral-500 text-xs font-medium">
 								Optional
 							</div>
 						</div>
-						<div className="flex items-center justify-between py-2 border-b border-zinc-800">
+						<div className="flex items-center justify-between py-2 border-b border-neutral-100">
 							<div>
-								<p className="text-sm font-medium text-zinc-200">Session Timeout</p>
-								<p className="text-xs text-zinc-500">Auto-logout after inactivity</p>
+								<p className="text-sm font-medium text-neutral-700">Session Timeout</p>
+								<p className="text-xs text-neutral-500">Auto-logout after inactivity</p>
 							</div>
-							<span className="text-sm text-zinc-300">24 hours</span>
+							<span className="text-sm text-neutral-700">24 hours</span>
 						</div>
 						<div className="flex items-center justify-between py-2">
 							<div>
-								<p className="text-sm font-medium text-zinc-200">API Keys</p>
-								<p className="text-xs text-zinc-500">Manage external integrations</p>
+								<p className="text-sm font-medium text-neutral-700">API Keys</p>
+								<p className="text-xs text-neutral-500">Manage external integrations</p>
 							</div>
-							<Button variant="outline" size="sm" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+							<Button variant="outline" size="sm">
 								Manage
 							</Button>
 						</div>
@@ -107,45 +107,45 @@ export default async function SettingsPage() {
 				</Card>
 
 				{/* Database */}
-				<Card className="bg-zinc-900/50 border-zinc-800">
+				<Card className="border-neutral-200 bg-white shadow-sm">
 					<CardHeader>
 						<div className="flex items-center gap-3">
-							<div className="rounded-lg bg-emerald-500/20 p-2">
-								<Database className="h-5 w-5 text-emerald-400" />
+							<div className="rounded-lg bg-emerald-50 p-2">
+								<Database className="h-5 w-5 text-emerald-500" />
 							</div>
 							<div>
-								<CardTitle className="text-white">Database</CardTitle>
-								<CardDescription className="text-zinc-400">
+								<CardTitle className="text-neutral-900">Database</CardTitle>
+								<CardDescription className="text-neutral-500">
 									Supabase database information
 								</CardDescription>
 							</div>
 						</div>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<div className="flex items-center justify-between py-2 border-b border-zinc-800">
+						<div className="flex items-center justify-between py-2 border-b border-neutral-100">
 							<div>
-								<p className="text-sm font-medium text-zinc-200">Project</p>
-								<p className="text-xs text-zinc-500">Supabase project ID</p>
+								<p className="text-sm font-medium text-neutral-700">Project</p>
+								<p className="text-xs text-neutral-500">Supabase project ID</p>
 							</div>
-							<span className="text-sm text-zinc-400 font-mono">esymbjpzjjkffpfqukxw</span>
+							<span className="text-sm text-neutral-500 font-mono">esymbjpzjjkffpfqukxw</span>
 						</div>
-						<div className="flex items-center justify-between py-2 border-b border-zinc-800">
+						<div className="flex items-center justify-between py-2 border-b border-neutral-100">
 							<div>
-								<p className="text-sm font-medium text-zinc-200">Region</p>
-								<p className="text-xs text-zinc-500">Database location</p>
+								<p className="text-sm font-medium text-neutral-700">Region</p>
+								<p className="text-xs text-neutral-500">Database location</p>
 							</div>
-							<span className="text-sm text-zinc-300">US East</span>
+							<span className="text-sm text-neutral-700">US East</span>
 						</div>
 						<div className="flex items-center justify-between py-2">
 							<div>
-								<p className="text-sm font-medium text-zinc-200">Dashboard</p>
-								<p className="text-xs text-zinc-500">Open Supabase dashboard</p>
+								<p className="text-sm font-medium text-neutral-700">Dashboard</p>
+								<p className="text-xs text-neutral-500">Open Supabase dashboard</p>
 							</div>
 							<Link
 								href="https://supabase.com/dashboard/project/esymbjpzjjkffpfqukxw"
 								target="_blank"
 							>
-								<Button variant="outline" size="sm" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+								<Button variant="outline" size="sm">
 									Open
 								</Button>
 							</Link>
@@ -154,45 +154,45 @@ export default async function SettingsPage() {
 				</Card>
 
 				{/* Branding */}
-				<Card className="bg-zinc-900/50 border-zinc-800">
+				<Card className="border-neutral-200 bg-white shadow-sm">
 					<CardHeader>
 						<div className="flex items-center gap-3">
-							<div className="rounded-lg bg-blue-500/20 p-2">
-								<Palette className="h-5 w-5 text-blue-400" />
+							<div className="rounded-lg bg-blue-50 p-2">
+								<Palette className="h-5 w-5 text-blue-500" />
 							</div>
 							<div>
-								<CardTitle className="text-white">Executive Personas</CardTitle>
-								<CardDescription className="text-zinc-400">
+								<CardTitle className="text-neutral-900">Executive Personas</CardTitle>
+								<CardDescription className="text-neutral-500">
 									AI executive configuration
 								</CardDescription>
 							</div>
 						</div>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<div className="flex items-center justify-between py-2 border-b border-zinc-800">
+						<div className="flex items-center justify-between py-2 border-b border-neutral-100">
 							<div className="flex items-center gap-2">
 								<div className="w-3 h-3 rounded-full bg-gradient-to-r from-rose-500 to-pink-600" />
-								<p className="text-sm font-medium text-zinc-200">Alexandria (CMO)</p>
+								<p className="text-sm font-medium text-neutral-700">Alexandria (CMO)</p>
 							</div>
-							<div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium">
+							<div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-medium">
 								Active
 							</div>
 						</div>
-						<div className="flex items-center justify-between py-2 border-b border-zinc-800">
+						<div className="flex items-center justify-between py-2 border-b border-neutral-100">
 							<div className="flex items-center gap-2">
 								<div className="w-3 h-3 rounded-full bg-gradient-to-r from-red-500 to-orange-600" />
-								<p className="text-sm font-medium text-zinc-200">Kim (CSO)</p>
+								<p className="text-sm font-medium text-neutral-700">Kim (CSO)</p>
 							</div>
-							<div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium">
+							<div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-medium">
 								Active
 							</div>
 						</div>
 						<div className="flex items-center justify-between py-2">
 							<div className="flex items-center gap-2">
 								<div className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600" />
-								<p className="text-sm font-medium text-zinc-200">Collaborative</p>
+								<p className="text-sm font-medium text-neutral-700">Collaborative</p>
 							</div>
-							<div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium">
+							<div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-medium">
 								Active
 							</div>
 						</div>
@@ -201,26 +201,26 @@ export default async function SettingsPage() {
 			</div>
 
 			{/* Quick Actions */}
-			<div className="mt-8 p-6 rounded-xl border border-zinc-800 bg-zinc-900/50">
-				<h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
+			<div className="mt-8 p-6 rounded-xl border border-neutral-200 bg-white shadow-sm">
+				<h2 className="text-lg font-semibold text-neutral-900 mb-4">Quick Actions</h2>
 				<div className="flex flex-wrap gap-3">
 					<Link href="/admin/users">
-						<Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+						<Button variant="outline">
 							Manage Users
 						</Button>
 					</Link>
 					<Link href="/admin/conversations">
-						<Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+						<Button variant="outline">
 							View Conversations
 						</Button>
 					</Link>
 					<Link href="/admin/analytics">
-						<Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+						<Button variant="outline">
 							View Analytics
 						</Button>
 					</Link>
 					<Link href="/">
-						<Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+						<Button variant="outline">
 							Back to App
 						</Button>
 					</Link>
