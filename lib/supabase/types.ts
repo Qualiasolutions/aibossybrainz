@@ -6,6 +6,10 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+// Subscription types
+export type SubscriptionType = "trial" | "monthly" | "biannual"
+export type SubscriptionStatus = "active" | "expired" | "cancelled"
+
 export type Database = {
   public: {
     Tables: {
@@ -386,6 +390,10 @@ export type Database = {
           profileUpdatedAt: string | null
           deletedAt: string | null
           isAdmin: boolean | null
+          subscriptionType: "trial" | "monthly" | "biannual" | null
+          subscriptionStartDate: string | null
+          subscriptionEndDate: string | null
+          subscriptionStatus: "active" | "expired" | "cancelled" | null
         }
         Insert: {
           email: string
@@ -402,6 +410,10 @@ export type Database = {
           profileUpdatedAt?: string | null
           deletedAt?: string | null
           isAdmin?: boolean | null
+          subscriptionType?: "trial" | "monthly" | "biannual" | null
+          subscriptionStartDate?: string | null
+          subscriptionEndDate?: string | null
+          subscriptionStatus?: "active" | "expired" | "cancelled" | null
         }
         Update: {
           email?: string
@@ -418,6 +430,10 @@ export type Database = {
           profileUpdatedAt?: string | null
           deletedAt?: string | null
           isAdmin?: boolean | null
+          subscriptionType?: "trial" | "monthly" | "biannual" | null
+          subscriptionStartDate?: string | null
+          subscriptionEndDate?: string | null
+          subscriptionStatus?: "active" | "expired" | "cancelled" | null
         }
         Relationships: []
       }

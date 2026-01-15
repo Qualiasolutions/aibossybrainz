@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
-import { getAllUsers, createUserByAdmin, updateUserByAdmin, deleteUserByAdmin } from "@/lib/admin/queries";
+import { getAllUsers, createUserByAdmin, updateUserByAdmin, deleteUserByAdmin, updateUserSubscription } from "@/lib/admin/queries";
 import { UsersTable } from "@/components/admin/users-table";
+import type { SubscriptionType } from "@/lib/supabase/types";
 
 export const dynamic = "force-dynamic";
 
@@ -20,9 +21,16 @@ async function createUser(data: {
 	email: string;
 	displayName?: string;
 	companyName?: string;
+	subscriptionType?: SubscriptionType;
 }) {
 	"use server";
 	await createUserByAdmin(data);
+	revalidatePath("/admin/users");
+}
+
+async function changeSubscription(userId: string, subscriptionType: SubscriptionType) {
+	"use server";
+	await updateUserSubscription(userId, subscriptionType);
 	revalidatePath("/admin/users");
 }
 
@@ -43,6 +51,7 @@ export default async function UsersPage() {
 				onDeleteUser={deleteUser}
 				onToggleAdmin={toggleAdmin}
 				onCreateUser={createUser}
+				onChangeSubscription={changeSubscription}
 			/>
 		</div>
 	);

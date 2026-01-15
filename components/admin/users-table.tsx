@@ -9,8 +9,12 @@ import {
 	Eye,
 	Search,
 	UserPlus,
+	Clock,
+	Calendar,
+	CreditCard,
 } from "lucide-react";
 import type { AdminUser } from "@/lib/admin/queries";
+import type { SubscriptionType } from "@/lib/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,6 +33,13 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 interface UsersTableProps {
 	users: AdminUser[];
@@ -38,7 +49,36 @@ interface UsersTableProps {
 		email: string;
 		displayName?: string;
 		companyName?: string;
+		subscriptionType?: SubscriptionType;
 	}) => Promise<void>;
+	onChangeSubscription: (userId: string, subscriptionType: SubscriptionType) => Promise<void>;
+}
+
+// Helper to format subscription display
+function formatSubscriptionType(type: SubscriptionType | null | undefined): string {
+	switch (type) {
+		case "trial": return "Trial (7 days)";
+		case "monthly": return "Monthly";
+		case "biannual": return "6 Months";
+		default: return "None";
+	}
+}
+
+function formatDate(dateString: string | null | undefined): string {
+	if (!dateString) return "N/A";
+	return new Date(dateString).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	});
+}
+
+function getDaysRemaining(endDate: string | null | undefined): number | null {
+	if (!endDate) return null;
+	const end = new Date(endDate);
+	const now = new Date();
+	const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+	return diff;
 }
 
 export function UsersTable({
@@ -46,15 +86,19 @@ export function UsersTable({
 	onDeleteUser,
 	onToggleAdmin,
 	onCreateUser,
+	onChangeSubscription,
 }: UsersTableProps) {
 	const [search, setSearch] = useState("");
 	const [isPending, startTransition] = useTransition();
 	const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
 	const [showCreateDialog, setShowCreateDialog] = useState(false);
+	const [subscriptionUserId, setSubscriptionUserId] = useState<string | null>(null);
+	const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionType>("trial");
 	const [newUser, setNewUser] = useState({
 		email: "",
 		displayName: "",
 		companyName: "",
+		subscriptionType: "trial" as SubscriptionType,
 	});
 
 	const filteredUsers = users.filter(
@@ -83,7 +127,15 @@ export function UsersTable({
 		startTransition(async () => {
 			await onCreateUser(newUser);
 			setShowCreateDialog(false);
-			setNewUser({ email: "", displayName: "", companyName: "" });
+			setNewUser({ email: "", displayName: "", companyName: "", subscriptionType: "trial" });
+		});
+	};
+
+	const handleChangeSubscription = () => {
+		if (!subscriptionUserId) return;
+		startTransition(async () => {
+			await onChangeSubscription(subscriptionUserId, selectedSubscription);
+			setSubscriptionUserId(null);
 		});
 	};
 
@@ -121,6 +173,9 @@ export function UsersTable({
 								Company
 							</th>
 							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+								Subscription
+							</th>
+							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
 								Activity
 							</th>
 							<th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -135,7 +190,7 @@ export function UsersTable({
 						{filteredUsers.length === 0 ? (
 							<tr>
 								<td
-									colSpan={5}
+									colSpan={6}
 									className="px-6 py-8 text-center text-neutral-500"
 								>
 									No users found
@@ -162,6 +217,42 @@ export function UsersTable({
 										<p className="text-xs text-neutral-500">
 											{user.industry || "No industry"}
 										</p>
+									</td>
+									<td className="px-6 py-4">
+										{(() => {
+											const daysLeft = getDaysRemaining(user.subscriptionEndDate);
+											const isExpired = user.subscriptionStatus === "expired" || (daysLeft !== null && daysLeft <= 0);
+											return (
+												<div className="space-y-1">
+													<div className="flex items-center gap-1">
+														<span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full ${
+															user.subscriptionType === "trial"
+																? "bg-amber-50 text-amber-700"
+																: user.subscriptionType === "monthly"
+																	? "bg-blue-50 text-blue-700"
+																	: user.subscriptionType === "biannual"
+																		? "bg-purple-50 text-purple-700"
+																		: "bg-neutral-100 text-neutral-500"
+														}`}>
+															{user.subscriptionType === "trial" && <Clock className="h-3 w-3" />}
+															{(user.subscriptionType === "monthly" || user.subscriptionType === "biannual") && <CreditCard className="h-3 w-3" />}
+															{formatSubscriptionType(user.subscriptionType)}
+														</span>
+													</div>
+													{isExpired ? (
+														<p className="text-xs text-rose-600 font-medium">Expired</p>
+													) : daysLeft !== null ? (
+														<p className="text-xs text-neutral-500 flex items-center gap-1">
+															<Calendar className="h-3 w-3" />
+															{daysLeft} days left
+														</p>
+													) : null}
+													<p className="text-xs text-neutral-400">
+														{formatDate(user.subscriptionEndDate)}
+													</p>
+												</div>
+											);
+										})()}
 									</td>
 									<td className="px-6 py-4">
 										<div className="space-y-1">
@@ -230,6 +321,17 @@ export function UsersTable({
 															Make Admin
 														</>
 													)}
+												</DropdownMenuItem>
+												<DropdownMenuSeparator />
+												<DropdownMenuItem
+													onClick={() => {
+														setSubscriptionUserId(user.id);
+														setSelectedSubscription(user.subscriptionType || "trial");
+													}}
+													className="cursor-pointer"
+												>
+													<CreditCard className="h-4 w-4 mr-2" />
+													Change Subscription
 												</DropdownMenuItem>
 												<DropdownMenuSeparator />
 												<DropdownMenuItem
@@ -330,6 +432,26 @@ export function UsersTable({
 								}
 							/>
 						</div>
+						<div className="space-y-2">
+							<Label htmlFor="subscriptionType">
+								Subscription Type
+							</Label>
+							<Select
+								value={newUser.subscriptionType}
+								onValueChange={(value: SubscriptionType) =>
+									setNewUser({ ...newUser, subscriptionType: value })
+								}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder="Select subscription type" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="trial">Trial (7 days)</SelectItem>
+									<SelectItem value="monthly">Monthly (1 month)</SelectItem>
+									<SelectItem value="biannual">6 Months</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
 					</div>
 					<DialogFooter>
 						<Button
@@ -344,6 +466,62 @@ export function UsersTable({
 							className="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700"
 						>
 							{isPending ? "Creating..." : "Create User"}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			{/* Change Subscription Dialog */}
+			<Dialog
+				open={!!subscriptionUserId}
+				onOpenChange={() => setSubscriptionUserId(null)}
+			>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Change Subscription</DialogTitle>
+						<DialogDescription>
+							Select a new subscription type. The subscription period will reset from today.
+						</DialogDescription>
+					</DialogHeader>
+					<div className="space-y-4 py-4">
+						<div className="space-y-2">
+							<Label>Subscription Type</Label>
+							<Select
+								value={selectedSubscription}
+								onValueChange={(value: SubscriptionType) => setSelectedSubscription(value)}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder="Select subscription type" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="trial">Trial (7 days)</SelectItem>
+									<SelectItem value="monthly">Monthly (1 month)</SelectItem>
+									<SelectItem value="biannual">6 Months</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+						<div className="text-sm text-neutral-500 bg-neutral-50 p-3 rounded-lg">
+							<p className="font-medium mb-1">What happens:</p>
+							<ul className="list-disc list-inside space-y-1">
+								<li>Subscription starts from today</li>
+								<li>Previous subscription period is replaced</li>
+								<li>User will have immediate access</li>
+							</ul>
+						</div>
+					</div>
+					<DialogFooter>
+						<Button
+							variant="ghost"
+							onClick={() => setSubscriptionUserId(null)}
+						>
+							Cancel
+						</Button>
+						<Button
+							onClick={handleChangeSubscription}
+							disabled={isPending}
+							className="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700"
+						>
+							{isPending ? "Updating..." : "Update Subscription"}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

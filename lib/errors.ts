@@ -4,7 +4,8 @@ export type ErrorType =
 	| "forbidden"
 	| "not_found"
 	| "rate_limit"
-	| "offline";
+	| "offline"
+	| "subscription_expired";
 
 export type Surface =
 	| "chat"
@@ -107,6 +108,11 @@ export function getMessageByErrorCode(errorCode: ErrorCode): string {
 		case "bad_request:document":
 			return "The request to create or update the document was invalid. Please check your input and try again.";
 
+		case "subscription_expired:chat":
+			return "Your subscription has expired. Please contact an administrator to renew your access.";
+		case "subscription_expired:auth":
+			return "Your subscription has expired. Please contact an administrator to renew your access.";
+
 		default:
 			return "Something went wrong. Please try again later.";
 	}
@@ -124,6 +130,8 @@ function getStatusCodeByType(type: ErrorType) {
 			return 404;
 		case "rate_limit":
 			return 429;
+		case "subscription_expired":
+			return 402; // Payment Required
 		case "offline":
 			return 503;
 		default:

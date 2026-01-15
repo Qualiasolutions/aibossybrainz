@@ -33,6 +33,7 @@ import { classifyTopic } from "@/lib/ai/topic-classifier";
 import { generateConversationSummary } from "@/lib/ai/conversation-summarizer";
 import { isProductionEnvironment } from "@/lib/constants";
 import {
+	checkUserSubscription,
 	createStreamId,
 	deleteChatById,
 	ensureUserExists,
@@ -166,6 +167,12 @@ export async function POST(request: Request) {
 			id: user.id,
 			email: user.email || "",
 		});
+
+		// Check subscription status
+		const subscriptionStatus = await checkUserSubscription(user.id);
+		if (!subscriptionStatus.isActive) {
+			return new ChatSDKError("subscription_expired:chat").toResponse();
+		}
 
 		const userType: UserType = "regular"; // Default to regular for now until user type is in metadata/db
 		const maxMessages = entitlementsByUserType[userType].maxMessagesPerDay;

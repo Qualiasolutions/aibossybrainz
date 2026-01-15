@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createServiceClient } from "../supabase/server";
-import type { User, Chat, DBMessage } from "../supabase/types";
+import type { User, Chat, DBMessage, SubscriptionType, SubscriptionStatus } from "../supabase/types";
 
 // ============================================
 // ADMIN USER QUERIES (uses service role - bypasses RLS)
@@ -132,20 +132,42 @@ export async function getUserById(userId: string): Promise<AdminUser | null> {
 	};
 }
 
+// Helper to calculate subscription end date
+function calculateSubscriptionEndDate(startDate: Date, subscriptionType: SubscriptionType): Date {
+	const endDate = new Date(startDate);
+	switch (subscriptionType) {
+		case "trial":
+			endDate.setDate(endDate.getDate() + 7);
+			break;
+		case "monthly":
+			endDate.setMonth(endDate.getMonth() + 1);
+			break;
+		case "biannual":
+			endDate.setMonth(endDate.getMonth() + 6);
+			break;
+	}
+	return endDate;
+}
+
 export async function createUserByAdmin({
 	email,
 	displayName,
 	companyName,
 	industry,
 	isAdmin = false,
+	subscriptionType = "trial",
 }: {
 	email: string;
 	displayName?: string;
 	companyName?: string;
 	industry?: string;
 	isAdmin?: boolean;
+	subscriptionType?: SubscriptionType;
 }) {
 	const supabase = createServiceClient();
+
+	const startDate = new Date();
+	const endDate = calculateSubscriptionEndDate(startDate, subscriptionType);
 
 	const { data, error } = await supabase
 		.from("User")
@@ -155,6 +177,10 @@ export async function createUserByAdmin({
 			companyName,
 			industry,
 			isAdmin,
+			subscriptionType,
+			subscriptionStartDate: startDate.toISOString(),
+			subscriptionEndDate: endDate.toISOString(),
+			subscriptionStatus: "active" as SubscriptionStatus,
 		})
 		.select()
 		.single();
@@ -171,6 +197,8 @@ export async function updateUserByAdmin(
 		industry?: string;
 		userType?: string;
 		isAdmin?: boolean;
+		subscriptionType?: SubscriptionType;
+		subscriptionStatus?: SubscriptionStatus;
 	},
 ) {
 	const supabase = createServiceClient();
@@ -187,6 +215,70 @@ export async function updateUserByAdmin(
 
 	if (error) throw error;
 	return data;
+}
+
+// Update user subscription (change type and reset dates)
+export async function updateUserSubscription(
+	userId: string,
+	subscriptionType: SubscriptionType,
+) {
+	const supabase = createServiceClient();
+
+	const startDate = new Date();
+	const endDate = calculateSubscriptionEndDate(startDate, subscriptionType);
+
+	const { data, error } = await supabase
+		.from("User")
+		.update({
+			subscriptionType,
+			subscriptionStartDate: startDate.toISOString(),
+			subscriptionEndDate: endDate.toISOString(),
+			subscriptionStatus: "active" as SubscriptionStatus,
+			profileUpdatedAt: new Date().toISOString(),
+		})
+		.eq("id", userId)
+		.select()
+		.single();
+
+	if (error) throw error;
+	return data;
+}
+
+// Expire all subscriptions that have passed their end date
+export async function expireSubscriptions() {
+	const supabase = createServiceClient();
+
+	const { data, error } = await supabase
+		.from("User")
+		.update({
+			subscriptionStatus: "expired" as SubscriptionStatus,
+		})
+		.lt("subscriptionEndDate", new Date().toISOString())
+		.eq("subscriptionStatus", "active")
+		.is("deletedAt", null)
+		.select();
+
+	if (error) throw error;
+	return data;
+}
+
+// Check if a user's subscription is active
+export async function isSubscriptionActive(userId: string): Promise<boolean> {
+	const supabase = createServiceClient();
+
+	const { data, error } = await supabase
+		.from("User")
+		.select("subscriptionStatus, subscriptionEndDate")
+		.eq("id", userId)
+		.single();
+
+	if (error || !data) return false;
+
+	// Check if status is active and end date hasn't passed
+	if (data.subscriptionStatus !== "active") return false;
+	if (data.subscriptionEndDate && new Date(data.subscriptionEndDate) < new Date()) return false;
+
+	return true;
 }
 
 export async function deleteUserByAdmin(userId: string) {

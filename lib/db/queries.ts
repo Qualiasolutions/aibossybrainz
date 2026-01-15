@@ -129,6 +129,67 @@ export async function ensureUserExists({
 	}
 }
 
+/**
+ * Checks if a user's subscription is active.
+ * Returns subscription status info for access control.
+ */
+export async function checkUserSubscription(userId: string): Promise<{
+	isActive: boolean;
+	subscriptionType: string | null;
+	daysRemaining: number | null;
+	isAdmin: boolean;
+}> {
+	try {
+		const supabase = createServiceClient();
+
+		const { data: user, error } = await supabase
+			.from("User")
+			.select("subscriptionStatus, subscriptionType, subscriptionEndDate, isAdmin")
+			.eq("id", userId)
+			.single();
+
+		if (error || !user) {
+			console.error("[checkUserSubscription] Error:", error);
+			return { isActive: false, subscriptionType: null, daysRemaining: null, isAdmin: false };
+		}
+
+		// Admins always have access
+		if (user.isAdmin) {
+			return { isActive: true, subscriptionType: user.subscriptionType, daysRemaining: null, isAdmin: true };
+		}
+
+		// Check if subscription is active
+		if (user.subscriptionStatus !== "active") {
+			return { isActive: false, subscriptionType: user.subscriptionType, daysRemaining: null, isAdmin: false };
+		}
+
+		// Check if subscription end date has passed
+		if (user.subscriptionEndDate) {
+			const endDate = new Date(user.subscriptionEndDate);
+			const now = new Date();
+			const daysRemaining = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+			if (daysRemaining <= 0) {
+				// Update status to expired
+				await supabase
+					.from("User")
+					.update({ subscriptionStatus: "expired" })
+					.eq("id", userId);
+
+				return { isActive: false, subscriptionType: user.subscriptionType, daysRemaining: 0, isAdmin: false };
+			}
+
+			return { isActive: true, subscriptionType: user.subscriptionType, daysRemaining, isAdmin: false };
+		}
+
+		return { isActive: true, subscriptionType: user.subscriptionType, daysRemaining: null, isAdmin: false };
+	} catch (error) {
+		console.error("checkUserSubscription error:", error);
+		// Fail open - don't block users if subscription check fails
+		return { isActive: true, subscriptionType: null, daysRemaining: null, isAdmin: false };
+	}
+}
+
 // ============================================
 // AUDIT LOG QUERIES
 // ============================================
