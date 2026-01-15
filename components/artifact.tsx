@@ -304,7 +304,7 @@ function PureArtifact({
 									damping: 30,
 								},
 							}}
-							className="relative h-dvh w-[400px] shrink-0 bg-muted dark:bg-background"
+							className="relative h-dvh w-[55%] min-w-[400px] max-w-[700px] shrink-0 bg-muted dark:bg-background"
 							exit={{
 								opacity: 0,
 								x: 0,
@@ -317,7 +317,7 @@ function PureArtifact({
 								{!isCurrentVersion && (
 									<motion.div
 										animate={{ opacity: 1 }}
-										className="absolute top-0 left-0 z-50 h-dvh w-[400px] bg-zinc-900/50"
+										className="absolute top-0 left-0 z-50 h-dvh w-full bg-zinc-900/50"
 										exit={{ opacity: 0 }}
 										initial={{ opacity: 0 }}
 									/>
@@ -378,12 +378,10 @@ function PureArtifact({
 									}
 								: {
 										opacity: 1,
-										x: 400,
+										x: "55%",
 										y: 0,
 										height: windowHeight,
-										width: windowWidth
-											? windowWidth - 400
-											: "calc(100dvw-400px)",
+										width: "45%",
 										borderRadius: 0,
 										transition: {
 											delay: 0,
@@ -394,7 +392,7 @@ function PureArtifact({
 										},
 									}
 						}
-						className="fixed flex h-dvh flex-col overflow-y-scroll border border-border/70 bg-background/95 shadow-2xl shadow-primary/10 backdrop-blur-xl dark:bg-background/95 dark:border-border/50 md:border-l"
+						className="fixed flex h-dvh flex-col overflow-y-scroll border border-border/70 bg-background/95 shadow-2xl shadow-primary/10 backdrop-blur-xl dark:bg-background/95 dark:border-border/50 md:border-l md:min-w-[400px] md:max-w-[55%]"
 						exit={{
 							opacity: 0,
 							scale: 0.5,
