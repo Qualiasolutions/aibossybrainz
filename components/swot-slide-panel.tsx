@@ -15,15 +15,16 @@ export function SwotSlidePanel({ isOpen, onClose }: SwotSlidePanelProps) {
 		<AnimatePresence>
 			{isOpen && (
 				<motion.div
-					initial={{ width: 0, opacity: 0 }}
-					animate={{ width: "auto", opacity: 1 }}
-					exit={{ width: 0, opacity: 0 }}
+					initial={{ width: 0 }}
+					animate={{ width: 380 }}
+					exit={{ width: 0 }}
 					transition={{
 						type: "spring",
 						stiffness: 400,
 						damping: 40,
 					}}
-					className="h-full w-[320px] flex-shrink-0 overflow-hidden border-l border-border bg-background sm:w-[340px] md:w-[380px] lg:w-[400px]"
+					style={{ width: 380 }}
+					className="h-full flex-shrink-0 overflow-hidden border-l border-border bg-background"
 				>
 					{/* Header */}
 					<div className="flex items-center justify-between border-b border-border px-4 py-3">
