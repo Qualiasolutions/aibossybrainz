@@ -85,7 +85,7 @@ function HeroSection() {
                   size="lg"
                   className="group gap-2 bg-gradient-to-r from-red-500 to-red-600 px-8 text-base shadow-2xl shadow-red-500/25 transition-all hover:from-red-600 hover:to-red-700 hover:shadow-red-500/40"
                 >
-                  Start Free Trial
+                  Sign In
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -152,37 +152,58 @@ function formatBoldText(text: string) {
   });
 }
 
-// Compact Chat Demo Component
+// Realistic Chat Demo Component - Matches actual app interface
 function ChatDemo() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
+  const [selectedExec, setSelectedExec] = useState<"alexandria" | "kim" | "collaborative">("collaborative");
 
   const conversation = [
     {
       role: "user",
-      content: "I need a go-to-market strategy for our SaaS launch.",
+      content: "I need a go-to-market strategy for our SaaS launch next quarter.",
     },
     {
       role: "assistant",
       bot: "alexandria",
+      name: "Alexandria Alecci",
+      title: "Chief Marketing Officer",
       content: `Here's your GTM roadmap:
 
-**Pre-Launch** - Build waitlist, create case studies
-**Launch Week** - PR push, influencer activation
-**Post-Launch** - Nurture leads, gather social proof`,
+**Phase 1: Pre-Launch (Weeks 1-4)**
+• Build email waitlist with lead magnet
+• Create 3 customer case studies
+• Prep launch content calendar
+
+**Phase 2: Launch Week**
+• PR push to industry publications
+• Influencer activation campaign
+• Launch day email sequence
+
+**Phase 3: Post-Launch**
+• Nurture MQLs with drip campaign
+• Gather social proof and testimonials`,
     },
     {
       role: "user",
-      content: "What's the sales approach for first customers?",
+      content: "What's the best sales approach for landing our first 10 customers?",
     },
     {
       role: "assistant",
       bot: "kim",
-      content: `Focus on design partners first:
+      name: "Kim Mylls",
+      title: "Chief Sales Officer",
+      content: `Smart move focusing on early wins. Here's my playbook:
 
-1. **Offer 3-5 companies** discounted access
-2. **Qualify with BANT** - Budget, Authority, Need
-3. **Lead demos with value**, not features`,
+**Design Partner Strategy:**
+1. Target 3-5 companies for discounted beta access
+2. Qualify with BANT framework
+3. Lead demos with value, not features
+
+**Closing Framework:**
+• Create urgency with limited beta spots
+• Offer implementation support
+• Build case studies from each win`,
     },
   ];
 
@@ -198,10 +219,10 @@ function ChatDemo() {
           setTimeout(() => {
             setIsTyping(false);
             setCurrentStep((prev) => prev + 1);
-          }, 1200);
+          }, 1500);
         }
       },
-      currentStep === 0 ? 800 : 2000
+      currentStep === 0 ? 1000 : 2500
     );
 
     return () => clearTimeout(timer);
@@ -226,155 +247,215 @@ function ChatDemo() {
               alt="AI Boss Brainz"
               className="h-4 w-auto"
             />
-            <span className="text-[11px] text-stone-500">bossybrainz.ai</span>
+            <span className="text-[11px] text-stone-500">app.bossybrainz.ai</span>
           </div>
         </div>
 
         {/* Chat Interface */}
-        <div className="h-[380px] overflow-hidden bg-gradient-to-b from-stone-50/50 to-white sm:h-[400px]">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-stone-100 bg-white/80 px-4 py-2.5 backdrop-blur-sm">
-            <div className="flex items-center gap-2.5">
-              <div className="flex -space-x-1.5">
-                <div className="relative size-7 overflow-hidden rounded-full border-2 border-white bg-gradient-to-br from-rose-100 to-rose-200 shadow-sm">
-                  <img
-                    src="https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
-                    alt="Alexandria"
-                    className="size-full object-cover"
-                  />
-                </div>
-                <div className="relative size-7 overflow-hidden rounded-full border-2 border-white bg-gradient-to-br from-red-100 to-red-200 shadow-sm">
-                  <img
-                    src="https://i.ibb.co/m7vk4JF/KIM-3.png"
-                    alt="Kim"
-                    className="size-full object-cover"
-                  />
-                </div>
-              </div>
-              <div>
-                <span className="text-xs font-semibold text-stone-800">
-                  Executive Team
-                </span>
-                <div className="flex items-center gap-1">
-                  <span className="size-1.5 animate-pulse rounded-full bg-green-500" />
-                  <span className="text-[10px] text-stone-500">Online</span>
-                </div>
-              </div>
+        <div className="h-[420px] overflow-hidden bg-gradient-to-b from-stone-50/30 to-white sm:h-[440px]">
+          {/* Header - Matches actual app header */}
+          <div className="flex items-center justify-between border-b border-stone-100 bg-white/95 px-4 py-3 backdrop-blur-xl">
+            {/* Left - Menu + New Chat */}
+            <div className="flex items-center gap-2">
+              <button type="button" className="flex size-8 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-500 shadow-sm">
+                <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <button type="button" className="flex h-8 items-center gap-1.5 rounded-lg border border-stone-200 bg-white px-2.5 text-xs font-medium text-stone-600 shadow-sm">
+                <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                <span className="hidden sm:inline">New</span>
+              </button>
             </div>
-            <button
-              type="button"
-              className="rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600"
-            >
-              <Mic className="size-3.5" />
-            </button>
+
+            {/* Center - Executive Selector */}
+            <div className="flex items-center gap-1 rounded-full bg-stone-100 p-1">
+              {[
+                { id: "alexandria", img: "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png" },
+                { id: "kim", img: "https://i.ibb.co/m7vk4JF/KIM-3.png" },
+                { id: "collaborative", icon: true },
+              ].map((exec) => (
+                <button
+                  key={exec.id}
+                  type="button"
+                  onClick={() => setSelectedExec(exec.id as typeof selectedExec)}
+                  className={cn(
+                    "flex size-8 items-center justify-center rounded-full transition-all",
+                    selectedExec === exec.id
+                      ? "bg-white shadow-sm ring-1 ring-stone-200"
+                      : "hover:bg-stone-200/50"
+                  )}
+                >
+                  {exec.icon ? (
+                    <div className="flex -space-x-1">
+                      <img src="https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png" className="size-4 rounded-full border border-white" alt="" />
+                      <img src="https://i.ibb.co/m7vk4JF/KIM-3.png" className="size-4 rounded-full border border-white" alt="" />
+                    </div>
+                  ) : (
+                    <img src={exec.img} className="size-6 rounded-full" alt="" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Right - SWOT + Menu */}
+            <div className="flex items-center gap-1.5">
+              <button type="button" className="flex h-8 items-center gap-1.5 rounded-lg border border-stone-200 bg-white px-2.5 text-xs font-medium text-stone-500 shadow-sm">
+                <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <span className="hidden sm:inline">SWOT</span>
+              </button>
+              <button type="button" className="flex h-8 items-center gap-1 rounded-lg border border-stone-200 bg-white px-2 text-stone-500 shadow-sm">
+                <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                </svg>
+              </button>
+            </div>
           </div>
 
-          {/* Messages */}
-          <div className="h-[calc(100%-110px)] space-y-3 overflow-y-auto p-4">
+          {/* Messages Area - Matches actual app styling */}
+          <div className="h-[calc(100%-140px)] space-y-4 overflow-y-auto p-4">
             {visibleMessages.map((message, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className={cn(
-                  "flex",
+                  "flex w-full",
                   message.role === "user" ? "justify-end" : "justify-start"
                 )}
               >
-                {message.role === "assistant" && (
-                  <div className="mr-2 flex flex-col items-center gap-0.5">
-                    <div className="relative size-6 overflow-hidden rounded-full border border-stone-200 shadow-sm">
-                      <img
-                        src={
-                          message.bot === "alexandria"
-                            ? "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
-                            : "https://i.ibb.co/m7vk4JF/KIM-3.png"
-                        }
-                        alt={message.bot === "alexandria" ? "Alexandria" : "Kim"}
-                        className="size-full object-cover"
-                      />
+                {message.role === "assistant" ? (
+                  // Executive message - matches EnhancedChatMessage styling
+                  <div className="max-w-[90%] sm:max-w-[85%]">
+                    <div className="relative flex flex-col gap-2 rounded-2xl border border-stone-200 bg-gradient-to-br from-white to-stone-50/50 px-4 py-3 shadow-sm">
+                      {/* Accent line */}
+                      <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full bg-gradient-to-b from-rose-400 to-rose-600" />
+
+                      {/* Header */}
+                      <div className="flex items-center gap-2.5 pl-3">
+                        <div className="relative">
+                          <img
+                            src={message.bot === "alexandria"
+                              ? "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
+                              : "https://i.ibb.co/m7vk4JF/KIM-3.png"
+                            }
+                            alt=""
+                            className="size-8 rounded-full border-2 border-rose-100 shadow-sm"
+                          />
+                          <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-white bg-green-500" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-stone-800">{message.name}</div>
+                          <div className="text-[11px] text-stone-500">{message.title}</div>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="pl-3 text-xs leading-relaxed text-stone-700">
+                        {message.content.split("\n").map((line, i) => (
+                          <span key={i}>
+                            {formatBoldText(line)}
+                            {i < message.content.split("\n").length - 1 && <br />}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                    <span className="text-[9px] text-stone-400">
-                      {message.bot === "alexandria" ? "CMO" : "CSO"}
-                    </span>
+                  </div>
+                ) : (
+                  // User message
+                  <div className="max-w-[85%] rounded-2xl border border-stone-200 bg-white px-4 py-2 text-sm text-stone-800 shadow-sm sm:max-w-[70%]">
+                    {message.content}
                   </div>
                 )}
-                <div
-                  className={cn(
-                    "max-w-[85%] rounded-xl px-3 py-2 text-xs",
-                    message.role === "user"
-                      ? "bg-stone-800 text-white"
-                      : "border border-stone-200 bg-white text-stone-700 shadow-sm"
-                  )}
-                >
-                  {message.role === "assistant" ? (
-                    <div className="whitespace-pre-wrap leading-relaxed">
-                      {message.content.split("\n").map((line, i) => (
-                        <span key={i}>
-                          {formatBoldText(line)}
-                          {i < message.content.split("\n").length - 1 && <br />}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span>{message.content}</span>
-                  )}
-                </div>
               </motion.div>
             ))}
 
+            {/* Typing indicator */}
             {isTyping && (
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-start gap-2"
+                className="flex justify-start"
               >
-                <div className="size-6 overflow-hidden rounded-full border border-stone-200 shadow-sm">
-                  <img
-                    src={
-                      visibleMessages.length % 2 === 0
-                        ? "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
-                        : "https://i.ibb.co/m7vk4JF/KIM-3.png"
-                    }
-                    alt="Executive"
-                    className="size-full object-cover"
-                  />
-                </div>
-                <div className="flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-3 py-2 shadow-sm">
-                  {[0, 1, 2].map((i) => (
-                    <motion.div
-                      key={i}
-                      animate={{ y: [0, -3, 0] }}
-                      transition={{
-                        duration: 0.5,
-                        repeat: Infinity,
-                        delay: i * 0.12,
-                      }}
-                      className="size-1.5 rounded-full bg-red-400"
-                    />
-                  ))}
+                <div className="max-w-[85%]">
+                  <div className="relative flex flex-col gap-2 rounded-2xl border border-stone-200 bg-gradient-to-br from-white to-stone-50/50 px-4 py-3 shadow-sm">
+                    <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full bg-gradient-to-b from-rose-400 to-rose-600" />
+                    <div className="flex items-center gap-2.5 pl-3">
+                      <img
+                        src={visibleMessages.length === 1
+                          ? "https://i.ibb.co/m7vk4JF/KIM-3.png"
+                          : "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
+                        }
+                        alt=""
+                        className="size-8 rounded-full border-2 border-rose-100 shadow-sm"
+                      />
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-1">
+                          {[0, 1, 2].map((i) => (
+                            <motion.span
+                              key={i}
+                              animate={{ y: [0, -4, 0] }}
+                              transition={{
+                                duration: 0.6,
+                                repeat: Infinity,
+                                delay: i * 0.15,
+                              }}
+                              className="size-1.5 rounded-full bg-gradient-to-br from-rose-500 to-rose-600 shadow-sm"
+                            />
+                          ))}
+                        </div>
+                        <span className="animate-pulse text-xs text-stone-500">Crafting response...</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}
           </div>
 
-          {/* Input */}
-          <div className="border-t border-stone-100 bg-white/80 p-2.5 backdrop-blur-sm">
-            <div className="flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-1.5 shadow-sm">
-              <Paperclip className="size-3.5 text-stone-400" />
-              <Mic className="size-3.5 text-stone-400" />
+          {/* Input Area - Matches actual app */}
+          <div className="border-t border-stone-100 bg-white/80 px-4 pb-4 pt-3 backdrop-blur-xl">
+            {/* Focus Mode Chips */}
+            <div className="mb-2 flex gap-1.5 overflow-x-auto">
+              {["Default", "Brand Crisis", "Pipeline Audit", "Deal Closing"].map((mode, i) => (
+                <span
+                  key={mode}
+                  className={cn(
+                    "shrink-0 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                    i === 0
+                      ? "bg-red-100 text-red-700"
+                      : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+                  )}
+                >
+                  {mode}
+                </span>
+              ))}
+            </div>
+
+            {/* Input field */}
+            <div className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-red-300 focus-within:ring-2 focus-within:ring-red-100">
+              <button type="button" className="text-stone-400 transition-colors hover:text-stone-600">
+                <Paperclip className="size-4" />
+              </button>
+              <button type="button" className="text-stone-400 transition-colors hover:text-stone-600">
+                <Mic className="size-4" />
+              </button>
               <input
                 type="text"
                 placeholder="Message your executive team..."
-                className="flex-1 bg-transparent text-xs text-stone-600 placeholder:text-stone-400 focus:outline-none"
+                className="flex-1 bg-transparent text-sm text-stone-700 placeholder:text-stone-400 focus:outline-none"
                 readOnly
               />
               <button
                 type="button"
-                className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-red-500 to-red-600 text-white shadow-sm"
+                className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-red-500 to-red-600 text-white shadow-sm transition-all hover:from-red-600 hover:to-red-700"
               >
-                <Send className="size-3" />
+                <Send className="size-4" />
               </button>
             </div>
           </div>
@@ -575,7 +656,7 @@ function CTASection() {
                   size="lg"
                   className="group gap-2 bg-white px-8 text-base text-stone-900 shadow-2xl transition-all hover:bg-stone-100"
                 >
-                  Start Free Trial
+                  Sign In
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>

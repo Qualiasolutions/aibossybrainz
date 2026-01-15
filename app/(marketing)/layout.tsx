@@ -59,16 +59,11 @@ function Header() {
 						))}
 					</div>
 
-					{/* CTA Buttons */}
+					{/* CTA Button */}
 					<div className="flex items-center gap-2 sm:gap-3">
-						<Link href="/login" className="hidden sm:block">
-							<Button variant="ghost" size="sm" className="text-muted-foreground">
-								Sign In
-							</Button>
-						</Link>
 						<Link href="/login">
-							<Button size="sm" className="shadow-lg shadow-red-500/20">
-								Get Started
+							<Button size="sm" className="bg-gradient-to-r from-red-500 to-red-600 shadow-lg shadow-red-500/20 hover:from-red-600 hover:to-red-700">
+								Sign In
 							</Button>
 						</Link>
 
