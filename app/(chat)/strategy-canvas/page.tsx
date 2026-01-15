@@ -12,7 +12,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BrainstormBoard } from "@/components/strategy-canvas/brainstorm-board";
 import { BusinessModelCanvas } from "@/components/strategy-canvas/business-model-canvas";
 import { CustomerJourney } from "@/components/strategy-canvas/customer-journey";
@@ -82,6 +82,8 @@ const canvasTypes = [
 export default function StrategyCanvasPage() {
 	const [activeCanvas, setActiveCanvas] = useState<CanvasType>("swot");
 	const [isDark, setIsDark] = useState(false);
+	const mobileTabsRef = useRef<HTMLDivElement>(null);
+	const tabRefs = useRef<Map<CanvasType, HTMLButtonElement>>(new Map());
 
 	useEffect(() => {
 		setIsDark(document.documentElement.classList.contains("dark"));
@@ -91,6 +93,24 @@ export default function StrategyCanvasPage() {
 		const newIsDark = !isDark;
 		setIsDark(newIsDark);
 		document.documentElement.classList.toggle("dark", newIsDark);
+	};
+
+	// Scroll active tab into view on mobile
+	const scrollToActiveTab = useCallback((key: CanvasType) => {
+		const tabElement = tabRefs.current.get(key);
+		if (tabElement && mobileTabsRef.current) {
+			tabElement.scrollIntoView({
+				behavior: "smooth",
+				block: "nearest",
+				inline: "center",
+			});
+		}
+	}, []);
+
+	const handleTabChange = (key: CanvasType) => {
+		setActiveCanvas(key);
+		// Small delay to ensure DOM is updated
+		setTimeout(() => scrollToActiveTab(key), 50);
 	};
 
 	const activeTab = canvasTypes.find((c) => c.key === activeCanvas);
@@ -196,8 +216,8 @@ export default function StrategyCanvasPage() {
 					transition={{ delay: 0.1 }}
 					className="mb-6"
 				>
-					{/* Desktop Tabs - Premium unified rose theme */}
-					<div className="hidden md:block">
+					{/* Desktop Tabs - Premium unified rose theme (lg+) */}
+					<div className="hidden lg:block">
 						<div className="relative rounded-2xl border border-rose-200/30 bg-gradient-to-b from-white/90 to-white/60 p-2 shadow-[0_8px_32px_rgba(244,63,94,0.08)] backdrop-blur-2xl dark:border-rose-800/20 dark:from-neutral-800/90 dark:to-neutral-900/70 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
 							{/* Subtle rose accent line at top */}
 							<div className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-24 rounded-full bg-gradient-to-r from-transparent via-rose-400/50 to-transparent" />
@@ -214,7 +234,7 @@ export default function StrategyCanvasPage() {
 											transition={{ delay: 0.05 * index }}
 											whileHover={{ scale: 1.01, y: -1 }}
 											whileTap={{ scale: 0.99 }}
-											onClick={() => setActiveCanvas(canvas.key)}
+											onClick={() => handleTabChange(canvas.key)}
 											className={cn(
 												"group relative flex flex-1 flex-col items-center gap-3 rounded-xl px-4 py-5 transition-all duration-300",
 												isActive
@@ -281,51 +301,135 @@ export default function StrategyCanvasPage() {
 						</div>
 					</div>
 
-					{/* Mobile Tabs - Unified rose pills */}
-					<div className="flex gap-2 overflow-x-auto pb-2 md:hidden scrollbar-hide">
-						{canvasTypes.map((canvas, index) => {
-							const Icon = canvas.icon;
-							const isActive = activeCanvas === canvas.key;
+					{/* Tablet Tabs - 2x2 Grid (md-lg) */}
+					<div className="hidden md:block lg:hidden">
+						<div className="rounded-2xl border border-rose-200/30 bg-gradient-to-b from-white/90 to-white/60 p-2 shadow-[0_8px_32px_rgba(244,63,94,0.08)] backdrop-blur-2xl dark:border-rose-800/20 dark:from-neutral-800/90 dark:to-neutral-900/70">
+							<div className="grid grid-cols-2 gap-2">
+								{canvasTypes.map((canvas, index) => {
+									const Icon = canvas.icon;
+									const isActive = activeCanvas === canvas.key;
 
-							return (
-								<motion.button
-									key={canvas.key}
-									initial={{ opacity: 0, scale: 0.9 }}
-									animate={{ opacity: 1, scale: 1 }}
-									transition={{ delay: 0.05 * index }}
-									whileTap={{ scale: 0.95 }}
-									onClick={() => setActiveCanvas(canvas.key)}
-									className={cn(
-										"relative flex flex-shrink-0 items-center gap-2.5 rounded-full px-5 py-3 text-sm font-semibold transition-all duration-300",
-										isActive
-											? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-lg shadow-rose-500/30"
-											: "border border-rose-200/50 bg-white/80 text-neutral-600 shadow-sm backdrop-blur-sm hover:border-rose-300 dark:border-rose-800/30 dark:bg-neutral-800/80 dark:text-neutral-300",
-									)}
-									type="button"
-								>
-									{isActive && (
-										<div className="absolute inset-0 rounded-full bg-gradient-to-t from-black/10 to-white/10" />
-									)}
-									<Icon
-										weight={isActive ? "fill" : "duotone"}
+									return (
+										<motion.button
+											key={canvas.key}
+											initial={{ opacity: 0, scale: 0.95 }}
+											animate={{ opacity: 1, scale: 1 }}
+											transition={{ delay: 0.05 * index }}
+											whileTap={{ scale: 0.98 }}
+											onClick={() => handleTabChange(canvas.key)}
+											className={cn(
+												"group relative flex items-center gap-3 rounded-xl px-4 py-4 transition-all duration-300",
+												isActive
+													? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-lg shadow-rose-500/30"
+													: "text-neutral-600 hover:bg-rose-50/60 dark:text-neutral-400 dark:hover:bg-rose-900/20",
+											)}
+											type="button"
+										>
+											{isActive && (
+												<motion.div
+													layoutId="activeTabletTab"
+													className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/10 to-white/10"
+													transition={{ type: "spring", stiffness: 400, damping: 30 }}
+												/>
+											)}
+											<div
+												className={cn(
+													"relative z-10 flex size-10 items-center justify-center rounded-xl transition-all",
+													isActive
+														? "bg-white/20"
+														: "bg-rose-50 dark:bg-rose-900/30",
+												)}
+											>
+												<Icon
+													weight={isActive ? "fill" : "duotone"}
+													className={cn(
+														"size-5",
+														isActive ? "text-white" : "text-rose-600 dark:text-rose-400",
+													)}
+												/>
+											</div>
+											<div className="relative z-10 flex flex-col items-start">
+												<span className="font-semibold text-sm">{canvas.shortLabel}</span>
+												<span
+													className={cn(
+														"text-xs",
+														isActive
+															? "text-white/80"
+															: "text-neutral-400 dark:text-neutral-500",
+													)}
+												>
+													{canvas.description.split(",")[0]}
+												</span>
+											</div>
+										</motion.button>
+									);
+								})}
+							</div>
+						</div>
+					</div>
+
+					{/* Mobile Tabs - Horizontal scrollable pills */}
+					<div className="relative md:hidden">
+						{/* Scroll fade indicators */}
+						<div className="pointer-events-none absolute left-0 top-0 bottom-2 z-10 w-6 bg-gradient-to-r from-neutral-50 to-transparent dark:from-neutral-950" />
+						<div className="pointer-events-none absolute right-0 top-0 bottom-2 z-10 w-6 bg-gradient-to-l from-neutral-50 to-transparent dark:from-neutral-950" />
+
+						<div
+							ref={mobileTabsRef}
+							className="flex gap-2 overflow-x-auto px-2 -mx-2 pb-2 scrollbar-hide snap-x snap-mandatory"
+						>
+							{canvasTypes.map((canvas, index) => {
+								const Icon = canvas.icon;
+								const isActive = activeCanvas === canvas.key;
+
+								return (
+									<motion.button
+										key={canvas.key}
+										ref={(el) => {
+											if (el) tabRefs.current.set(canvas.key, el);
+										}}
+										initial={{ opacity: 0, scale: 0.9 }}
+										animate={{ opacity: 1, scale: 1 }}
+										transition={{ delay: 0.05 * index }}
+										whileTap={{ scale: 0.95 }}
+										onClick={() => handleTabChange(canvas.key)}
 										className={cn(
-											"relative z-10 size-4",
-											isActive ? "text-white" : "text-rose-500 dark:text-rose-400",
+											"relative flex flex-shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-300 snap-center",
+											isActive
+												? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-lg shadow-rose-500/30"
+												: "border border-rose-200/50 bg-white/80 text-neutral-600 shadow-sm backdrop-blur-sm active:bg-rose-50 dark:border-rose-800/30 dark:bg-neutral-800/80 dark:text-neutral-300 dark:active:bg-rose-900/20",
 										)}
-									/>
-									<span className="relative z-10">{canvas.shortLabel}</span>
-								</motion.button>
-							);
-						})}
+										type="button"
+									>
+										{isActive && (
+											<motion.div
+												layoutId="activeMobileTab"
+												className="absolute inset-0 rounded-full bg-gradient-to-t from-black/10 to-white/10"
+												transition={{ type: "spring", stiffness: 400, damping: 30 }}
+											/>
+										)}
+										<Icon
+											weight={isActive ? "fill" : "duotone"}
+											className={cn(
+												"relative z-10 size-4",
+												isActive ? "text-white" : "text-rose-500 dark:text-rose-400",
+											)}
+										/>
+										<span className="relative z-10 whitespace-nowrap">{canvas.shortLabel}</span>
+									</motion.button>
+								);
+							})}
+						</div>
 					</div>
 				</motion.div>
 
-				{/* Active Tab Description (Mobile) */}
+				{/* Active Tab Description (Mobile only) */}
 				{activeTab && (
 					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						className="mb-6 text-center md:hidden"
+						key={activeTab.key}
+						initial={{ opacity: 0, y: -5 }}
+						animate={{ opacity: 1, y: 0 }}
+						className="mb-4 text-center md:hidden"
 					>
 						<p className="text-sm text-neutral-500 dark:text-neutral-400">
 							{activeTab.description}

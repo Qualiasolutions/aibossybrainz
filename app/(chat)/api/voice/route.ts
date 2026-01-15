@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getVoiceConfig, MAX_TTS_TEXT_LENGTH, detectSpeaker } from "@/lib/ai/voice-config";
+import { getVoiceConfig, MAX_TTS_TEXT_LENGTH } from "@/lib/ai/voice-config";
 import type { BotType } from "@/lib/bot-personalities";
 import { ChatSDKError } from "@/lib/errors";
 import {
@@ -11,7 +11,7 @@ import {
 	getRateLimitHeaders,
 } from "@/lib/security/rate-limiter";
 
-export const maxDuration = 30;
+export const maxDuration = 60; // Increased for collaborative multi-voice
 
 // Max voice requests per day (separate from chat limit)
 const MAX_VOICE_REQUESTS_PER_DAY = 500;
@@ -82,13 +82,46 @@ export async function POST(request: Request) {
 			);
 		}
 
-		// For collaborative mode, detect which executive is speaking and use their voice
-		let effectiveBotType: BotType = botType;
+		// For collaborative mode, parse speaker segments and generate audio for each
 		if (botType === "collaborative") {
-			effectiveBotType = detectSpeaker(cleanText);
+			const segments = parseCollaborativeSegments(cleanText);
+
+			// If we have multiple speakers, generate audio for each segment
+			if (segments.length > 1 || (segments.length === 1 && segments[0].speaker !== "alexandria")) {
+				const audioBuffers: ArrayBuffer[] = [];
+
+				for (const segment of segments) {
+					if (!segment.text.trim()) continue;
+
+					const voiceConfig = getVoiceConfig(segment.speaker);
+					const audioBuffer = await generateAudioForSegment(
+						segment.text,
+						voiceConfig,
+						apiKey,
+					);
+					audioBuffers.push(audioBuffer);
+				}
+
+				// Concatenate all audio buffers
+				const totalLength = audioBuffers.reduce((sum, buf) => sum + buf.byteLength, 0);
+				const combined = new Uint8Array(totalLength);
+				let offset = 0;
+				for (const buffer of audioBuffers) {
+					combined.set(new Uint8Array(buffer), offset);
+					offset += buffer.byteLength;
+				}
+
+				return new Response(combined, {
+					headers: {
+						"Content-Type": "audio/mpeg",
+						"Cache-Control": "no-cache",
+					},
+				});
+			}
 		}
 
-		const voiceConfig = getVoiceConfig(effectiveBotType);
+		// Single voice path (non-collaborative or single speaker)
+		const voiceConfig = getVoiceConfig(botType);
 
 		// Use resilience wrapper for ElevenLabs API calls
 		const response = await withElevenLabsResilience(async () => {
@@ -185,6 +218,127 @@ const MARKDOWN_PATTERNS = {
 	tableSeparators: /^[-|:\s]+$/gm,
 	multipleNewlines: /\n{3,}/g,
 };
+
+// Types for collaborative voice segments
+interface SpeakerSegment {
+	speaker: "alexandria" | "kim";
+	text: string;
+}
+
+/**
+ * Parse collaborative mode text into speaker segments.
+ * Identifies sections by **Alexandria (CMO):**, **Kim (CSO):**, **Joint Strategy:**
+ * Joint Strategy sections alternate between voices for variety.
+ */
+function parseCollaborativeSegments(text: string): SpeakerSegment[] {
+	const segments: SpeakerSegment[] = [];
+
+	// Patterns to match speaker markers
+	const speakerPattern = /\*\*(?:Alexandria\s*\(CMO\)|Kim\s*\(CSO\)|Joint Strategy)\s*:\*\*/gi;
+
+	// Find all speaker markers and their positions
+	const markers: { index: number; speaker: "alexandria" | "kim" | "joint"; length: number }[] = [];
+	let match: RegExpExecArray | null;
+
+	// Reset lastIndex to ensure we start from the beginning
+	speakerPattern.lastIndex = 0;
+
+	while ((match = speakerPattern.exec(text)) !== null) {
+		const markerText = match[0].toLowerCase();
+		let speaker: "alexandria" | "kim" | "joint";
+
+		if (markerText.includes("alexandria")) {
+			speaker = "alexandria";
+		} else if (markerText.includes("kim")) {
+			speaker = "kim";
+		} else {
+			speaker = "joint";
+		}
+
+		markers.push({
+			index: match.index,
+			speaker,
+			length: match[0].length,
+		});
+	}
+
+	// If no markers found, return the whole text as alexandria (default)
+	if (markers.length === 0) {
+		return [{ speaker: "alexandria", text }];
+	}
+
+	// Extract text before first marker if any
+	if (markers[0].index > 0) {
+		const beforeText = text.slice(0, markers[0].index).trim();
+		if (beforeText) {
+			segments.push({ speaker: "alexandria", text: beforeText });
+		}
+	}
+
+	// Extract text for each marker section
+	for (let i = 0; i < markers.length; i++) {
+		const marker = markers[i];
+		const startIndex = marker.index + marker.length;
+		const endIndex = markers[i + 1]?.index ?? text.length;
+		const sectionText = text.slice(startIndex, endIndex).trim();
+
+		if (sectionText) {
+			// Joint Strategy alternates voices, starting with Alexandria
+			const speaker = marker.speaker === "joint"
+				? (segments.length % 2 === 0 ? "alexandria" : "kim")
+				: marker.speaker;
+
+			segments.push({ speaker, text: sectionText });
+		}
+	}
+
+	return segments;
+}
+
+/**
+ * Generate audio for a single segment using ElevenLabs API.
+ */
+async function generateAudioForSegment(
+	text: string,
+	voiceConfig: { voiceId: string; modelId: string; settings: { stability: number; similarityBoost: number; style?: number; useSpeakerBoost?: boolean } },
+	apiKey: string,
+): Promise<ArrayBuffer> {
+	const response = await withElevenLabsResilience(async () => {
+		const res = await fetch(
+			`https://api.elevenlabs.io/v1/text-to-speech/${voiceConfig.voiceId}`,
+			{
+				method: "POST",
+				headers: {
+					"xi-api-key": apiKey,
+					"Content-Type": "application/json",
+					Accept: "audio/mpeg",
+				},
+				body: JSON.stringify({
+					text,
+					model_id: voiceConfig.modelId,
+					voice_settings: {
+						stability: voiceConfig.settings.stability,
+						similarity_boost: voiceConfig.settings.similarityBoost,
+						style: voiceConfig.settings.style ?? 0,
+						use_speaker_boost: voiceConfig.settings.useSpeakerBoost ?? true,
+					},
+				}),
+			},
+		);
+
+		if (!res.ok) {
+			console.error("ElevenLabs API error:", res.status, res.statusText);
+			if (res.status === 401) {
+				throw new Error("INVALID_API_KEY");
+			}
+			throw new Error(`ElevenLabs API error: ${res.status}`);
+		}
+
+		return res;
+	});
+
+	return response.arrayBuffer();
+}
 
 // Helper function to strip markdown for cleaner TTS
 function stripMarkdown(text: string): string {

@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import {
+	generateCsrfToken,
 	getCsrfToken,
-	setCsrfCookie,
 	validateCsrfToken,
 } from "@/lib/security/csrf";
+
+const CSRF_COOKIE_NAME = "__csrf";
 
 /**
  * GET /api/csrf - Get or generate CSRF token
@@ -18,10 +20,19 @@ export async function GET() {
 			return NextResponse.json({ token: existingToken });
 		}
 
-		// Generate new token and set cookie
-		const newToken = await setCsrfCookie();
+		// Generate new token and set cookie via response headers
+		const newToken = generateCsrfToken();
+		const response = NextResponse.json({ token: newToken });
 
-		return NextResponse.json({ token: newToken });
+		response.cookies.set(CSRF_COOKIE_NAME, newToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: "strict",
+			path: "/",
+			maxAge: 60 * 60 * 24, // 24 hours
+		});
+
+		return response;
 	} catch (error) {
 		console.error("CSRF token generation error:", error);
 		return NextResponse.json(
