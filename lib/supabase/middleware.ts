@@ -1,10 +1,35 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import * as Sentry from "@sentry/nextjs";
+
+/**
+ * Generate a unique request ID for tracing
+ * Uses Vercel's request ID if available, otherwise generates a UUID
+ */
+function generateRequestId(request: NextRequest): string {
+	// Try Vercel-provided request ID first
+	const vercelId = request.headers.get("x-vercel-id");
+	if (vercelId) {
+		return vercelId;
+	}
+
+	// Generate a simple unique ID (crypto.randomUUID is available in Edge runtime)
+	return crypto.randomUUID();
+}
 
 export async function updateSession(request: NextRequest) {
+	// Generate request ID for tracing
+	const requestId = generateRequestId(request);
+
+	// Set request ID in Sentry for correlation
+	Sentry.setTag("request_id", requestId);
+
 	let supabaseResponse = NextResponse.next({
 		request,
 	});
+
+	// Add request ID to response headers
+	supabaseResponse.headers.set("x-request-id", requestId);
 
 	const supabase = createServerClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -61,7 +86,9 @@ export async function updateSession(request: NextRequest) {
 	if (!user) {
 		const url = request.nextUrl.clone();
 		url.pathname = "/login";
-		return NextResponse.redirect(url);
+		const redirectResponse = NextResponse.redirect(url);
+		redirectResponse.headers.set("x-request-id", requestId);
+		return redirectResponse;
 	}
 
 	// IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

@@ -104,3 +104,109 @@ WHERE schemaname = 'public';
 - [x] Soft delete support with proper filtering
 - [x] Indexes for RLS performance
 - [ ] Regular audit of RLS policies
+
+---
+
+## Backup & Recovery
+
+### Supabase Backup Configuration
+
+| Setting | Value | Notes |
+|---------|-------|-------|
+| **Project ID** | `esymbjpzjjkffpfqukxw` | Production database |
+| **Tier** | Pro | Verify in Dashboard |
+| **Daily Backups** | Enabled | Automatic, no action needed |
+| **Retention** | 7 days | Standard for Pro tier |
+| **PITR (Point-in-Time Recovery)** | Available | Must be enabled in Dashboard |
+
+### Verifying Backup Status
+
+1. Go to [Supabase Dashboard](https://supabase.com/dashboard/project/esymbjpzjjkffpfqukxw/settings/database)
+2. Navigate to **Settings** → **Database**
+3. Scroll to **Backups** section
+4. Confirm daily backups are enabled
+
+### Recovery Procedures
+
+#### Option 1: Restore from Daily Backup
+Best for: Complete database restore from a specific date
+
+1. Go to **Settings** → **Database** → **Backups**
+2. Select the backup date to restore
+3. Click **Restore** and confirm
+4. Wait for restore (5-30 minutes depending on size)
+5. Verify with health check: `curl https://aleccinew.vercel.app/api/health`
+
+#### Option 2: Point-in-Time Recovery (PITR)
+Best for: Recovering to a specific timestamp (e.g., just before accidental deletion)
+
+1. Go to **Settings** → **Database** → **Point in Time Recovery**
+2. Select the exact timestamp to recover to
+3. Follow the restore wizard
+4. Test critical flows after recovery
+
+#### Option 3: Manual Data Recovery
+Best for: Recovering specific records
+
+```sql
+-- Restore soft-deleted records
+UPDATE "Chat" SET "deletedAt" = NULL WHERE "id" = 'chat-uuid';
+
+-- Check audit logs for what was deleted
+SELECT * FROM "AuditLog"
+WHERE "action" = 'CHAT_DELETE'
+AND "createdAt" > NOW() - INTERVAL '24 hours';
+```
+
+### Disaster Recovery Checklist
+
+Before any major deployment:
+- [ ] Verify backup was created today in Supabase Dashboard
+- [ ] Know the restore procedure (this document)
+- [ ] Have rollback plan for Vercel (see ROLLBACK.md)
+
+After a restore:
+- [ ] Verify `/api/health` returns healthy
+- [ ] Test user login
+- [ ] Test creating a new chat
+- [ ] Check recent data is present
+
+### Recovery Time Objectives (RTO)
+
+| Scenario | Target RTO | Method |
+|----------|------------|--------|
+| Accidental data deletion | 15 min | PITR or soft delete restore |
+| Database corruption | 1 hour | Daily backup restore |
+| Complete service outage | 2 hours | Backup restore + Vercel redeploy |
+
+### Backup Testing
+
+**Quarterly**: Test restore procedure on a staging project
+1. Create a new Supabase project (staging)
+2. Restore production backup to staging
+3. Verify data integrity
+4. Delete staging project
+
+---
+
+## New Migrations (2026-01-15)
+
+The following migrations add new tables for audit logging and strategy features:
+
+### 20260115_add_audit_log.sql
+Creates `AuditLog` table for GDPR compliance and security auditing.
+
+### 20260115_add_strategy_canvas.sql
+Creates `StrategyCanvas` table for user strategy canvases (SWOT, BMC, etc.).
+
+### 20260115_add_conversation_summary.sql
+Creates `ConversationSummary` table for AI-generated conversation summaries.
+
+### 20260115_add_rls_policies.sql
+Adds RLS policies for the new tables.
+
+**Apply order:**
+1. `20260115_add_audit_log.sql`
+2. `20260115_add_strategy_canvas.sql`
+3. `20260115_add_conversation_summary.sql`
+4. `20260115_add_rls_policies.sql`

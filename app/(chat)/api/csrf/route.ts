@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import {
-	generateCsrfToken,
-	getCsrfTokenFromCookie,
+	getCsrfToken,
 	setCsrfCookie,
 	validateCsrfToken,
 } from "@/lib/security/csrf";
@@ -13,15 +12,14 @@ import {
 export async function GET() {
 	try {
 		// Check for existing valid token
-		const existingToken = await getCsrfTokenFromCookie();
+		const existingToken = await getCsrfToken();
 
 		if (existingToken && validateCsrfToken(existingToken)) {
 			return NextResponse.json({ token: existingToken });
 		}
 
-		// Generate new token
-		const newToken = generateCsrfToken();
-		await setCsrfCookie(newToken);
+		// Generate new token and set cookie
+		const newToken = await setCsrfCookie();
 
 		return NextResponse.json({ token: newToken });
 	} catch (error) {

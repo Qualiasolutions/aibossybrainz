@@ -4,7 +4,15 @@ import { cookies } from "next/headers";
 const CSRF_COOKIE_NAME = "__csrf";
 const CSRF_HEADER_NAME = "x-csrf-token";
 const CSRF_TOKEN_LENGTH = 32;
-const CSRF_SECRET = process.env.AUTH_SECRET ?? "fallback-secret";
+
+// CSRF secret - required in production
+const AUTH_SECRET = process.env.AUTH_SECRET;
+if (!AUTH_SECRET && process.env.NODE_ENV === "production") {
+	throw new Error(
+		"AUTH_SECRET environment variable is required in production for CSRF protection",
+	);
+}
+const CSRF_SECRET = AUTH_SECRET ?? "dev-only-fallback-secret";
 
 /**
  * Generates a CSRF token using HMAC-based approach
@@ -54,18 +62,12 @@ export function validateCsrfToken(token: string): boolean {
 }
 
 /**
- * Gets the CSRF token from cookies (server-side)
+ * Sets a CSRF token cookie
  */
-export async function getCsrfTokenFromCookie(): Promise<string | undefined> {
+export async function setCsrfCookie(): Promise<string> {
+	const token = generateCsrfToken();
 	const cookieStore = await cookies();
-	return cookieStore.get(CSRF_COOKIE_NAME)?.value;
-}
 
-/**
- * Sets CSRF token cookie (server-side)
- */
-export async function setCsrfCookie(token: string): Promise<void> {
-	const cookieStore = await cookies();
 	cookieStore.set(CSRF_COOKIE_NAME, token, {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
@@ -73,23 +75,33 @@ export async function setCsrfCookie(token: string): Promise<void> {
 		path: "/",
 		maxAge: 60 * 60 * 24, // 24 hours
 	});
+
+	return token;
 }
 
 /**
- * Validates CSRF token from request header against cookie
+ * Gets the CSRF token from cookies
+ */
+export async function getCsrfToken(): Promise<string | undefined> {
+	const cookieStore = await cookies();
+	return cookieStore.get(CSRF_COOKIE_NAME)?.value;
+}
+
+/**
+ * Validates CSRF token from request headers against cookie
  */
 export async function validateCsrfRequest(
 	request: Request,
 ): Promise<{ valid: boolean; error?: string }> {
 	const headerToken = request.headers.get(CSRF_HEADER_NAME);
-	const cookieToken = await getCsrfTokenFromCookie();
+	const cookieToken = await getCsrfToken();
 
 	if (!cookieToken) {
 		return { valid: false, error: "No CSRF cookie found" };
 	}
 
 	if (!headerToken) {
-		return { valid: false, error: "No CSRF header found" };
+		return { valid: false, error: "No CSRF token in request headers" };
 	}
 
 	if (headerToken !== cookieToken) {
@@ -102,5 +114,3 @@ export async function validateCsrfRequest(
 
 	return { valid: true };
 }
-
-export { CSRF_COOKIE_NAME, CSRF_HEADER_NAME };

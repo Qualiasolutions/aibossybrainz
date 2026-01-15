@@ -46,6 +46,7 @@ export function AuthForm({
 				</Label>
 
 				<Input
+					autoComplete="current-password"
 					className="h-12 rounded-2xl border-transparent bg-white/80 px-4 text-base text-slate-700 shadow-[inset_0_2px_12px_rgba(244,114,182,0.12)] shadow-inner transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-rose-400/60 md:text-sm"
 					id="password"
 					name="password"

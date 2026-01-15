@@ -452,7 +452,7 @@ export async function POST(request: Request) {
 			return error.toResponse();
 		}
 
-		// Log detailed error for debugging
+		// Log detailed error for debugging (no secrets)
 		console.error("Unhandled error in chat API:", {
 			message: error?.message,
 			name: error?.name,
@@ -460,7 +460,6 @@ export async function POST(request: Request) {
 			stack: error?.stack?.split("\n").slice(0, 5).join("\n"),
 			vercelId,
 			hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY,
-			openRouterKeyPrefix: process.env.OPENROUTER_API_KEY?.slice(0, 12) + "...",
 		});
 		return new ChatSDKError("offline:chat").toResponse();
 	}

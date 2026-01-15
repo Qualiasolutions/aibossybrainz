@@ -26,6 +26,7 @@ export interface TopicBreakdown {
 
 /**
  * Get analytics summary for a user over a date range
+ * Uses optimized Postgres function to avoid N+1 queries
  */
 export async function getAnalyticsSummary(
 	userId: string,
@@ -35,33 +36,18 @@ export async function getAnalyticsSummary(
 	try {
 		const supabase = await createClient();
 
-		// Get chat count
-		const { count: chatCount } = await supabase
-			.from("Chat")
-			.select("*", { count: "exact", head: true })
-			.eq("userId", userId)
-			.gte("createdAt", startDate.toISOString())
-			.lte("createdAt", endDate.toISOString());
+		// Use RPC to get chat and message counts in a single query
+		// Cast to avoid type errors - function exists in DB but not in generated types
+		const { data: summaryData } = await (supabase.rpc as Function)(
+			"get_user_analytics_summary",
+			{
+				p_user_id: userId,
+				p_start_date: startDate.toISOString(),
+				p_end_date: endDate.toISOString(),
+			},
+		) as { data: Array<{ chat_count: number; message_count: number }> | null };
 
-		// Get user's chats for message count
-		const { data: userChats } = await supabase
-			.from("Chat")
-			.select("id")
-			.eq("userId", userId);
-
-		const chatIds = userChats?.map((c) => c.id) || [];
-
-		// Get message count
-		let messageCount = 0;
-		if (chatIds.length > 0) {
-			const { count } = await supabase
-				.from("Message_v2")
-				.select("*", { count: "exact", head: true })
-				.in("chatId", chatIds)
-				.gte("createdAt", startDate.toISOString())
-				.lte("createdAt", endDate.toISOString());
-			messageCount = count || 0;
-		}
+		const summary = summaryData?.[0] || { chat_count: 0, message_count: 0 };
 
 		// Get aggregated analytics from UserAnalytics table
 		const { data: analyticsData } = await supabase
@@ -85,8 +71,8 @@ export async function getAnalyticsSummary(
 			0,
 		);
 
-		const totalChats = chatCount || 0;
-		const totalMessages = messageCount || 0;
+		const totalChats = Number(summary.chat_count) || 0;
+		const totalMessages = Number(summary.message_count) || 0;
 
 		return {
 			totalChats,
