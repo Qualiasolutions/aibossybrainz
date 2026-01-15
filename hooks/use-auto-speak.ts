@@ -182,7 +182,7 @@ export const useAutoSpeak = ({
 
 			if (savedSpeed) {
 				const speed = Number.parseFloat(savedSpeed);
-				if (!Number.isNaN(speed) && speed >= 0.5 && speed <= 2) {
+				if (!Number.isNaN(speed) && speed >= 0.5 && speed <= 3) {
 					audio.playbackRate = speed;
 				}
 			}
