@@ -291,16 +291,18 @@ export function Chat({
 
 	return (
 		<>
-			<div className="relative flex h-screen w-full flex-col overflow-hidden bg-background">
-				{/* Subtle red accent glow - minimalist */}
-				<div
-					aria-hidden
-					className="pointer-events-none absolute inset-0 overflow-hidden"
-				>
-					<div className="absolute -top-40 left-1/3 h-[400px] w-[600px] rounded-full bg-primary/10 blur-[100px]" />
-				</div>
+			<div className="flex h-screen w-full overflow-hidden bg-background">
+				{/* Chat Area - compresses when panel opens */}
+				<div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+					{/* Subtle red accent glow - minimalist */}
+					<div
+						aria-hidden
+						className="pointer-events-none absolute inset-0 overflow-hidden"
+					>
+						<div className="absolute -top-40 left-1/3 h-[400px] w-[600px] rounded-full bg-primary/10 blur-[100px]" />
+					</div>
 
-				<div className="relative z-10 flex h-full w-full flex-col">
+					<div className="relative z-10 flex h-full w-full flex-col">
 					{/* Premium Minimalist Header */}
 					<header className="flex-shrink-0 border-b border-border bg-background/95 backdrop-blur-xl">
 						<div className="flex h-14 w-full items-center justify-between gap-4 px-4 sm:h-16 sm:px-6">
@@ -466,7 +468,14 @@ export function Chat({
 							</div>
 						</div>
 					)}
+					</div>
 				</div>
+
+				{/* Strategy Canvas Panel - part of flex layout */}
+				<SwotSlidePanel
+					isOpen={isSwotPanelOpen}
+					onClose={() => setIsSwotPanelOpen(false)}
+				/>
 			</div>
 
 			<Artifact
@@ -486,12 +495,6 @@ export function Chat({
 				status={status}
 				stop={stop}
 				votes={votes}
-			/>
-
-			{/* SWOT Analysis Slide Panel */}
-			<SwotSlidePanel
-				isOpen={isSwotPanelOpen}
-				onClose={() => setIsSwotPanelOpen(false)}
 			/>
 
 			{/* Voice Call Dialog */}

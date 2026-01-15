@@ -15,27 +15,27 @@ export function SwotSlidePanel({ isOpen, onClose }: SwotSlidePanelProps) {
 		<AnimatePresence>
 			{isOpen && (
 				<motion.div
-					initial={{ x: "100%" }}
-					animate={{ x: 0 }}
-					exit={{ x: "100%" }}
+					initial={{ width: 0, opacity: 0 }}
+					animate={{ width: "auto", opacity: 1 }}
+					exit={{ width: 0, opacity: 0 }}
 					transition={{
 						type: "spring",
 						stiffness: 400,
 						damping: 40,
 					}}
-					className="fixed top-0 right-0 z-50 h-full w-[90%] border-l border-border bg-background shadow-2xl sm:w-[70%] md:w-[55%] lg:w-[40%] xl:w-[32%] 2xl:w-[28%]"
+					className="h-full w-[320px] flex-shrink-0 overflow-hidden border-l border-border bg-background sm:w-[340px] md:w-[380px] lg:w-[400px]"
 				>
 					{/* Header */}
-					<div className="flex items-center justify-between border-b border-border px-4 py-3 sm:px-5 sm:py-4">
-						<div className="flex items-center gap-3">
-							<div className="flex size-8 items-center justify-center rounded-lg bg-primary/10">
-								<LayoutGrid className="size-4 text-primary" />
+					<div className="flex items-center justify-between border-b border-border px-4 py-3">
+						<div className="flex items-center gap-2.5">
+							<div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
+								<LayoutGrid className="size-3.5 text-primary" />
 							</div>
 							<div>
 								<h2 className="font-semibold text-sm text-foreground">
 									Strategy Canvas
 								</h2>
-								<p className="text-xs text-muted-foreground">
+								<p className="text-[11px] text-muted-foreground">
 									SWOT Analysis
 								</p>
 							</div>
@@ -44,15 +44,15 @@ export function SwotSlidePanel({ isOpen, onClose }: SwotSlidePanelProps) {
 							variant="ghost"
 							size="icon"
 							onClick={onClose}
-							className="size-8 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+							className="size-7 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
 						>
-							<X className="size-4" />
+							<X className="size-3.5" />
 							<span className="sr-only">Close panel</span>
 						</Button>
 					</div>
 
 					{/* Content - Scrollable */}
-					<div className="h-[calc(100%-57px)] overflow-y-auto p-4 sm:p-5">
+					<div className="h-[calc(100%-53px)] overflow-y-auto p-3 sm:p-4">
 						<SwotBoard />
 					</div>
 				</motion.div>
