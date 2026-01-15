@@ -156,6 +156,29 @@ export const isAudioPlaying = () => state.audio !== null;
 export const getCurrentSource = () => state.source;
 
 /**
+ * Update playback rate of currently playing audio
+ */
+export const updatePlaybackRate = (rate: number) => {
+	if (state.audio) {
+		state.audio.playbackRate = Math.max(0.5, Math.min(3, rate));
+	}
+};
+
+/**
+ * Update volume of currently playing audio
+ */
+export const updateVolume = (volume: number) => {
+	if (state.audio) {
+		state.audio.volume = Math.max(0, Math.min(1, volume));
+	}
+};
+
+/**
+ * Get current audio element (for reading current playback state)
+ */
+export const getCurrentAudio = () => state.audio;
+
+/**
  * Subscribe to audio state changes
  */
 export const subscribeToAudioChanges = (callback: StateChangeCallback) => {

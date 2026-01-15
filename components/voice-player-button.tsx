@@ -9,10 +9,11 @@ import {
 	Volume2,
 	VolumeX,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useVoicePlayer } from "@/hooks/use-voice-player";
 import { SPEED_PRESETS, useVoiceSpeed } from "@/hooks/use-voice-speed";
 import { useVoiceVolume, VOLUME_PRESETS } from "@/hooks/use-voice-volume";
+import { updatePlaybackRate, updateVolume } from "@/lib/audio-manager";
 import type { BotType } from "@/lib/bot-personalities";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -36,10 +37,33 @@ export const VoicePlayerButton = ({
 	className,
 }: VoicePlayerButtonProps) => {
 	const voicePlayer = useVoicePlayer();
-	const { speed, setSpeed } = useVoiceSpeed();
-	const { volume, setVolume, isMuted, toggleMute, volumeLevel } =
-		useVoiceVolume();
+	const { speed, setSpeed: setSpeedBase } = useVoiceSpeed();
+	const {
+		volume,
+		setVolume: setVolumeBase,
+		isMuted,
+		toggleMute,
+		volumeLevel,
+	} = useVoiceVolume();
 	const [showSettingsPopover, setShowSettingsPopover] = useState(false);
+
+	// Wrap setSpeed to also update currently playing audio
+	const setSpeed = useCallback(
+		(newSpeed: number) => {
+			setSpeedBase(newSpeed);
+			updatePlaybackRate(newSpeed);
+		},
+		[setSpeedBase],
+	);
+
+	// Wrap setVolume to also update currently playing audio
+	const handleSetVolume = useCallback(
+		(newVolume: number) => {
+			setVolumeBase(newVolume);
+			updateVolume(newVolume / 100);
+		},
+		[setVolumeBase],
+	);
 
 	const handleClick = () => {
 		if (voicePlayer.isPlaying) {
@@ -154,7 +178,7 @@ export const VoicePlayerButton = ({
 									disabled={isMuted}
 									max={100}
 									min={0}
-									onValueChange={([value]) => setVolume(value)}
+									onValueChange={([value]) => handleSetVolume(value)}
 									step={5}
 									value={[volume]}
 								/>
@@ -164,7 +188,7 @@ export const VoicePlayerButton = ({
 											className="h-6 px-2 text-xs"
 											disabled={isMuted}
 											key={preset.value}
-											onClick={() => setVolume(preset.value)}
+											onClick={() => handleSetVolume(preset.value)}
 											size="sm"
 											type="button"
 											variant={volume === preset.value ? "secondary" : "ghost"}

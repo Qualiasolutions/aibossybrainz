@@ -78,6 +78,24 @@ export function useGreetingSpeech({
 					clearAudioUrl(audioUrl);
 				});
 
+				// Apply volume and speed settings from localStorage
+				const savedVolume = localStorage.getItem("voice-playback-volume");
+				const savedSpeed = localStorage.getItem("voice-playback-speed");
+
+				if (savedVolume) {
+					const volume = Number.parseInt(savedVolume, 10);
+					if (!Number.isNaN(volume) && volume >= 0 && volume <= 100) {
+						audio.volume = volume / 100;
+					}
+				}
+
+				if (savedSpeed) {
+					const speed = Number.parseFloat(savedSpeed);
+					if (!Number.isNaN(speed) && speed >= 0.5 && speed <= 3) {
+						audio.playbackRate = speed;
+					}
+				}
+
 				// Register with global audio manager
 				setCurrentAudio(audio, audioUrl, "greeting");
 
