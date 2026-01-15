@@ -71,6 +71,7 @@ const PureChatItem = ({
 					)}
 					href={`/chat/${chat.id}`}
 					onClick={() => setOpenMobile(false)}
+					prefetch={false}
 				>
 					{/* Active state indicator */}
 					{isActive && (

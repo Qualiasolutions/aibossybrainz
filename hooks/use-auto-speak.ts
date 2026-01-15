@@ -187,23 +187,31 @@ export const useAutoSpeak = ({
 				}
 			}
 
-			audio.addEventListener("ended", () => {
-				if (currentPlayIdRef.current === playId) {
-					setState("idle");
-					currentPlayIdRef.current = null;
-					markAudioEnded();
-				}
-				clearAudioUrl(audioUrl);
-			});
+			audio.addEventListener(
+				"ended",
+				() => {
+					if (currentPlayIdRef.current === playId) {
+						setState("idle");
+						currentPlayIdRef.current = null;
+						markAudioEnded();
+					}
+					clearAudioUrl(audioUrl);
+				},
+				{ once: true },
+			);
 
-			audio.addEventListener("error", () => {
-				if (currentPlayIdRef.current === playId) {
-					setState("error");
-					currentPlayIdRef.current = null;
-					markAudioEnded();
-				}
-				clearAudioUrl(audioUrl);
-			});
+			audio.addEventListener(
+				"error",
+				() => {
+					if (currentPlayIdRef.current === playId) {
+						setState("error");
+						currentPlayIdRef.current = null;
+						markAudioEnded();
+					}
+					clearAudioUrl(audioUrl);
+				},
+				{ once: true },
+			);
 
 			// Register with global audio manager
 			setCurrentAudio(audio, audioUrl, "auto-speak");

@@ -5,14 +5,16 @@ const CSRF_COOKIE_NAME = "__csrf";
 const CSRF_HEADER_NAME = "x-csrf-token";
 const CSRF_TOKEN_LENGTH = 32;
 
-// CSRF secret - required in production
-const AUTH_SECRET = process.env.AUTH_SECRET;
-if (!AUTH_SECRET && process.env.NODE_ENV === "production") {
-	throw new Error(
-		"AUTH_SECRET environment variable is required in production for CSRF protection",
-	);
+// CSRF secret - required in production (checked at runtime, not build time)
+function getCsrfSecret(): string {
+	const secret = process.env.AUTH_SECRET;
+	if (!secret && process.env.NODE_ENV === "production") {
+		throw new Error(
+			"AUTH_SECRET environment variable is required in production for CSRF protection",
+		);
+	}
+	return secret ?? "dev-only-fallback-secret";
 }
-const CSRF_SECRET = AUTH_SECRET ?? "dev-only-fallback-secret";
 
 /**
  * Generates a CSRF token using HMAC-based approach
@@ -21,7 +23,7 @@ const CSRF_SECRET = AUTH_SECRET ?? "dev-only-fallback-secret";
 export function generateCsrfToken(): string {
 	const random = randomBytes(CSRF_TOKEN_LENGTH).toString("hex");
 	const hash = createHash("sha256")
-		.update(`${random}${CSRF_SECRET}`)
+		.update(`${random}${getCsrfSecret()}`)
 		.digest("hex");
 	return `${random}.${hash}`;
 }
@@ -45,7 +47,7 @@ export function validateCsrfToken(token: string): boolean {
 	}
 
 	const expectedHash = createHash("sha256")
-		.update(`${random}${CSRF_SECRET}`)
+		.update(`${random}${getCsrfSecret()}`)
 		.digest("hex");
 
 	// Timing-safe comparison

@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -439,9 +440,11 @@ function ExecutiveCards() {
               <div className="absolute inset-0 bg-gradient-to-br from-red-50/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               <div className="relative flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left">
                 <div className="relative mb-4 size-20 shrink-0 overflow-hidden rounded-2xl border-2 border-white shadow-xl sm:mb-0 sm:mr-6">
-                  <img
+                  <Image
                     src={exec.image}
                     alt={exec.name}
+                    width={80}
+                    height={80}
                     className="size-full object-cover"
                   />
                   <div
