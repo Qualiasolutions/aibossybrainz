@@ -1,8 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Cloud, Download, Loader2, Plus } from "lucide-react";
+import { Check, ChevronDown, Cloud, Download, Loader2, Plus } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { CompactHeader } from "./compact-header";
 import { StickyNote } from "./sticky-note";
 import type {
 	BusinessModelData,
@@ -80,12 +82,19 @@ const defaultData: BusinessModelData = {
 	revenueStreams: [],
 };
 
-export function BusinessModelCanvas() {
+interface BusinessModelCanvasProps {
+	compact?: boolean;
+}
+
+export function BusinessModelCanvas({ compact = false }: BusinessModelCanvasProps) {
 	const { data, setData, isSaving, isLoading, lastSaved } =
 		useCanvasPersistence<BusinessModelData>({
 			canvasType: "bmc",
 			defaultData,
 		});
+	const [expandedSections, setExpandedSections] = useState<Set<string>>(
+		new Set(["valuePropositions"]),
+	);
 
 	const generateId = () =>
 		`bmc-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -100,6 +109,7 @@ export function BusinessModelCanvas() {
 			...prev,
 			[section]: [...prev[section], newNote],
 		}));
+		setExpandedSections((prev) => new Set([...prev, section]));
 	};
 
 	const updateNote = (
@@ -148,8 +158,145 @@ export function BusinessModelCanvas() {
 		URL.revokeObjectURL(url);
 	};
 
+	const toggleSection = (key: string) => {
+		setExpandedSections((prev) => {
+			const next = new Set(prev);
+			if (next.has(key)) {
+				next.delete(key);
+			} else {
+				next.add(key);
+			}
+			return next;
+		});
+	};
+
 	const totalNotes = Object.values(data).flat().length;
 
+	// Compact Layout for Side Panel
+	if (compact) {
+		return (
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.3 }}
+				className="space-y-3"
+			>
+				<CompactHeader
+					title="Business Model Canvas"
+					isLoading={isLoading}
+					isSaving={isSaving}
+					lastSaved={lastSaved}
+					onReset={resetCanvas}
+					onExport={exportCanvas}
+				/>
+
+				{/* Accordion Sections */}
+				<div className="space-y-1">
+					{sections.map((section) => {
+						const notes = data[section.key];
+						const isExpanded = expandedSections.has(section.key);
+
+						return (
+							<div
+								key={section.key}
+								className="rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+							>
+								{/* Section Header */}
+								<button
+									type="button"
+									onClick={() => toggleSection(section.key)}
+									className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left"
+								>
+									<div className="flex items-center gap-2">
+										<ChevronDown
+											className={cn(
+												"size-3.5 text-neutral-400 transition-transform",
+												!isExpanded && "-rotate-90",
+											)}
+										/>
+										<span className="font-medium text-sm text-neutral-900 dark:text-white">
+											{section.label}
+										</span>
+										{notes.length > 0 && (
+											<span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+												{notes.length}
+											</span>
+										)}
+									</div>
+									<button
+										type="button"
+										onClick={(e) => {
+											e.stopPropagation();
+											addNote(section.key, section.noteColor);
+										}}
+										className="rounded p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+									>
+										<Plus className="size-3.5" />
+									</button>
+								</button>
+
+								{/* Section Content */}
+								<AnimatePresence>
+									{isExpanded && (
+										<motion.div
+											initial={{ height: 0, opacity: 0 }}
+											animate={{ height: "auto", opacity: 1 }}
+											exit={{ height: 0, opacity: 0 }}
+											transition={{ duration: 0.2 }}
+											className="overflow-hidden"
+										>
+											<div className="space-y-1.5 border-t border-neutral-100 px-3 py-2.5 dark:border-neutral-800">
+												{notes.length === 0 ? (
+													<div className="space-y-2">
+														<p className="text-xs text-neutral-400 dark:text-neutral-500">
+															{section.hint}
+														</p>
+														<button
+															type="button"
+															onClick={() =>
+																addNote(section.key, section.noteColor)
+															}
+															className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-neutral-200 py-3 text-xs text-neutral-400 transition-colors hover:border-neutral-300 hover:text-neutral-500 dark:border-neutral-700 dark:text-neutral-500 dark:hover:border-neutral-600"
+														>
+															<Plus className="size-3" />
+															Add
+														</button>
+													</div>
+												) : (
+													<AnimatePresence mode="popLayout">
+														{notes.map((note) => (
+															<motion.div
+																key={note.id}
+																initial={{ opacity: 0, y: 5 }}
+																animate={{ opacity: 1, y: 0 }}
+																exit={{ opacity: 0, y: -5 }}
+															>
+																<StickyNote
+																	note={note}
+																	onUpdate={(id, content) =>
+																		updateNote(section.key, id, content)
+																	}
+																	onDelete={(id) =>
+																		deleteNote(section.key, id)
+																	}
+																/>
+															</motion.div>
+														))}
+													</AnimatePresence>
+												)}
+											</div>
+										</motion.div>
+									)}
+								</AnimatePresence>
+							</div>
+						);
+					})}
+				</div>
+			</motion.div>
+		);
+	}
+
+	// Full Layout (unchanged)
 	return (
 		<motion.div
 			initial={{ opacity: 0 }}

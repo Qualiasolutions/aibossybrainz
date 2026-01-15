@@ -1,9 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Cloud, Download, Loader2, Plus } from "lucide-react";
+import { Check, ChevronDown, Cloud, Download, Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { CompactHeader } from "./compact-header";
 import { StickyNote } from "./sticky-note";
 import type {
 	NoteColor,
@@ -46,13 +47,20 @@ const defaultData: SwotData = {
 	threats: [],
 };
 
-export function SwotBoard() {
+interface SwotBoardProps {
+	compact?: boolean;
+}
+
+export function SwotBoard({ compact = false }: SwotBoardProps) {
 	const { data, setData, isSaving, isLoading, lastSaved } =
 		useCanvasPersistence<SwotData>({
 			canvasType: "swot",
 			defaultData,
 		});
 	const [hoveredQuadrant, setHoveredQuadrant] = useState<string | null>(null);
+	const [expandedQuadrants, setExpandedQuadrants] = useState<Set<string>>(
+		new Set(["strengths"]),
+	);
 
 	const generateId = () =>
 		`note-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -67,6 +75,8 @@ export function SwotBoard() {
 			...prev,
 			[quadrant]: [...prev[quadrant], newNote],
 		}));
+		// Auto-expand when adding
+		setExpandedQuadrants((prev) => new Set([...prev, quadrant]));
 	};
 
 	const updateNote = (
@@ -115,8 +125,140 @@ export function SwotBoard() {
 		URL.revokeObjectURL(url);
 	};
 
+	const toggleQuadrant = (key: string) => {
+		setExpandedQuadrants((prev) => {
+			const next = new Set(prev);
+			if (next.has(key)) {
+				next.delete(key);
+			} else {
+				next.add(key);
+			}
+			return next;
+		});
+	};
+
 	const totalNotes = Object.values(data).flat().length;
 
+	// Compact Layout for Side Panel
+	if (compact) {
+		return (
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.3 }}
+				className="space-y-3"
+			>
+				<CompactHeader
+					title="SWOT Analysis"
+					isLoading={isLoading}
+					isSaving={isSaving}
+					lastSaved={lastSaved}
+					onReset={resetBoard}
+					onExport={exportBoard}
+				/>
+
+				{/* Accordion Sections */}
+				<div className="space-y-1">
+					{quadrants.map((quadrant) => {
+						const notes = data[quadrant.key];
+						const isExpanded = expandedQuadrants.has(quadrant.key);
+
+						return (
+							<div
+								key={quadrant.key}
+								className="rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+							>
+								{/* Section Header */}
+								<button
+									type="button"
+									onClick={() => toggleQuadrant(quadrant.key)}
+									className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left"
+								>
+									<div className="flex items-center gap-2">
+										<ChevronDown
+											className={cn(
+												"size-3.5 text-neutral-400 transition-transform",
+												!isExpanded && "-rotate-90",
+											)}
+										/>
+										<span className="font-medium text-sm text-neutral-900 dark:text-white">
+											{quadrant.label}
+										</span>
+										{notes.length > 0 && (
+											<span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+												{notes.length}
+											</span>
+										)}
+									</div>
+									<button
+										type="button"
+										onClick={(e) => {
+											e.stopPropagation();
+											addNote(quadrant.key, quadrant.noteColor);
+										}}
+										className="rounded p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+									>
+										<Plus className="size-3.5" />
+									</button>
+								</button>
+
+								{/* Section Content */}
+								<AnimatePresence>
+									{isExpanded && (
+										<motion.div
+											initial={{ height: 0, opacity: 0 }}
+											animate={{ height: "auto", opacity: 1 }}
+											exit={{ height: 0, opacity: 0 }}
+											transition={{ duration: 0.2 }}
+											className="overflow-hidden"
+										>
+											<div className="space-y-1.5 border-t border-neutral-100 px-3 py-2.5 dark:border-neutral-800">
+												{notes.length === 0 ? (
+													<button
+														type="button"
+														onClick={() =>
+															addNote(quadrant.key, quadrant.noteColor)
+														}
+														className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-neutral-200 py-4 text-xs text-neutral-400 transition-colors hover:border-neutral-300 hover:text-neutral-500 dark:border-neutral-700 dark:text-neutral-500 dark:hover:border-neutral-600"
+													>
+														<Plus className="size-3" />
+														Add {quadrant.label.toLowerCase().slice(0, -1)}
+													</button>
+												) : (
+													<AnimatePresence mode="popLayout">
+														{notes.map((note) => (
+															<motion.div
+																key={note.id}
+																initial={{ opacity: 0, y: 5 }}
+																animate={{ opacity: 1, y: 0 }}
+																exit={{ opacity: 0, y: -5 }}
+															>
+																<StickyNote
+																	note={note}
+																	onUpdate={(id, content) =>
+																		updateNote(quadrant.key, id, content)
+																	}
+																	onDelete={(id) =>
+																		deleteNote(quadrant.key, id)
+																	}
+																/>
+															</motion.div>
+														))}
+													</AnimatePresence>
+												)}
+											</div>
+										</motion.div>
+									)}
+								</AnimatePresence>
+							</div>
+						);
+					})}
+				</div>
+			</motion.div>
+		);
+	}
+
+	// Full Layout (unchanged)
 	return (
 		<motion.div
 			initial={{ opacity: 0 }}

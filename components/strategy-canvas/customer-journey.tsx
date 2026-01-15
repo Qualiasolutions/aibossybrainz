@@ -1,9 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Cloud, Download, Loader2, Plus, X } from "lucide-react";
+import { Check, ChevronDown, Cloud, Download, Loader2, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { CompactHeader } from "./compact-header";
 import type { JourneyStage, JourneyTouchpoint } from "./types";
 import { useCanvasPersistence } from "./use-canvas-persistence";
 
@@ -67,7 +68,11 @@ const touchpointTypes = [
 	},
 ];
 
-export function CustomerJourney() {
+interface CustomerJourneyProps {
+	compact?: boolean;
+}
+
+export function CustomerJourney({ compact = false }: CustomerJourneyProps) {
 	const { data, setData, isSaving, isLoading, lastSaved } =
 		useCanvasPersistence<JourneyData>({
 			canvasType: "journey",
@@ -87,6 +92,9 @@ export function CustomerJourney() {
 	const [newContent, setNewContent] = useState("");
 	const [newType, setNewType] =
 		useState<JourneyTouchpoint["type"]>("touchpoint");
+	const [expandedStages, setExpandedStages] = useState<Set<string>>(
+		new Set(["awareness"]),
+	);
 
 	const generateId = () =>
 		`tp-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -142,10 +150,248 @@ export function CustomerJourney() {
 		URL.revokeObjectURL(url);
 	};
 
+	const toggleStage = (key: string) => {
+		setExpandedStages((prev) => {
+			const next = new Set(prev);
+			if (next.has(key)) {
+				next.delete(key);
+			} else {
+				next.add(key);
+			}
+			return next;
+		});
+	};
+
 	const totalTouchpoints = touchpoints.length;
 	const painPoints = touchpoints.filter((tp) => tp.type === "pain").length;
 	const opportunities = touchpoints.filter((tp) => tp.type === "opportunity").length;
 
+	// Compact Layout for Side Panel
+	if (compact) {
+		return (
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.3 }}
+				className="space-y-3"
+			>
+				<CompactHeader
+					title="Customer Journey"
+					isLoading={isLoading}
+					isSaving={isSaving}
+					lastSaved={lastSaved}
+					onReset={resetJourney}
+					onExport={exportJourney}
+				/>
+
+				{/* Vertical Timeline */}
+				<div className="space-y-1">
+					{stages.map((stage, index) => {
+						const stageTouchpoints = getTouchpointsForStage(stage.key);
+						const isExpanded = expandedStages.has(stage.key);
+						const isAdding = addingTo === stage.key;
+
+						return (
+							<div
+								key={stage.key}
+								className="rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+							>
+								{/* Stage Header */}
+								<button
+									type="button"
+									onClick={() => toggleStage(stage.key)}
+									className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left"
+								>
+									<div className="flex items-center gap-2">
+										<div className="flex size-5 items-center justify-center rounded-full bg-neutral-100 text-[10px] font-semibold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+											{index + 1}
+										</div>
+										<ChevronDown
+											className={cn(
+												"size-3.5 text-neutral-400 transition-transform",
+												!isExpanded && "-rotate-90",
+											)}
+										/>
+										<span className="font-medium text-sm text-neutral-900 dark:text-white">
+											{stage.label}
+										</span>
+										{stageTouchpoints.length > 0 && (
+											<span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+												{stageTouchpoints.length}
+											</span>
+										)}
+									</div>
+									<button
+										type="button"
+										onClick={(e) => {
+											e.stopPropagation();
+											setAddingTo(stage.key);
+											setExpandedStages((prev) => new Set([...prev, stage.key]));
+										}}
+										className="rounded p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+									>
+										<Plus className="size-3.5" />
+									</button>
+								</button>
+
+								{/* Stage Content */}
+								<AnimatePresence>
+									{isExpanded && (
+										<motion.div
+											initial={{ height: 0, opacity: 0 }}
+											animate={{ height: "auto", opacity: 1 }}
+											exit={{ height: 0, opacity: 0 }}
+											transition={{ duration: 0.2 }}
+											className="overflow-hidden"
+										>
+											<div className="space-y-1.5 border-t border-neutral-100 px-3 py-2.5 dark:border-neutral-800">
+												{/* Touchpoints */}
+												{stageTouchpoints.length === 0 && !isAdding && (
+													<button
+														type="button"
+														onClick={() => setAddingTo(stage.key)}
+														className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-neutral-200 py-4 text-xs text-neutral-400 transition-colors hover:border-neutral-300 hover:text-neutral-500 dark:border-neutral-700 dark:text-neutral-500 dark:hover:border-neutral-600"
+													>
+														<Plus className="size-3" />
+														Add touchpoint
+													</button>
+												)}
+
+												<AnimatePresence mode="popLayout">
+													{stageTouchpoints.map((tp) => (
+														<motion.div
+															key={tp.id}
+															initial={{ opacity: 0, y: 5 }}
+															animate={{ opacity: 1, y: 0 }}
+															exit={{ opacity: 0, y: -5 }}
+															className={cn(
+																"group/item flex items-start justify-between gap-2 rounded-md border p-2 text-xs",
+																tp.type === "touchpoint" && "border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800",
+																tp.type === "pain" && "border-rose-200 bg-rose-50 dark:border-rose-900/50 dark:bg-rose-900/20",
+																tp.type === "opportunity" && "border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-900/20",
+															)}
+														>
+															<div className="flex items-start gap-2">
+																<span
+																	className={cn(
+																		"mt-0.5 size-1.5 flex-shrink-0 rounded-full",
+																		tp.type === "touchpoint" && "bg-neutral-400",
+																		tp.type === "pain" && "bg-rose-500",
+																		tp.type === "opportunity" && "bg-amber-500",
+																	)}
+																/>
+																<span
+																	className={cn(
+																		"leading-relaxed",
+																		tp.type === "touchpoint" && "text-neutral-700 dark:text-neutral-300",
+																		tp.type === "pain" && "text-rose-700 dark:text-rose-300",
+																		tp.type === "opportunity" && "text-amber-700 dark:text-amber-300",
+																	)}
+																>
+																	{tp.content}
+																</span>
+															</div>
+															<button
+																className="flex-shrink-0 rounded p-0.5 opacity-0 transition-opacity hover:bg-black/5 group-hover/item:opacity-100"
+																onClick={() => deleteTouchpoint(tp.id)}
+																type="button"
+															>
+																<X className="size-3 text-neutral-400" />
+															</button>
+														</motion.div>
+													))}
+												</AnimatePresence>
+
+												{/* Add Form */}
+												{isAdding && (
+													<motion.div
+														initial={{ opacity: 0, y: 5 }}
+														animate={{ opacity: 1, y: 0 }}
+														className="space-y-2"
+													>
+														<input
+															autoFocus
+															className="w-full rounded-md border border-neutral-200 bg-white px-2.5 py-2 text-xs focus:border-neutral-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800"
+															placeholder="Describe..."
+															value={newContent}
+															onChange={(e) => setNewContent(e.target.value)}
+															onKeyDown={(e) => {
+																if (e.key === "Enter") {
+																	addTouchpoint(stage.key);
+																}
+																if (e.key === "Escape") {
+																	setAddingTo(null);
+																	setNewContent("");
+																}
+															}}
+														/>
+														<div className="flex gap-1">
+															{touchpointTypes.map((type) => (
+																<button
+																	key={type.type}
+																	className={cn(
+																		"flex-1 rounded-md px-2 py-1.5 text-[10px] font-medium transition-all",
+																		newType === type.type
+																			? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+																			: "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400",
+																	)}
+																	onClick={() => setNewType(type.type)}
+																	type="button"
+																>
+																	{type.label}
+																</button>
+															))}
+														</div>
+														<div className="flex gap-1.5">
+															<button
+																className="flex-1 rounded-md bg-rose-600 py-1.5 text-[10px] font-medium text-white hover:bg-rose-700"
+																onClick={() => addTouchpoint(stage.key)}
+																type="button"
+															>
+																Add
+															</button>
+															<button
+																className="flex-1 rounded-md bg-neutral-100 py-1.5 text-[10px] font-medium text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300"
+																onClick={() => {
+																	setAddingTo(null);
+																	setNewContent("");
+																}}
+																type="button"
+															>
+																Cancel
+															</button>
+														</div>
+													</motion.div>
+												)}
+											</div>
+										</motion.div>
+									)}
+								</AnimatePresence>
+							</div>
+						);
+					})}
+				</div>
+
+				{/* Legend */}
+				<div className="flex flex-wrap items-center justify-center gap-4 pt-2 text-[10px] text-neutral-400 dark:text-neutral-500">
+					<div className="flex items-center gap-1.5">
+						<div className="size-2 rounded-full bg-neutral-400" />
+						<span>Touchpoint</span>
+					</div>
+					<div className="flex items-center gap-1.5">
+						<div className="size-2 rounded-full bg-rose-500" />
+						<span>Pain Point</span>
+					</div>
+					<div className="flex items-center gap-1.5">
+						<div className="size-2 rounded-full bg-amber-500" />
+						<span>Opportunity</span>
+					</div>
+				</div>
+			</motion.div>
+		);
+	}
+
+	// Full Layout (unchanged)
 	return (
 		<motion.div
 			initial={{ opacity: 0 }}

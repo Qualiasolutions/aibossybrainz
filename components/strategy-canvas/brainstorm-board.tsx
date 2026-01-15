@@ -1,9 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Cloud, Download, Loader2, Plus, Shuffle, Trash2 } from "lucide-react";
+import { Check, Cloud, Download, Loader2, Plus, Shuffle, Trash2, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { CompactHeader } from "./compact-header";
 import { StickyNote } from "./sticky-note";
 import type { NoteColor, StickyNote as StickyNoteType } from "./types";
 import { useCanvasPersistence } from "./use-canvas-persistence";
@@ -24,7 +25,11 @@ const categories = [
 	{ label: "Resources", color: "slate" as NoteColor },
 ];
 
-export function BrainstormBoard() {
+interface BrainstormBoardProps {
+	compact?: boolean;
+}
+
+export function BrainstormBoard({ compact = false }: BrainstormBoardProps) {
 	const { data, setData, isSaving, isLoading, lastSaved } =
 		useCanvasPersistence<BrainstormData>({
 			canvasType: "brainstorm",
@@ -134,6 +139,156 @@ export function BrainstormBoard() {
 		URL.revokeObjectURL(url);
 	};
 
+	// Compact Layout for Side Panel
+	if (compact) {
+		const groupedNotes = categories
+			.map((cat) => ({
+				category: cat.label,
+				notes: notes.filter((n) => n.category === cat.label),
+			}))
+			.filter((group) => group.notes.length > 0);
+
+		return (
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.3 }}
+				className="space-y-3"
+			>
+				<CompactHeader
+					title="Brainstorming"
+					isLoading={isLoading}
+					isSaving={isSaving}
+					lastSaved={lastSaved}
+					onReset={resetBoard}
+					onExport={exportBoard}
+				/>
+
+				{/* Quick Add */}
+				<div className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-white p-2.5 dark:border-neutral-800 dark:bg-neutral-900">
+					<button
+						className="flex items-center gap-1.5 rounded-md bg-rose-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-rose-700"
+						onClick={addNote}
+						type="button"
+					>
+						<Plus className="size-3" />
+						Add
+					</button>
+					<select
+						className="flex-1 rounded-md border border-neutral-200 bg-white px-2 py-1.5 text-xs text-neutral-700 focus:border-neutral-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+						value={selectedCategory}
+						onChange={(e) => setSelectedCategory(Number(e.target.value))}
+					>
+						{categories.map((cat, idx) => (
+							<option key={cat.label} value={idx}>
+								{cat.label}
+							</option>
+						))}
+					</select>
+					<button
+						className="rounded p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+						onClick={clearNotes}
+						title="Clear all"
+						type="button"
+					>
+						<Trash2 className="size-3.5" />
+					</button>
+				</div>
+
+				{/* Notes List by Category */}
+				<div className="space-y-3">
+					{groupedNotes.length === 0 ? (
+						<div className="rounded-lg border border-dashed border-neutral-200 bg-neutral-50/50 py-8 text-center dark:border-neutral-800 dark:bg-neutral-900/50">
+							<p className="mb-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
+								Start Brainstorming
+							</p>
+							<p className="mb-4 text-xs text-neutral-400 dark:text-neutral-500">
+								Click "Add" to capture your ideas
+							</p>
+							<button
+								className="mx-auto flex items-center gap-1.5 rounded-md bg-rose-600 px-4 py-2 text-xs font-medium text-white hover:bg-rose-700"
+								onClick={addNote}
+								type="button"
+							>
+								<Plus className="size-3" />
+								Add Your First Idea
+							</button>
+						</div>
+					) : (
+						groupedNotes.map((group) => (
+							<div key={group.category}>
+								<div className="mb-1.5 flex items-center justify-between">
+									<span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+										{group.category}
+									</span>
+									<span className="text-[10px] text-neutral-400 dark:text-neutral-500">
+										{group.notes.length}
+									</span>
+								</div>
+								<div className="space-y-1.5">
+									<AnimatePresence mode="popLayout">
+										{group.notes.map((note) => (
+											<motion.div
+												key={note.id}
+												initial={{ opacity: 0, y: 5 }}
+												animate={{ opacity: 1, y: 0 }}
+												exit={{ opacity: 0, y: -5 }}
+												className="group/item flex items-start justify-between gap-2 rounded-md border border-neutral-200 bg-white p-2.5 dark:border-neutral-800 dark:bg-neutral-900"
+											>
+												{note.content ? (
+													<span className="flex-1 text-xs leading-relaxed text-neutral-700 dark:text-neutral-300">
+														{note.content}
+													</span>
+												) : (
+													<input
+														autoFocus
+														className="flex-1 bg-transparent text-xs leading-relaxed text-neutral-700 outline-none placeholder:text-neutral-400 dark:text-neutral-300"
+														placeholder="Type your idea..."
+														onBlur={(e) => {
+															if (!e.target.value.trim()) {
+																deleteNote(note.id);
+															}
+														}}
+														onChange={(e) =>
+															updateNote(note.id, e.target.value)
+														}
+														onKeyDown={(e) => {
+															if (e.key === "Enter") {
+																e.currentTarget.blur();
+															}
+															if (e.key === "Escape") {
+																deleteNote(note.id);
+															}
+														}}
+													/>
+												)}
+												<button
+													className="flex-shrink-0 rounded p-0.5 opacity-0 transition-opacity hover:bg-neutral-100 group-hover/item:opacity-100 dark:hover:bg-neutral-800"
+													onClick={() => deleteNote(note.id)}
+													type="button"
+												>
+													<X className="size-3 text-neutral-400" />
+												</button>
+											</motion.div>
+										))}
+									</AnimatePresence>
+								</div>
+							</div>
+						))
+					)}
+				</div>
+
+				{/* Summary */}
+				{notes.length > 0 && (
+					<div className="pt-2 text-center text-[10px] text-neutral-400 dark:text-neutral-500">
+						{notes.length} idea{notes.length !== 1 && "s"} captured
+					</div>
+				)}
+			</motion.div>
+		);
+	}
+
+	// Full Layout (unchanged)
 	return (
 		<motion.div
 			initial={{ opacity: 0 }}
