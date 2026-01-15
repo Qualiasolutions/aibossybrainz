@@ -5,7 +5,7 @@ import { MobileSidebarProvider } from "@/components/mobile-sidebar-context";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TosPopup } from "@/components/tos-popup";
 import { WelcomeTutorial } from "@/components/welcome-tutorial";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export default async function Layout({
 	children,
@@ -16,6 +16,18 @@ export default async function Layout({
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
+
+	// Check if user is admin
+	let isAdmin = false;
+	if (user) {
+		const serviceClient = createServiceClient();
+		const { data: userData } = await serviceClient
+			.from("User")
+			.select("isAdmin")
+			.eq("id", user.id)
+			.single();
+		isAdmin = userData?.isAdmin === true;
+	}
 
 	return (
 		<>
@@ -28,7 +40,7 @@ export default async function Layout({
 			<DataStreamProvider>
 				<MobileSidebarProvider>
 					<SidebarProvider defaultOpen={true}>
-						<AppSidebar user={user || undefined} />
+						<AppSidebar user={user || undefined} isAdmin={isAdmin} />
 						<SidebarInset>{children}</SidebarInset>
 					</SidebarProvider>
 				</MobileSidebarProvider>

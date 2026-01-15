@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronUp, Home, CreditCard, Mail, LogOut, LogIn } from "lucide-react";
+import { ChevronUp, Home, CreditCard, Mail, LogOut, LogIn, Shield } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,7 +19,8 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { guestRegex } from "@/lib/constants";
-export function SidebarUserNav({ user }: { user: User }) {
+
+export function SidebarUserNav({ user, isAdmin = false }: { user: User; isAdmin?: boolean }) {
 	const router = useRouter();
 	const supabase = createClient();
 
@@ -76,6 +77,17 @@ export function SidebarUserNav({ user }: { user: User }) {
 								<span className="text-sm font-medium">Contact</span>
 							</Link>
 						</DropdownMenuItem>
+						{isAdmin && (
+							<>
+								<DropdownMenuSeparator className="my-1" />
+								<DropdownMenuItem asChild className="rounded-lg px-3 py-2.5 cursor-pointer focus:bg-purple-50 focus:text-purple-600">
+									<Link href="/admin">
+										<Shield className="mr-2.5 h-4 w-4 text-purple-500" />
+										<span className="text-sm font-medium">Admin Panel</span>
+									</Link>
+								</DropdownMenuItem>
+							</>
+						)}
 						<DropdownMenuSeparator className="my-1" />
 						<DropdownMenuItem
 							asChild

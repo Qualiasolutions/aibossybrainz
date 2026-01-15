@@ -385,6 +385,7 @@ export type Database = {
           onboardedAt: string | null
           profileUpdatedAt: string | null
           deletedAt: string | null
+          isAdmin: boolean | null
         }
         Insert: {
           email: string
@@ -400,6 +401,7 @@ export type Database = {
           onboardedAt?: string | null
           profileUpdatedAt?: string | null
           deletedAt?: string | null
+          isAdmin?: boolean | null
         }
         Update: {
           email?: string
@@ -415,6 +417,7 @@ export type Database = {
           onboardedAt?: string | null
           profileUpdatedAt?: string | null
           deletedAt?: string | null
+          isAdmin?: boolean | null
         }
         Relationships: []
       }

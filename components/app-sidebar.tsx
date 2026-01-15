@@ -42,7 +42,7 @@ import {
 	AlertDialogTitle,
 } from "./ui/alert-dialog";
 
-export function AppSidebar({ user }: { user: User | undefined }) {
+export function AppSidebar({ user, isAdmin = false }: { user: User | undefined; isAdmin?: boolean }) {
 	const router = useRouter();
 	const { setOpenMobile } = useSidebar();
 	const { mutate } = useSWRConfig();
@@ -138,7 +138,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 				<SidebarFooter className="border-t border-border bg-background px-3 py-2">
 					{user && (
 						<div className="w-full">
-							<SidebarUserNav user={user} />
+							<SidebarUserNav user={user} isAdmin={isAdmin} />
 						</div>
 					)}
 				</SidebarFooter>
@@ -201,7 +201,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 						<div className="border-t border-border bg-background px-3 py-2">
 							{user && (
 								<div className="w-full">
-									<SidebarUserNav user={user} />
+									<SidebarUserNav user={user} isAdmin={isAdmin} />
 								</div>
 							)}
 						</div>
