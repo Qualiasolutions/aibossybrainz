@@ -26,6 +26,7 @@ import { myProvider } from "@/lib/ai/providers";
 import { createDocument } from "@/lib/ai/tools/create-document";
 import { getWeather } from "@/lib/ai/tools/get-weather";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
+import { strategyCanvas } from "@/lib/ai/tools/strategy-canvas";
 import { updateDocument } from "@/lib/ai/tools/update-document";
 import { webSearch } from "@/lib/ai/tools/web-search";
 import { classifyTopic } from "@/lib/ai/topic-classifier";
@@ -317,6 +318,7 @@ export async function POST(request: Request) {
 							dataStream,
 						}),
 						webSearch,
+						strategyCanvas: strategyCanvas({ session: { user } satisfies Session, dataStream }),
 					},
 					experimental_telemetry: {
 						isEnabled: isProductionEnvironment,

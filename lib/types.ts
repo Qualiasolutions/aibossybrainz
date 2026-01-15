@@ -44,6 +44,10 @@ export type CustomUIDataTypes = {
 	clear: null;
 	finish: null;
 	usage: AppUsage;
+	// Strategy Canvas types
+	canvasType: string;
+	canvasItem: { section: string; content: string; id: string };
+	canvasData: string;
 };
 
 export type ChatMessage = UIMessage<
