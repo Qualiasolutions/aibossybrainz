@@ -19,6 +19,7 @@ import { createClient } from "@/lib/supabase/server";
 import { type UserType } from "@/lib/ai/entitlements";
 import type { VisibilityType } from "@/components/visibility-selector";
 import { entitlementsByUserType } from "@/lib/ai/entitlements";
+import { formatCanvasContext } from "@/lib/ai/canvas-context";
 import { getKnowledgeBaseContent } from "@/lib/ai/knowledge-base";
 import type { ChatModel } from "@/lib/ai/models";
 import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
@@ -37,6 +38,7 @@ import {
 	createStreamId,
 	deleteChatById,
 	ensureUserExists,
+	getAllUserCanvases,
 	getChatById,
 	getMessageCountByUserId,
 	getMessagesByChatId,
@@ -266,10 +268,11 @@ export async function POST(request: Request) {
 			country,
 		};
 
-		// Run knowledge base loading, message save, and stream ID creation in parallel
+		// Run knowledge base loading, canvas fetch, message save, and stream ID creation in parallel
 		const streamId = generateUUID();
-		const [knowledgeBaseContent] = await Promise.all([
+		const [knowledgeBaseContent, userCanvases] = await Promise.all([
 			getKnowledgeBaseContent(selectedBotType),
+			getAllUserCanvases({ userId: user.id }),
 			saveMessages({
 				messages: [
 					{
@@ -287,6 +290,14 @@ export async function POST(request: Request) {
 			createStreamId({ streamId, chatId: id }),
 		]);
 
+		// Format canvas context for AI consumption
+		const canvasContext = formatCanvasContext(
+			userCanvases.map((c) => ({
+				canvasType: c.canvasType as "swot" | "bmc" | "journey" | "brainstorm",
+				data: c.data,
+			})),
+		);
+
 		// Build system prompt with personalization (now async)
 		const systemPromptText = await systemPrompt({
 			selectedChatModel,
@@ -294,6 +305,7 @@ export async function POST(request: Request) {
 			botType: selectedBotType,
 			focusMode: focusMode,
 			knowledgeBaseContent,
+			canvasContext,
 			userId: user.id,
 		});
 

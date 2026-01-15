@@ -107,6 +107,7 @@ export const systemPrompt = async ({
 	botType = "collaborative",
 	focusMode = "default",
 	knowledgeBaseContent = "",
+	canvasContext = "",
 	userId,
 }: {
 	selectedChatModel: string;
@@ -114,6 +115,7 @@ export const systemPrompt = async ({
 	botType?: BotType;
 	focusMode?: FocusMode;
 	knowledgeBaseContent?: string;
+	canvasContext?: string;
 	userId?: string;
 }): Promise<string> => {
 	const requestPrompt = getRequestPromptFromHints(requestHints);
@@ -156,6 +158,23 @@ The following is content YOU have personally written and published throughout yo
 ---YOUR PUBLISHED WORK---
 ${knowledgeBaseContent}
 ---END OF YOUR WORK---`;
+	}
+
+	// Append strategy canvas context if available
+	if (canvasContext) {
+		botSystemPrompt += `
+
+## CLIENT'S STRATEGY CANVAS
+The client is actively developing strategic frameworks using the Strategy Canvas tool. Below is their current work-in-progress. Reference this context when relevant to provide more targeted advice.
+
+**HOW TO REFERENCE THIS:**
+- Acknowledge what they've already documented
+- Build on their existing insights rather than starting from scratch
+- Point out gaps or areas they haven't addressed yet
+- Connect their strategy elements together
+
+${canvasContext}
+---END CANVAS CONTEXT---`;
 	}
 
 	if (selectedChatModel === "chat-model-reasoning") {
