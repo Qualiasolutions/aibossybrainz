@@ -51,6 +51,7 @@ import { MultimodalInput } from "./multimodal-input";
 import { OnboardingModal } from "./onboarding-modal";
 import { ReactionItemsPopup } from "./reaction-items-popup";
 import { getChatHistoryPaginationKey } from "./sidebar-history";
+import { SwotSlidePanel } from "./swot-slide-panel";
 import { toast } from "./toast";
 import { useSidebar } from "./ui/sidebar";
 import type { VisibilityType } from "./visibility-selector";
@@ -100,6 +101,7 @@ export function Chat({
 	const [selectedBot, setSelectedBot] = useState<BotType>(initialBotType);
 	const [focusMode, setFocusMode] = useState<FocusMode>("default");
 	const [reactionPopup, setReactionPopup] = useState<"actionable" | "needs_clarification" | "save_for_later" | null>(null);
+	const [isSwotPanelOpen, setIsSwotPanelOpen] = useState(false);
 	const currentModelIdRef = useRef(currentModelId);
 	const selectedBotRef = useRef(initialBotType);
 
@@ -331,35 +333,14 @@ export function Chat({
 
 							{/* Right: Strategy Canvas, Menu, Analytics, Export & Visibility */}
 							<div className="flex items-center gap-1.5">
-								{/* Strategy Canvas - Opens side panel */}
+								{/* SWOT Analysis - Opens slide panel */}
 								<Button
 									className="h-8 gap-1.5 rounded-lg border-border bg-background px-2.5 font-medium text-xs text-muted-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
 									variant="outline"
-									onClick={(e) => {
-										const rect = e.currentTarget.getBoundingClientRect();
-										setArtifact({
-											documentId: generateUUID(),
-											title: "SWOT Analysis",
-											kind: "strategy-canvas",
-											content: JSON.stringify({
-												strengths: [],
-												weaknesses: [],
-												opportunities: [],
-												threats: [],
-											}),
-											status: "idle",
-											isVisible: true,
-											boundingBox: {
-												top: rect.top,
-												left: rect.left,
-												width: rect.width,
-												height: rect.height,
-											},
-										});
-									}}
+									onClick={() => setIsSwotPanelOpen(true)}
 								>
 									<LayoutGrid className="size-3.5" />
-									<span className="hidden sm:inline">Strategy</span>
+									<span className="hidden sm:inline">SWOT</span>
 								</Button>
 
 								{/* Quick Navigation Dropdown */}
@@ -505,6 +486,12 @@ export function Chat({
 				status={status}
 				stop={stop}
 				votes={votes}
+			/>
+
+			{/* SWOT Analysis Slide Panel */}
+			<SwotSlidePanel
+				isOpen={isSwotPanelOpen}
+				onClose={() => setIsSwotPanelOpen(false)}
 			/>
 
 			{/* Voice Call Dialog */}
