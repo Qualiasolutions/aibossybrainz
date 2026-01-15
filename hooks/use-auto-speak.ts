@@ -38,22 +38,36 @@ function checkVoiceServiceAvailable(): boolean {
  * Hook that automatically speaks the latest assistant message when streaming completes.
  * Uses ElevenLabs TTS API via the /api/voice endpoint.
  */
+const AUTO_SPEAK_STORAGE_KEY = "auto-speak-enabled";
+
+// Get initial state from localStorage, defaulting to true (ON)
+function getInitialAutoSpeakState(): boolean {
+	if (typeof window === "undefined") return true;
+	const stored = localStorage.getItem(AUTO_SPEAK_STORAGE_KEY);
+	// Default to true if not set
+	if (stored === null) return true;
+	return stored === "true";
+}
+
 export const useAutoSpeak = ({
 	messages,
 	status,
 	botType,
-	enabled = true,
 }: {
 	messages: ChatMessage[];
 	status: "ready" | "submitted" | "streaming" | "error";
 	botType: BotType;
-	enabled?: boolean;
 }) => {
 	const [state, setState] = useState<AutoSpeakState>("idle");
-	const [isAutoSpeakEnabled, setIsAutoSpeakEnabled] = useState(enabled);
+	const [isAutoSpeakEnabled, setIsAutoSpeakEnabled] = useState(() => getInitialAutoSpeakState());
 	const lastSpokenMessageIdRef = useRef<string | null>(null);
 	const wasStreamingRef = useRef(false);
 	const currentPlayIdRef = useRef<string | null>(null);
+
+	// Persist auto-speak setting to localStorage
+	useEffect(() => {
+		localStorage.setItem(AUTO_SPEAK_STORAGE_KEY, String(isAutoSpeakEnabled));
+	}, [isAutoSpeakEnabled]);
 
 	// Subscribe to global audio state changes
 	useEffect(() => {
@@ -246,11 +260,25 @@ export const useAutoSpeak = ({
 			}
 
 			// Extract text content from message parts
-			const textContent = lastMessage.parts
+			let textContent = lastMessage.parts
 				?.filter((part) => part.type === "text")
 				.map((part) => part.text)
 				.join("\n")
 				.trim();
+
+			// Strip code blocks and code-related phrases for cleaner voice output
+			if (textContent) {
+				// Remove code blocks (```...```)
+				textContent = textContent.replace(/```[\s\S]*?```/g, "");
+				// Remove inline code (`...`)
+				textContent = textContent.replace(/`[^`]+`/g, "");
+				// Remove phrases referring to code examples
+				textContent = textContent.replace(/see the (code )?example (displayed )?(above|below)/gi, "");
+				textContent = textContent.replace(/as shown (in the )?(code )?(above|below)/gi, "");
+				textContent = textContent.replace(/here'?s? (the |an? )?(code )?example:?/gi, "");
+				// Clean up extra whitespace
+				textContent = textContent.replace(/\n{3,}/g, "\n\n").trim();
+			}
 
 			console.log("[AutoSpeak] Text content length:", textContent?.length || 0);
 

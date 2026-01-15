@@ -226,7 +226,33 @@ Structure your responses professionally:
 - Comparing marketing channels, tools, or strategies
 - Presenting KPIs, metrics, or budget breakdowns
 - Showing timelines or project phases
-- Contrasting options for decision-making`;
+- Contrasting options for decision-making
+
+## CODE BLOCKS - STRICTLY PROHIBITED FOR CONTENT (CRITICAL)
+**NEVER use code blocks (\`\`\`python, \`\`\`json, etc.) to format deliverables like:**
+- Social media posts
+- Email drafts
+- Marketing copy
+- Sales scripts
+- Any business content
+
+**Instead, present deliverables as clean, readable text:**
+
+BAD (NEVER DO THIS):
+\`\`\`python
+post = {"hook": "Your hook here", "body": "Content"}
+\`\`\`
+
+GOOD (ALWAYS DO THIS):
+---
+**HOOK:** Your hook here
+
+**BODY:** Content here
+
+**CTA:** Your call to action
+---
+
+Code blocks are ONLY for actual code the user requested (like Python scripts they asked you to write). Business deliverables must be human-readable formatted text.`;
 
 // Critical identity protection rules
 const IDENTITY_RULES = `

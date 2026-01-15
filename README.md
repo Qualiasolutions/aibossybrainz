@@ -1,172 +1,149 @@
+<div align="center">
+
 # AI Boss Brainz
 
-<p align="center">
-  <img src="app/(chat)/opengraph-image.png" alt="AI Boss Brainz" width="600">
-</p>
+**Executive AI Consultants for Strategic Business Growth**
 
-<p align="center">
-  <strong>Your AI Executive Team, Available 24/7</strong>
-</p>
+[![Next.js](https://img.shields.io/badge/Next.js-15.6+-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6+-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green?style=flat-square&logo=supabase)](https://supabase.com/)
+[![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square)](LICENSE)
 
-<p align="center">
-  AI Boss Brainz transforms how businesses approach strategic consulting. Instead of a generic chatbot, you get access to two distinct AI executives with specialized expertise, personalities, and strategic frameworks.
-</p>
+[Live Demo](https://aibossbrainz.com) | [Documentation](#documentation) | [Report Issue](https://github.com/Qualiasolutions/ai-bossy-brainz/issues)
 
-## Meet Your Executives
+---
 
-### Alexandria | Chief Marketing Officer
+Built by **[Qualia Solutions](https://qualiasolutions.net)** - AI-Powered Voice Agents & Automation
 
-Alexandria brings deep expertise in brand strategy, market positioning, and creative campaigns. She excels at:
+</div>
 
-* Brand identity and positioning strategy
-* Marketing campaign development
-* Crisis communications and reputation management
-* Customer experience optimization
-* Content strategy and storytelling
+## Overview
 
-Her approach is thoughtful, creative, and brand centric. She sees every business challenge through the lens of brand equity and customer perception.
+AI Boss Brainz is an executive personality-driven AI consulting platform built for Alecci Media. Unlike generic chatbots, it provides access to two distinct AI executives - **Alexandria (CMO)** and **Kim (CSO)** - each with specialized expertise, unique personalities, and strategic frameworks tailored to marketing and sales consulting.
 
-### Kim | Chief Sales Officer
-
-Kim is your revenue focused strategist with expertise in sales processes, deal structures, and market expansion. She specializes in:
-
-* Sales pipeline optimization
-* Deal negotiation and closing strategies
-* Market entry and expansion planning
-* Revenue forecasting and metrics
-* Team scaling and sales operations
-
-Her style is direct, results driven, and always focused on the bottom line. Every recommendation ties back to revenue impact.
-
-### Collaborative Mode
-
-When complex challenges require both perspectives, engage both executives simultaneously. They'll debate, complement each other's viewpoints, and deliver comprehensive strategic recommendations that balance brand building with revenue generation.
+The platform leverages advanced AI models through OpenRouter, features real-time streaming responses, voice synthesis via ElevenLabs, and persistent conversation memory across sessions.
 
 ## Key Features
 
-### Executive Focus Modes
+| Feature | Description |
+|---------|-------------|
+| **Dual Executive Personas** | Alexandria (CMO) for marketing strategy, Kim (CSO) for sales optimization, or both in Collaborative mode |
+| **Focus Modes** | Specialized contexts: Business Analysis, Pricing, Key Messaging, Customer Journey, Social Media, Launch Strategy |
+| **Strategy Canvas** | Interactive SWOT, Business Model Canvas, Customer Journey, and Brainstorm boards |
+| **Voice Integration** | Text-to-speech responses with ElevenLabs, speech-to-text input via Web Speech API |
+| **Knowledge Base** | Executive-specific knowledge loaded from PDF, DOCX, and XLSX files |
+| **Conversation Memory** | Cross-chat summaries and context persistence for personalized consulting |
+| **Message Reactions** | Mark insights as Actionable, Save for Later, Needs Clarification, or Brilliant |
+| **PDF Export** | Export conversations with executive branding |
+| **Analytics Dashboard** | Track usage, topics, and executive preferences |
 
-Tailor your consultation with specialized modes:
+## Tech Stack
 
-| Mode | Description |
-|------|-------------|
-| Default | General strategic consultation |
-| Brand Crisis | Reputation management and damage control |
-| Launch Campaign | Go to market strategy and execution |
-| Pipeline Audit | Sales funnel analysis and optimization |
-| Deal Closing | Negotiation tactics and contract strategy |
-| Market Entry | New market research and expansion planning |
-| Team Scaling | Organizational growth and hiring strategy |
-
-### Intelligent Conversation Analytics
-
-* **Topic Detection** automatically categorizes conversations
-* **Drift Alerts** notify when discussions stray from objectives
-* **Executive Recommendations** suggest when to bring in another perspective
-* **Conversation Depth Metrics** track strategic value delivered
-
-### Executive Memory System
-
-The platform remembers your preferences and patterns:
-
-* Which executive you prefer for different topics
-* Your business context and ongoing initiatives
-* Historical recommendations and their outcomes
-* Personal communication style preferences
-
-### Reports Library
-
-All AI generated documents, frameworks, and artifacts are automatically saved and organized:
-
-* Filter by executive, date, or topic
-* Export with executive branding
-* Version history for all documents
-* Quick access to past strategic work
-
-### Rich Message Interactions
-
-Go beyond simple chat with:
-
-* **Reactions** to mark insights as Actionable, Brilliant, Helpful, or Save for Later
-* **Voting** to train better responses over time
-* **Voice Input** for hands free consulting sessions
-* **File Attachments** for document analysis
-
-## Technology
-
-Built with modern, production grade technology:
-
-* **Framework** Next.js 15+ with React 19 and TypeScript
-* **AI Engine** Vercel AI SDK with advanced streaming
-* **Database** Supabase (PostgreSQL) with row level security
-* **Authentication** Supabase Auth with secure session management
-* **Voice** ElevenLabs text to speech for natural responses
-* **Styling** Tailwind CSS with shadcn/ui components
-* **Monitoring** Sentry for error tracking and performance
+| Layer | Technology |
+|-------|------------|
+| **Framework** | Next.js 15.6+ (App Router, React 19, TypeScript) |
+| **AI/LLM** | Vercel AI SDK 5.x + OpenRouter (Google Gemini 3 Flash) |
+| **Database** | Supabase PostgreSQL with Row Level Security |
+| **Auth** | Supabase Auth (SSR pattern) |
+| **Storage** | Vercel Blob |
+| **Voice** | ElevenLabs TTS |
+| **Styling** | Tailwind CSS 4 + shadcn/ui + Radix UI |
+| **Monitoring** | Sentry + Vercel Analytics |
+| **Testing** | Playwright (E2E + API routes) |
+| **Linting** | Ultracite (Biome-based) |
 
 ## Getting Started
 
 ### Prerequisites
 
-* Node.js 18+
-* pnpm package manager
-* Supabase account
-* OpenRouter API key
+- Node.js 20+
+- pnpm package manager
+- Supabase project
+- OpenRouter API key
 
 ### Installation
 
-1. Clone the repository
-
 ```bash
-git clone https://github.com/Qualiasolutions/aibossybrainz.git
-cd aibossybrainz
-```
+# Clone the repository
+git clone https://github.com/Qualiasolutions/ai-bossy-brainz.git
+cd ai-bossy-brainz
 
-2. Install dependencies
-
-```bash
+# Install dependencies
 pnpm install
-```
 
-3. Configure environment variables
-
-```bash
+# Copy environment variables
 cp .env.example .env.local
 ```
 
-Edit `.env.local` with your credentials:
+### Environment Variables
 
+Configure `.env.local` with your credentials:
+
+```env
+# Required
+AUTH_SECRET=                      # Generate: openssl rand -base64 32
+OPENROUTER_API_KEY=               # https://openrouter.ai/keys
+NEXT_PUBLIC_SUPABASE_URL=         # Supabase project URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=    # Supabase anon key
+SUPABASE_SERVICE_ROLE_KEY=        # Supabase service role key
+BLOB_READ_WRITE_TOKEN=            # Vercel Blob token
+
+# Optional
+REDIS_URL=                        # For rate limiting (falls back to DB)
+TAVILY_API_KEY=                   # Enhanced web search
+ELEVENLABS_API_KEY=               # Text-to-speech
+SENTRY_DSN=                       # Error tracking
 ```
-AUTH_SECRET=your_auth_secret
-OPENROUTER_API_KEY=your_openrouter_key
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
-```
 
-4. Set up the database
+### Database Setup
 
-Apply migrations in the Supabase SQL Editor from `supabase/migrations/`
-
-5. Start the development server
+Apply migrations in order via Supabase SQL Editor:
 
 ```bash
-pnpm dev
+supabase/migrations/01_create_tables.sql
+supabase/migrations/02_enable_rls.sql
 ```
 
-Visit [localhost:3000](http://localhost:3000) to meet your AI executives.
-
-## Deployment
-
-Deploy to Vercel with one click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Qualiasolutions/aibossybrainz)
-
-Or deploy manually:
+### Development
 
 ```bash
-pnpm build
-vercel deploy --prod
+pnpm dev        # Start dev server with Turbopack
+pnpm build      # Production build
+pnpm lint       # Run linter
+pnpm test       # Run Playwright tests
+```
+
+Visit [localhost:3000](http://localhost:3000) to start consulting.
+
+## Project Structure
+
+```
+app/
+├── (auth)/                 # Authentication (login, register)
+├── (chat)/                 # Main application
+│   ├── api/                # API route handlers
+│   │   ├── chat/           # AI streaming endpoint
+│   │   ├── voice/          # ElevenLabs TTS
+│   │   ├── reactions/      # Message reactions
+│   │   └── canvas/         # Strategy canvas persistence
+│   └── analytics/          # Usage dashboard
+├── (marketing)/            # Landing pages
+
+lib/
+├── ai/
+│   ├── providers.ts        # OpenRouter configuration
+│   ├── prompts.ts          # System prompt builder
+│   ├── knowledge-base.ts   # File parsing (PDF, DOCX, XLSX)
+│   └── tools/              # AI tool implementations
+├── bot-personalities.ts    # Executive personas + focus modes
+├── db/queries.ts           # Supabase query functions
+└── security/               # Rate limiting (Redis + DB fallback)
+
+components/
+├── chat.tsx                # Main chat interface
+├── executive-switch.tsx    # Persona selector
+├── strategy-canvas/        # Interactive strategy boards
+└── ui/                     # shadcn/ui primitives
 ```
 
 ## Usage Limits
@@ -177,46 +154,42 @@ vercel deploy --prod
 | Regular | 500 |
 | Premium | 2,000 |
 
-## Project Structure
+## Deployment
 
+### Vercel (Recommended)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Qualiasolutions/ai-bossy-brainz)
+
+### Manual Deployment
+
+```bash
+pnpm build
+vercel deploy --prod
 ```
-app/
-├── (auth)/           Authentication pages
-├── (chat)/           Main application
-│   ├── api/          API routes
-│   ├── analytics/    Usage dashboard
-│   ├── history/      Conversation history
-│   ├── reports/      Reports library
-│   └── executives/   Executive profiles
 
-components/
-├── chat.tsx              Chat interface
-├── executive-switch.tsx  Executive selector
-├── focus-mode-selector.tsx
-├── message.tsx           Styled messages
-└── conversation-analytics.tsx
+## Documentation
 
-lib/
-├── ai/                   AI configuration
-├── bot-personalities.ts  Executive personas
-├── db/                   Database queries
-└── security/             Rate limiting
-```
+- [CLAUDE.md](CLAUDE.md) - Development guidelines and architecture
+- [ROADMAP.md](ROADMAP.md) - Feature roadmap
+- [PROGRESS.md](PROGRESS.md) - Implementation status
+- [supabase/README.md](supabase/README.md) - Database schema documentation
 
 ## Contributing
 
-We welcome contributions! Please read our contributing guidelines before submitting pull requests.
+This is a proprietary project built for Alecci Media. For inquiries about custom AI consulting platforms, contact [Qualia Solutions](https://qualiasolutions.net).
 
 ## License
 
-This project is licensed under the terms included in the LICENSE file.
-
-## Support
-
-For questions, feature requests, or issues, please open a GitHub issue or contact the team at [qualiasolutions.net](https://qualiasolutions.net).
+Proprietary - All Rights Reserved. See [LICENSE](LICENSE) for details.
 
 ---
 
-<p align="center">
-  Built by <a href="https://qualiasolutions.net">Qualia Solutions</a>
-</p>
+<div align="center">
+
+**Built with precision by [Qualia Solutions](https://qualiasolutions.net)**
+
+AI-Powered Voice Agents | Automation | Modern Web Apps
+
+[Website](https://qualiasolutions.net) | [GitHub](https://github.com/Qualiasolutions)
+
+</div>

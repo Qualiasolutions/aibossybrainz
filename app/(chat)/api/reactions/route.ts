@@ -2,10 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import {
 	addMessageReaction,
 	getMessageReactionCounts,
-	getMessageReactions,
 	getUserReactionForMessage,
+	getUserReactionsByType,
 	removeMessageReaction,
 } from "@/lib/db/queries";
+import type { ReactionType } from "@/lib/supabase/types";
 
 export async function GET(request: Request) {
 	const supabase = await createClient();
@@ -19,9 +20,37 @@ export async function GET(request: Request) {
 
 	const { searchParams } = new URL(request.url);
 	const messageId = searchParams.get("messageId");
+	const reactionType = searchParams.get("type") as ReactionType | null;
 
+	// If reactionType is provided, return all reactions of that type for the user
+	if (reactionType) {
+		const validTypes = [
+			"actionable",
+			"needs_clarification",
+			"ready_to_implement",
+			"save_for_later",
+			"brilliant",
+			"helpful",
+		];
+		if (!validTypes.includes(reactionType)) {
+			return new Response("Invalid reaction type", { status: 400 });
+		}
+
+		try {
+			const items = await getUserReactionsByType({
+				userId: user.id,
+				reactionType,
+			});
+			return Response.json({ items });
+		} catch (error) {
+			console.error("Failed to get reactions by type:", error);
+			return new Response("Failed to get reactions", { status: 500 });
+		}
+	}
+
+	// Otherwise, get reactions for a specific message
 	if (!messageId) {
-		return new Response("Missing messageId", { status: 400 });
+		return new Response("Missing messageId or type", { status: 400 });
 	}
 
 	try {

@@ -102,7 +102,7 @@ export function TosPopup({ onAccept }: TosPopupProps) {
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.95, y: 20 }}
 						transition={{ type: "spring", duration: 0.5 }}
-						className="relative z-10 w-full max-w-2xl bg-white rounded-2xl overflow-hidden shadow-2xl shadow-neutral-300/50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800 dark:shadow-black/30"
+						className="relative z-10 w-full max-w-2xl bg-white rounded-2xl overflow-hidden shadow-2xl shadow-neutral-300/50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800 dark:shadow-black/30 pointer-events-auto"
 					>
 						{/* Red accent line */}
 						<div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-red-600" />
@@ -216,41 +216,49 @@ export function TosPopup({ onAccept }: TosPopupProps) {
 						{/* Footer */}
 						<div className="p-6 pt-4 border-t border-neutral-100 bg-gradient-to-t from-neutral-50 to-white space-y-4 dark:border-neutral-800 dark:from-neutral-800 dark:to-neutral-900">
 							<div className="space-y-3">
-								<label className="flex items-center gap-3 cursor-pointer group">
+								<div
+									className="flex items-center gap-3 cursor-pointer group p-2 -m-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+									onClick={() => setTosChecked(!tosChecked)}
+								>
 									<Checkbox
 										checked={tosChecked}
 										onCheckedChange={(checked) => setTosChecked(checked === true)}
-										className="border-red-300 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
+										className="border-2 border-neutral-300 dark:border-neutral-600 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
 									/>
-									<span className="text-sm text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white transition-colors">
+									<span className="text-sm text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white transition-colors select-none">
 										I have read and agree to the{" "}
 										<Link
 											href="/terms"
 											target="_blank"
+											onClick={(e) => e.stopPropagation()}
 											className="font-medium text-red-600 underline underline-offset-2 hover:text-red-700"
 										>
 											Terms of Service
 										</Link>
 									</span>
-								</label>
+								</div>
 
-								<label className="flex items-center gap-3 cursor-pointer group">
+								<div
+									className="flex items-center gap-3 cursor-pointer group p-2 -m-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+									onClick={() => setPrivacyChecked(!privacyChecked)}
+								>
 									<Checkbox
 										checked={privacyChecked}
 										onCheckedChange={(checked) => setPrivacyChecked(checked === true)}
-										className="border-red-300 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
+										className="border-2 border-neutral-300 dark:border-neutral-600 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
 									/>
-									<span className="text-sm text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white transition-colors">
+									<span className="text-sm text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white transition-colors select-none">
 										I have read and agree to the{" "}
 										<Link
 											href="/privacy"
 											target="_blank"
+											onClick={(e) => e.stopPropagation()}
 											className="font-medium text-red-600 underline underline-offset-2 hover:text-red-700"
 										>
 											Privacy Policy
 										</Link>
 									</span>
-								</label>
+								</div>
 							</div>
 
 							<Button
