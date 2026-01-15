@@ -129,7 +129,48 @@ export async function ensureUserExists({
 	}
 }
 
+// ============================================
+// AUDIT LOG QUERIES
+// ============================================
 
+export async function createAuditLog({
+	userId,
+	action,
+	resource,
+	resourceId,
+	details,
+	ipAddress,
+	userAgent,
+}: {
+	userId?: string | null;
+	action: string;
+	resource: string;
+	resourceId?: string | null;
+	details?: Json;
+	ipAddress?: string | null;
+	userAgent?: string | null;
+}) {
+	try {
+		const supabase = await createClient();
+		const { error } = await supabase.from("AuditLog").insert({
+			userId,
+			action,
+			resource,
+			resourceId,
+			details: details ?? {},
+			ipAddress,
+			userAgent,
+		});
+
+		if (error) {
+			console.error("Failed to create audit log:", error);
+			// Don't throw - audit logs shouldn't break the main operation
+		}
+	} catch (error) {
+		console.error("createAuditLog error:", error);
+		// Non-critical - audit failure shouldn't break main operation
+	}
+}
 
 // ============================================
 // CHAT QUERIES

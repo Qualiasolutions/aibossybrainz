@@ -384,6 +384,7 @@ export type Database = {
           preferredBotType: string | null
           onboardedAt: string | null
           profileUpdatedAt: string | null
+          deletedAt: string | null
         }
         Insert: {
           email: string
@@ -398,6 +399,7 @@ export type Database = {
           preferredBotType?: string | null
           onboardedAt?: string | null
           profileUpdatedAt?: string | null
+          deletedAt?: string | null
         }
         Update: {
           email?: string
@@ -412,6 +414,7 @@ export type Database = {
           preferredBotType?: string | null
           onboardedAt?: string | null
           profileUpdatedAt?: string | null
+          deletedAt?: string | null
         }
         Relationships: []
       }
