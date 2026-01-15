@@ -9,10 +9,43 @@ import "./globals.css";
 
 
 export const metadata: Metadata = {
-	metadataBase: new URL("https://aleccimedia.vercel.app"),
-	title: "Alecci Media AI Agents - Executive Consulting Team",
+	metadataBase: new URL("https://aleccinew.vercel.app"),
+	title: {
+		default: "AI Boss Brainz - Executive AI Consulting",
+		template: "%s | AI Boss Brainz",
+	},
 	description:
 		"Get strategic business guidance from AI executives Alexandria Alecci (CMO) and Kim Mylls (CSO). Professional AI consulting for marketing and sales strategy.",
+	keywords: ["AI consulting", "marketing strategy", "sales strategy", "business AI", "executive coaching"],
+	authors: [{ name: "Alecci Media" }, { name: "Qualia Solutions" }],
+	creator: "Qualia Solutions",
+	openGraph: {
+		type: "website",
+		locale: "en_US",
+		url: "https://aleccinew.vercel.app",
+		siteName: "AI Boss Brainz",
+		title: "AI Boss Brainz - Executive AI Consulting",
+		description: "Get strategic business guidance from AI executives Alexandria (CMO) and Kim (CSO).",
+		images: [
+			{
+				url: "/opengraph-image.png",
+				width: 1200,
+				height: 630,
+				alt: "AI Boss Brainz - Executive AI Consulting",
+			},
+		],
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "AI Boss Brainz - Executive AI Consulting",
+		description: "Get strategic business guidance from AI executives Alexandria (CMO) and Kim (CSO).",
+		images: ["/twitter-image.png"],
+		creator: "@aleccimedia",
+	},
+	robots: {
+		index: true,
+		follow: true,
+	},
 };
 
 export const viewport = {
