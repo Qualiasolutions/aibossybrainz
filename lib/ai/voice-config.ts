@@ -14,15 +14,15 @@ export type VoiceConfig = {
 // Voice IDs provided by user:
 // Alexandria: kfxR5DufiGBogKn26hyv
 // Kim: wMmwtV1VyRNXQx00eD6W
-// Using ElevenLabs v3 for more expressive speech
-// eleven_v3 requires stability values of 0.0 (Creative), 0.5 (Natural), or 1.0 (Robust)
+// Using ElevenLabs Turbo v2.5 for cost efficiency (significantly cheaper than v3)
+// Turbo models support full 0-1 stability range
 export const VOICE_CONFIGS: Record<BotType, VoiceConfig> = {
 	alexandria: {
 		voiceId:
 			process.env.ELEVENLABS_VOICE_ID_ALEXANDRIA ?? "kfxR5DufiGBogKn26hyv",
-		modelId: "eleven_v3",
+		modelId: "eleven_turbo_v2_5",
 		settings: {
-			stability: 0.5, // Natural - balanced for CMO voice
+			stability: 0.5,
 			similarityBoost: 0.8,
 			style: 0.3,
 			useSpeakerBoost: true,
@@ -30,9 +30,9 @@ export const VOICE_CONFIGS: Record<BotType, VoiceConfig> = {
 	},
 	kim: {
 		voiceId: process.env.ELEVENLABS_VOICE_ID_KIM ?? "wMmwtV1VyRNXQx00eD6W",
-		modelId: "eleven_v3",
+		modelId: "eleven_turbo_v2_5",
 		settings: {
-			stability: 1.0, // Robust - consistent for CSO voice
+			stability: 0.7,
 			similarityBoost: 0.8,
 			style: 0.2,
 			useSpeakerBoost: true,
@@ -42,9 +42,9 @@ export const VOICE_CONFIGS: Record<BotType, VoiceConfig> = {
 		// Use Alexandria's voice for collaborative mode
 		voiceId:
 			process.env.ELEVENLABS_VOICE_ID_ALEXANDRIA ?? "kfxR5DufiGBogKn26hyv",
-		modelId: "eleven_v3",
+		modelId: "eleven_turbo_v2_5",
 		settings: {
-			stability: 0.5, // Natural - balanced for collaborative
+			stability: 0.5,
 			similarityBoost: 0.8,
 			style: 0.25,
 			useSpeakerBoost: true,
