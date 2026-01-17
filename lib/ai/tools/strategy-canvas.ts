@@ -3,100 +3,112 @@ import { z } from "zod";
 import type { Session } from "@/lib/artifacts/server";
 import type { ChatMessage } from "@/lib/types";
 import { generateUUID } from "@/lib/utils";
-import { saveDocument } from "@/lib/db/queries";
-import type {
-	SwotData,
-	BusinessModelData,
-	CanvasType,
-} from "@/components/strategy-canvas/types";
+import { getDocumentById, saveDocument } from "@/lib/db/queries";
 
 type StrategyCanvasProps = {
 	session: Session;
 	dataStream: UIMessageStreamWriter<ChatMessage>;
 };
 
-// Default empty data for each canvas type
-function getDefaultCanvasData(canvasType: CanvasType): object {
-	switch (canvasType) {
-		case "swot":
-			return {
-				strengths: [],
-				weaknesses: [],
-				opportunities: [],
-				threats: [],
-			} satisfies SwotData;
-		case "bmc":
-			return {
-				keyPartners: [],
-				keyActivities: [],
-				keyResources: [],
-				valuePropositions: [],
-				customerRelationships: [],
-				channels: [],
-				customerSegments: [],
-				costStructure: [],
-				revenueStreams: [],
-			} satisfies BusinessModelData;
-		case "journey":
-			return {
-				awareness: [],
-				consideration: [],
-				decision: [],
-				purchase: [],
-				retention: [],
-				advocacy: [],
-			};
-		case "brainstorm":
-			return {
-				notes: [],
-			};
-		default:
-			return {};
-	}
+// Get comprehensive data structure for ALL canvas types (all 4 tabs)
+function getAllCanvasData(): object {
+	return {
+		// SWOT Tab
+		strengths: [],
+		weaknesses: [],
+		opportunities: [],
+		threats: [],
+		// BMC Tab (Business Model Canvas)
+		keyPartners: [],
+		keyActivities: [],
+		keyResources: [],
+		valuePropositions: [],
+		customerRelationships: [],
+		channels: [],
+		customerSegments: [],
+		costStructure: [],
+		revenueStreams: [],
+		// Journey Tab (Customer Journey)
+		awareness: [],
+		consideration: [],
+		decision: [],
+		purchase: [],
+		retention: [],
+		advocacy: [],
+		// Ideas Tab (Brainstorm)
+		notes: [],
+	};
 }
+
 
 const strategyCanvasSchema = z.object({
 	action: z
-		.enum(["create", "addItems"])
+		.enum(["create", "addItems", "populateSection"])
 		.describe("Action to perform on the canvas"),
 	canvasType: z
 		.enum(["swot", "bmc", "journey", "brainstorm"])
-		.describe("Type of strategic canvas"),
+		.describe("Type of strategic canvas to target"),
 	title: z
 		.string()
 		.optional()
 		.describe("Title for the canvas (used when creating)"),
+	documentId: z
+		.string()
+		.optional()
+		.describe("Document ID returned from create action. REQUIRED for populateSection to persist items."),
 	section: z
 		.string()
 		.optional()
 		.describe(
-			"Section to add items to (e.g., 'strengths', 'keyPartners', 'awareness')",
+			"Section to add items to. SWOT: strengths/weaknesses/opportunities/threats. BMC: keyPartners/keyActivities/keyResources/valuePropositions/customerRelationships/channels/customerSegments/costStructure/revenueStreams. Journey: awareness/consideration/decision/purchase/retention/advocacy. Brainstorm: notes",
 		),
 	items: z
 		.array(z.string())
 		.optional()
-		.describe("Items to add to the specified section"),
+		.describe("Items to add to the specified section (3-5 items per section recommended)"),
 });
 
 type StrategyCanvasInput = z.infer<typeof strategyCanvasSchema>;
 
 export const strategyCanvas = ({ session, dataStream }: StrategyCanvasProps) =>
 	tool({
-		description: `Open and interact with strategic planning canvases. Use this tool to help users with strategic analysis.
+		description: `Strategic planning canvas tool with 4 integrated tabs: SWOT, BMC (Business Model), Journey, and Ideas.
 
-Available canvas types:
-- swot: SWOT Analysis (Strengths, Weaknesses, Opportunities, Threats)
-- bmc: Business Model Canvas (9 building blocks of a business model)
-- journey: Customer Journey Map (6 stages from awareness to advocacy)
-- brainstorm: Brainstorming Canvas (free-form idea capture)
+CRITICAL: When a user asks for strategic analysis, you MUST populate ALL 4 TABS automatically:
+1. First call "create" with canvasType="swot" and a title - this returns a documentId (id field)
+2. Then call "populateSection" multiple times with the SAME documentId to fill EVERY section across ALL canvas types:
 
-Actions:
-- create: Open a new canvas of the specified type
-- addItems: Add items to a specific section of the canvas
+FOR SWOT TAB:
+- section="strengths" (3-5 internal advantages)
+- section="weaknesses" (3-5 internal challenges)
+- section="opportunities" (3-5 external possibilities)
+- section="threats" (3-5 external risks)
 
-The canvas opens in a side panel where the user can see and edit it in real-time.`,
+FOR BMC TAB (Business Model Canvas):
+- section="keyPartners" (key partnerships)
+- section="keyActivities" (core activities)
+- section="keyResources" (essential resources)
+- section="valuePropositions" (value delivered)
+- section="customerRelationships" (how you engage customers)
+- section="channels" (how you reach customers)
+- section="customerSegments" (target customers)
+- section="costStructure" (main costs)
+- section="revenueStreams" (how you make money)
+
+FOR JOURNEY TAB (Customer Journey):
+- section="awareness" (how customers discover you)
+- section="consideration" (evaluation touchpoints)
+- section="decision" (purchase decision factors)
+- section="purchase" (buying experience)
+- section="retention" (keeping customers)
+- section="advocacy" (turning customers into advocates)
+
+FOR IDEAS TAB:
+- section="notes" (brainstorm ideas)
+
+WORKFLOW: Create canvas ONCE, then call populateSection for EACH section above (include documentId from create response). This gives users a complete strategic framework they can edit.`,
 		inputSchema: strategyCanvasSchema,
-		execute: async ({ action, canvasType, title, section, items }: StrategyCanvasInput) => {
+		execute: async ({ action, canvasType, title, documentId, section, items }: StrategyCanvasInput) => {
 			if (action === "create") {
 				const id = generateUUID();
 				const canvasTitle =
@@ -134,15 +146,15 @@ The canvas opens in a side panel where the user can see and edit it in real-time
 					transient: true,
 				});
 
-				// Initialize with empty structure
-				const initialData = getDefaultCanvasData(canvasType);
+				// Initialize with ALL canvas sections (all 4 tabs) so any section can receive items
+				const initialData = getAllCanvasData();
 				dataStream.write({
 					type: "data-canvasData",
 					data: JSON.stringify(initialData),
 					transient: true,
 				});
 
-				// Save to database
+				// Save to database with all sections initialized
 				if (session?.user?.id) {
 					await saveDocument({
 						id,
@@ -162,31 +174,82 @@ The canvas opens in a side panel where the user can see and edit it in real-time
 				return {
 					id,
 					canvasType,
-					message: `Created ${canvasType} canvas. The user can now see it in the side panel and add items.`,
+					message: `Created strategy canvas "${canvasTitle}". NOW POPULATE ALL 4 TABS by calling populateSection for: strengths, weaknesses, opportunities, threats (SWOT), keyPartners, keyActivities, keyResources, valuePropositions, customerRelationships, channels, customerSegments, costStructure, revenueStreams (BMC), awareness, consideration, decision, purchase, retention, advocacy (Journey), and notes (Ideas).`,
 				};
 			}
 
-			if (action === "addItems" && section && items && items.length > 0) {
-				// Stream each item addition
-				for (const item of items) {
+			if ((action === "addItems" || action === "populateSection") && section && items && items.length > 0) {
+				// Generate items with IDs for both streaming and persistence
+				const itemsWithIds = items.map((content) => ({
+					id: generateUUID(),
+					content,
+					color: "slate" as const,
+				}));
+
+				// Stream each item addition to the canvas for real-time UI updates
+				for (const item of itemsWithIds) {
 					dataStream.write({
 						type: "data-canvasItem",
 						data: {
 							section,
-							content: item,
-							id: generateUUID(),
+							content: item.content,
+							id: item.id,
 						},
 						transient: true,
 					});
 				}
 
+				// Persist items to database if documentId is provided
+				if (documentId && session?.user?.id) {
+					try {
+						const existingDoc = await getDocumentById({ id: documentId });
+						if (existingDoc) {
+							const currentData = existingDoc.content
+								? JSON.parse(existingDoc.content)
+								: getAllCanvasData();
+
+							// Add items to the section
+							if (!currentData[section]) {
+								currentData[section] = [];
+							}
+							currentData[section].push(...itemsWithIds);
+
+							// Save updated document
+							await saveDocument({
+								id: documentId,
+								title: existingDoc.title,
+								content: JSON.stringify(currentData),
+								kind: "strategy-canvas",
+								userId: session.user.id,
+							});
+						}
+					} catch (error) {
+						console.error("Failed to persist canvas items:", error);
+						// Continue anyway - UI still shows the items from streaming
+					}
+				}
+
+				// Map section to canvas tab for better UX messaging
+				const sectionToTab: Record<string, string> = {
+					strengths: "SWOT", weaknesses: "SWOT", opportunities: "SWOT", threats: "SWOT",
+					keyPartners: "BMC", keyActivities: "BMC", keyResources: "BMC",
+					valuePropositions: "BMC", customerRelationships: "BMC", channels: "BMC",
+					customerSegments: "BMC", costStructure: "BMC", revenueStreams: "BMC",
+					awareness: "Journey", consideration: "Journey", decision: "Journey",
+					purchase: "Journey", retention: "Journey", advocacy: "Journey",
+					notes: "Ideas",
+				};
+				const tabName = sectionToTab[section] || canvasType.toUpperCase();
+
 				return {
-					message: `Added ${items.length} item${items.length === 1 ? "" : "s"} to ${section}. The user can see the updates in the canvas panel.`,
+					section,
+					items: itemsWithIds,
+					message: `Added ${items.length} item${items.length === 1 ? "" : "s"} to ${section} (${tabName} tab). Continue populating other sections to complete all 4 tabs.`,
 				};
 			}
 
 			return {
-				message: "No action taken. Please specify a valid action and parameters.",
+				message: "No action taken. Use action='create' first, then action='populateSection' with section and items for each canvas section.",
 			};
 		},
 	});

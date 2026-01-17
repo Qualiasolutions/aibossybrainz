@@ -1,54 +1,41 @@
 import { createDocumentHandler } from "@/lib/artifacts/server";
-import type {
-	SwotData,
-	BusinessModelData,
-	CanvasType,
-} from "@/components/strategy-canvas/types";
+import type { CanvasType } from "@/components/strategy-canvas/types";
 
-// Default empty data for each canvas type
-function getDefaultCanvasData(canvasType: CanvasType): object {
-	switch (canvasType) {
-		case "swot":
-			return {
-				strengths: [],
-				weaknesses: [],
-				opportunities: [],
-				threats: [],
-			} satisfies SwotData;
-		case "bmc":
-			return {
-				keyPartners: [],
-				keyActivities: [],
-				keyResources: [],
-				valuePropositions: [],
-				customerRelationships: [],
-				channels: [],
-				customerSegments: [],
-				costStructure: [],
-				revenueStreams: [],
-			} satisfies BusinessModelData;
-		case "journey":
-			return {
-				awareness: [],
-				consideration: [],
-				decision: [],
-				purchase: [],
-				retention: [],
-				advocacy: [],
-			};
-		case "brainstorm":
-			return {
-				notes: [],
-			};
-		default:
-			return {};
-	}
+// Get comprehensive data structure for ALL canvas types (all 4 tabs)
+// This ensures all sections are initialized so items can be added to any tab
+function getAllCanvasData(): object {
+	return {
+		// SWOT Tab
+		strengths: [],
+		weaknesses: [],
+		opportunities: [],
+		threats: [],
+		// BMC Tab (Business Model Canvas)
+		keyPartners: [],
+		keyActivities: [],
+		keyResources: [],
+		valuePropositions: [],
+		customerRelationships: [],
+		channels: [],
+		customerSegments: [],
+		costStructure: [],
+		revenueStreams: [],
+		// Journey Tab (Customer Journey)
+		awareness: [],
+		consideration: [],
+		decision: [],
+		purchase: [],
+		retention: [],
+		advocacy: [],
+		// Ideas Tab (Brainstorm)
+		notes: [],
+	};
 }
 
 export const strategyCanvasDocumentHandler = createDocumentHandler<"strategy-canvas">({
 	kind: "strategy-canvas",
 	onCreateDocument: async ({ title, dataStream }) => {
-		// Parse canvas type from title if provided (e.g., "SWOT Analysis")
+		// Determine which tab to show initially based on title
 		let canvasType: CanvasType = "swot";
 		const titleLower = title.toLowerCase();
 		if (titleLower.includes("bmc") || titleLower.includes("business model")) {
@@ -59,16 +46,17 @@ export const strategyCanvasDocumentHandler = createDocumentHandler<"strategy-can
 			canvasType = "brainstorm";
 		}
 
-		const initialData = getDefaultCanvasData(canvasType);
+		// Initialize with ALL canvas sections (all 4 tabs) so AI can populate any section
+		const initialData = getAllCanvasData();
 
-		// Stream canvas type for client to know which board to render
+		// Stream canvas type for client to know which tab to show initially
 		dataStream.write({
 			type: "data-canvasType",
 			data: canvasType,
 			transient: true,
 		});
 
-		// Stream initial empty data structure
+		// Stream initial data structure with all sections initialized
 		dataStream.write({
 			type: "data-canvasData",
 			data: JSON.stringify(initialData),
@@ -77,7 +65,7 @@ export const strategyCanvasDocumentHandler = createDocumentHandler<"strategy-can
 
 		return JSON.stringify(initialData);
 	},
-	onUpdateDocument: async ({ document, description, dataStream }) => {
+	onUpdateDocument: async ({ document, description: _description, dataStream }) => {
 		// For updates, we preserve existing content and let client handle edits
 		// The AI tool handles adding items, not onUpdateDocument
 		const currentContent = document.content || "{}";
