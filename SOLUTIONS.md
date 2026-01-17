@@ -316,5 +316,11 @@ For organized, searchable documentation with YAML frontmatter, see `docs/solutio
 - [Unstable Cache Pattern](docs/solutions/performance-issues/nextjs-unstable-cache-pattern.md) - Cache with fallback
 - [Cache Invalidation](docs/solutions/performance-issues/cache-invalidation-after-mutations.md) - `revalidateTag` after mutations
 
+### TypeScript Issues
+- [Type Guards for Supabase JOINs](docs/solutions/typescript-issues/type-guards-supabase-joins.md) - Runtime validation for JOIN results
+
+### API Issues
+- [Safe JSON Parsing](docs/solutions/api-issues/safe-json-parsing-api-routes.md) - `safeParseJson` utility for routes
+
 ### Build Errors
 - [Biome/TypeScript/Supabase Fixes](docs/solutions/build-errors/2026-01-17-biome-typescript-supabase-fixes.md) - Multi-layer build fixes
