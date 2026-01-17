@@ -51,7 +51,7 @@ export function SupportWidget() {
 			{/* Floating trigger button */}
 			<motion.button
 				className={cn(
-					"fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center",
+					"fixed top-20 right-6 z-50 flex h-14 w-14 items-center justify-center",
 					"rounded-full bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-lg",
 					"hover:from-rose-600 hover:to-red-700 transition-all",
 					"focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2",
@@ -69,7 +69,7 @@ export function SupportWidget() {
 			<AnimatePresence>
 				{isOpen && (
 					<motion.div
-						className="fixed bottom-6 right-6 z-50 flex h-[520px] w-[380px] flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl"
+						className="fixed top-20 right-6 z-50 flex h-[520px] w-[380px] flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl"
 						initial={{ opacity: 0, y: 20, scale: 0.95 }}
 						animate={{ opacity: 1, y: 0, scale: 1 }}
 						exit={{ opacity: 0, y: 20, scale: 0.95 }}
