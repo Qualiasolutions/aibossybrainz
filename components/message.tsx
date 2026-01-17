@@ -2,6 +2,7 @@
 import type { UseChatHelpers } from "@ai-sdk/react";
 import equal from "fast-deep-equal";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { memo, useState } from "react";
 import { parseSuggestions } from "@/lib/ai/parse-suggestions";
 import { BOT_PERSONALITIES, type BotType } from "@/lib/bot-personalities";
@@ -423,10 +424,12 @@ export const ThinkingMessage = ({
                     ease: "easeInOut",
                   }}
                 />
-                <img
+                <Image
                   alt={`${personality.name} avatar`}
                   className="relative size-8 rounded-full border-2 border-white shadow-sm"
                   src={personality.avatar}
+                  width={32}
+                  height={32}
                 />
                 {/* Active pulse dot */}
                 <motion.span

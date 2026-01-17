@@ -7,8 +7,11 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_APP_URL || "https://aleccimedia.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aleccinew.vercel.app"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "AI Boss Brainz - Executive AI Consulting",
     template: "%s | AI Boss Brainz",
@@ -27,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://aleccinew.vercel.app",
+    url: siteUrl,
     siteName: "AI Boss Brainz",
     title: "AI Boss Brainz - Executive AI Consulting",
     description:

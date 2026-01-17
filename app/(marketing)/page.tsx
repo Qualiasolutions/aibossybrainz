@@ -249,10 +249,12 @@ function ChatDemo() {
             <div className="size-2.5 rounded-full bg-green-400" />
           </div>
           <div className="mx-auto flex items-center gap-2 rounded-md bg-white px-3 py-1 shadow-sm">
-            <img
+            <Image
               src="https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w"
               alt="AI Boss Brainz"
               className="h-4 w-auto"
+              width={80}
+              height={16}
             />
             <span className="text-[11px] text-stone-500">
               app.bossybrainz.ai
@@ -330,22 +332,28 @@ function ChatDemo() {
                 >
                   {exec.icon ? (
                     <div className="flex -space-x-1">
-                      <img
+                      <Image
                         src="https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
                         className="size-4 rounded-full border border-white"
                         alt=""
+                        width={16}
+                        height={16}
                       />
-                      <img
+                      <Image
                         src="https://i.ibb.co/m7vk4JF/KIM-3.png"
                         className="size-4 rounded-full border border-white"
                         alt=""
+                        width={16}
+                        height={16}
                       />
                     </div>
                   ) : (
-                    <img
-                      src={exec.img}
+                    <Image
+                      src={exec.img as string}
                       className="size-6 rounded-full"
                       alt=""
+                      width={24}
+                      height={24}
                     />
                   )}
                 </button>
@@ -417,7 +425,7 @@ function ChatDemo() {
                       {/* Header */}
                       <div className="flex items-center gap-2.5 pl-3">
                         <div className="relative">
-                          <img
+                          <Image
                             src={
                               message.bot === "alexandria"
                                 ? "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
@@ -425,6 +433,8 @@ function ChatDemo() {
                             }
                             alt=""
                             className="size-8 rounded-full border-2 border-rose-100 shadow-sm"
+                            width={32}
+                            height={32}
                           />
                           <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-white bg-green-500" />
                         </div>
@@ -471,7 +481,7 @@ function ChatDemo() {
                   <div className="relative flex flex-col gap-2 rounded-2xl border border-stone-200 bg-gradient-to-br from-white to-stone-50/50 px-4 py-3 shadow-sm">
                     <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full bg-gradient-to-b from-rose-400 to-rose-600" />
                     <div className="flex items-center gap-2.5 pl-3">
-                      <img
+                      <Image
                         src={
                           visibleMessages.length === 1
                             ? "https://i.ibb.co/m7vk4JF/KIM-3.png"
@@ -479,6 +489,8 @@ function ChatDemo() {
                         }
                         alt=""
                         className="size-8 rounded-full border-2 border-rose-100 shadow-sm"
+                        width={32}
+                        height={32}
                       />
                       <div className="flex items-center gap-2">
                         <div className="flex gap-1">

@@ -16,10 +16,12 @@ export default function ExecutivesPage() {
         <div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <Link href="/new">
-              <img
+              <Image
                 alt="Alecci Media Logo"
                 className="h-8 w-auto object-contain sm:h-10"
                 src="/images/AM_Logo_Horizontal_4C+(1).webp"
+                width={160}
+                height={40}
               />
             </Link>
             <Link href="/new">

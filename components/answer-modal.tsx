@@ -13,6 +13,7 @@ import {
   User,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -132,10 +133,12 @@ export function AnswerModal({
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-500/20 to-red-600/10 flex items-center justify-center border border-red-500/30">
                     {executiveAvatar ? (
-                      <img
+                      <Image
                         src={executiveAvatar}
                         alt={executiveName}
                         className="w-full h-full rounded-full object-cover"
+                        width={48}
+                        height={48}
                       />
                     ) : (
                       <User className="size-6 text-red-500" />

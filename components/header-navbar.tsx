@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu, Plus } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMobileSidebar } from "@/components/mobile-sidebar-context";
 import { Button } from "@/components/ui/button";
@@ -71,10 +72,12 @@ export function HeaderNavbar({
 
           {/* Logo */}
           <div className="flex items-center">
-            <img
+            <Image
               alt="Alecci Media Logo"
               className="h-8 w-auto max-w-[160px] object-contain lg:h-10 lg:max-w-[200px]"
               src="https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w"
+              width={200}
+              height={50}
             />
           </div>
         </div>

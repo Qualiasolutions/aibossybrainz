@@ -19,6 +19,18 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  // Redirect www to non-www for canonical URLs
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.aleccimedia.vercel.app" }],
+        destination: "https://aleccimedia.vercel.app/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   // Turbopack config (required for Next.js 16+)
   turbopack: {},
   webpack: (config, { isServer }) => {

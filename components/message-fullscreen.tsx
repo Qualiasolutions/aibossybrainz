@@ -1,6 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
+import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { useCopyToClipboard } from "usehooks-ts";
@@ -68,10 +69,12 @@ export function MessageFullscreen({
           <div className="flex items-center justify-between pr-8">
             <DialogTitle className="flex items-center gap-3">
               {personality.avatar && (
-                <img
+                <Image
                   alt={`${personality.name} avatar`}
                   className="size-8 rounded-full border-2 border-rose-100"
                   src={personality.avatar}
+                  width={32}
+                  height={32}
                 />
               )}
               <div className="flex flex-col">

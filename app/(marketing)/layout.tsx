@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -28,9 +29,11 @@ function Header() {
         >
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <img
+            <Image
               src="https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w"
               alt="AI Boss Brainz"
+              width={160}
+              height={40}
               className="h-8 w-auto sm:h-10"
             />
           </Link>
@@ -149,9 +152,11 @@ function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center">
-              <img
+              <Image
                 src="https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w"
                 alt="AI Boss Brainz"
+                width={120}
+                height={32}
                 className="h-8 w-auto"
               />
             </Link>
