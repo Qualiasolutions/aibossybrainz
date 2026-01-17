@@ -3,7 +3,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { DataStreamProvider } from "@/components/data-stream-provider";
 import { MobileSidebarProvider } from "@/components/mobile-sidebar-context";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { SupportWidget } from "@/components/support/support-widget";
 import { TosPopup } from "@/components/tos-popup";
 import { WelcomeTutorial } from "@/components/welcome-tutorial";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
@@ -46,7 +45,6 @@ export default async function Layout({
 					</SidebarProvider>
 				</MobileSidebarProvider>
 			</DataStreamProvider>
-			{user && <SupportWidget />}
 		</>
 	);
 }

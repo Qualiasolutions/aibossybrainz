@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { BarChart3, Bookmark, Download, HelpCircle, LayoutGrid, Lightbulb, Loader2, Mic, MoreHorizontal, Phone, PhoneOff, Volume2 } from "lucide-react";
+import { BarChart3, Bookmark, Download, Headphones, HelpCircle, LayoutGrid, Lightbulb, Loader2, Mic, MoreHorizontal, Phone, PhoneOff, Volume2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
@@ -51,6 +51,7 @@ import { MultimodalInput } from "./multimodal-input";
 import { OnboardingModal } from "./onboarding-modal";
 import { ReactionItemsPopup } from "./reaction-items-popup";
 import { getChatHistoryPaginationKey } from "./sidebar-history";
+import { SupportWidget } from "./support/support-widget";
 import { SwotSlidePanel } from "./swot-slide-panel";
 import { toast } from "./toast";
 import { useSidebar } from "./ui/sidebar";
@@ -102,6 +103,7 @@ export function Chat({
 	const [focusMode, setFocusMode] = useState<FocusMode>("default");
 	const [reactionPopup, setReactionPopup] = useState<"actionable" | "needs_clarification" | "save_for_later" | null>(null);
 	const [isSwotPanelOpen, setIsSwotPanelOpen] = useState(false);
+	const [isSupportOpen, setIsSupportOpen] = useState(false);
 	const currentModelIdRef = useRef(currentModelId);
 	const selectedBotRef = useRef(initialBotType);
 
@@ -333,7 +335,7 @@ export function Chat({
 								/>
 							</div>
 
-							{/* Right: Strategy Canvas, Menu, Analytics, Export & Visibility */}
+							{/* Right: Strategy Canvas, Menu & Support */}
 							<div className="flex items-center gap-1.5">
 								{/* Strategy Canvas - Opens slide panel */}
 								<Button
@@ -342,7 +344,7 @@ export function Chat({
 									onClick={() => setIsSwotPanelOpen(true)}
 								>
 									<LayoutGrid className="size-3.5" />
-									<span className="hidden sm:inline">Strategy</span>
+									<span className="hidden sm:inline">Strategy Canvas</span>
 								</Button>
 
 								{/* Quick Navigation Dropdown */}
@@ -384,25 +386,33 @@ export function Chat({
 											<Bookmark className="size-4 text-primary" />
 											<span>Saved for Later</span>
 										</DropdownMenuItem>
+										{messages.length > 0 && (
+											<DropdownMenuItem
+												className="cursor-pointer"
+												disabled={isExporting}
+												onClick={handleExportPDF}
+											>
+												{isExporting ? (
+													<Loader2 className="size-4 animate-spin" />
+												) : (
+													<Download className="size-4 text-primary" />
+												)}
+												<span>Export PDF</span>
+											</DropdownMenuItem>
+										)}
 									</DropdownMenuContent>
 								</DropdownMenu>
-								{messages.length > 0 && (
-									<Button
-										className="h-8 gap-1.5 rounded-lg border-border bg-background px-2.5 font-medium text-xs text-muted-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
-										disabled={isExporting}
-										onClick={handleExportPDF}
-										title="Export conversation as PDF"
-										type="button"
-										variant="outline"
-									>
-										{isExporting ? (
-											<Loader2 className="size-3.5 animate-spin" />
-										) : (
-											<Download className="size-3.5" />
-										)}
-										<span className="hidden sm:inline">Export</span>
-									</Button>
-								)}
+
+								{/* Support Button - Always visible */}
+								<Button
+									className="h-8 gap-1.5 rounded-lg bg-gradient-to-r from-rose-500 to-red-600 px-2.5 font-medium text-xs text-white shadow-sm transition-all hover:from-rose-600 hover:to-red-700"
+									onClick={() => setIsSupportOpen(true)}
+									title="Contact Support"
+									type="button"
+								>
+									<Headphones className="size-3.5" />
+									<span className="hidden sm:inline">Support</span>
+								</Button>
 							</div>
 						</div>
 					</header>
@@ -475,6 +485,12 @@ export function Chat({
 				<SwotSlidePanel
 					isOpen={isSwotPanelOpen}
 					onClose={() => setIsSwotPanelOpen(false)}
+				/>
+
+				{/* Support Widget */}
+				<SupportWidget
+					open={isSupportOpen}
+					onOpenChange={setIsSupportOpen}
 				/>
 			</div>
 

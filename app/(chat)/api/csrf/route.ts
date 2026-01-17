@@ -15,8 +15,14 @@ const CSRF_COOKIE_NAME = "__csrf";
  */
 export async function GET() {
 	try {
-		// Check for existing valid token
-		const existingToken = await getCsrfToken();
+		// Try to get existing token from cookie, but handle cases where cookies aren't available
+		let existingToken: string | undefined;
+		try {
+			existingToken = await getCsrfToken();
+		} catch {
+			// cookies() may fail in certain contexts (e.g., during prefetch)
+			existingToken = undefined;
+		}
 
 		if (existingToken && validateCsrfToken(existingToken)) {
 			return NextResponse.json({ token: existingToken });
@@ -36,10 +42,27 @@ export async function GET() {
 
 		return response;
 	} catch (error) {
-		console.error("CSRF token generation error:", error);
-		return NextResponse.json(
-			{ error: "Failed to generate CSRF token" },
-			{ status: 500 },
-		);
+		// Log but don't expose internal errors - generate a new token as fallback
+		console.error("CSRF token error:", error);
+
+		// Fallback: generate token without checking existing cookie
+		try {
+			const fallbackToken = generateCsrfToken();
+			const response = NextResponse.json({ token: fallbackToken });
+			response.cookies.set(CSRF_COOKIE_NAME, fallbackToken, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === "production",
+				sameSite: "strict",
+				path: "/",
+				maxAge: 60 * 60 * 24,
+			});
+			return response;
+		} catch (fallbackError) {
+			console.error("CSRF fallback failed:", fallbackError);
+			return NextResponse.json(
+				{ error: "Failed to generate CSRF token" },
+				{ status: 500 },
+			);
+		}
 	}
 }
