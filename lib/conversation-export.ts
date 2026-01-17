@@ -87,36 +87,53 @@ export async function exportConversationToPDF(
       logging: false,
     });
 
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    // A4 dimensions in mm
+    const pageWidth = 210;
+    const pageHeight = 297;
+
+    // Margins in mm
+    const marginLeft = 15;
+    const marginRight = 15;
+    const marginTop = 20;
+    const marginBottom = 20;
+
+    // Content area dimensions
+    const contentWidth = pageWidth - marginLeft - marginRight;
+    const contentHeight = pageHeight - marginTop - marginBottom;
+
+    // Calculate scaled image dimensions
+    const imgHeight = (canvas.height * contentWidth) / canvas.width;
 
     const pdf = new jsPDF("p", "mm", "a4");
-    let heightLeft = imgHeight;
-    let position = 0;
+    const imgData = canvas.toDataURL("image/png");
 
+    let heightLeft = imgHeight;
+    let position = marginTop;
+
+    // First page
     pdf.addImage(
-      canvas.toDataURL("image/png"),
+      imgData,
       "PNG",
-      0,
+      marginLeft,
       position,
-      imgWidth,
+      contentWidth,
       imgHeight,
     );
-    heightLeft -= pageHeight;
+    heightLeft -= contentHeight;
 
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
+    // Additional pages
+    while (heightLeft > 0) {
+      position = marginTop - (imgHeight - heightLeft);
       pdf.addPage();
       pdf.addImage(
-        canvas.toDataURL("image/png"),
+        imgData,
         "PNG",
-        0,
+        marginLeft,
         position,
-        imgWidth,
+        contentWidth,
         imgHeight,
       );
-      heightLeft -= pageHeight;
+      heightLeft -= contentHeight;
     }
 
     const filename = `${personality.name.split(" ")[0]}-conversation-${new Date().toISOString().split("T")[0]}.pdf`;
