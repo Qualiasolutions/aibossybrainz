@@ -6,6 +6,19 @@ import {
 import { ChatSDKError } from "@/lib/errors";
 import { createClient } from "@/lib/supabase/server";
 import type { BotType } from "@/lib/supabase/types";
+import { z } from "zod";
+
+// Validation schema for profile updates
+const profileUpdateSchema = z.object({
+  displayName: z.string().max(100, "Display name too long").optional(),
+  companyName: z.string().max(200, "Company name too long").optional(),
+  industry: z.string().max(100, "Industry too long").optional(),
+  businessGoals: z.string().max(2000, "Business goals too long").optional(),
+  preferredBotType: z
+    .enum(["alexandria", "kim", "collaborative"])
+    .optional()
+    .nullable(),
+});
 
 // GET - Fetch user profile
 export async function GET() {
@@ -57,13 +70,18 @@ export async function POST(request: Request) {
     await ensureUserExists({ id: user.id, email: user.email });
 
     const body = await request.json();
-    const {
-      displayName,
-      companyName,
-      industry,
-      businessGoals,
-      preferredBotType,
-    } = body;
+
+    // Validate input with Zod schema
+    const parseResult = profileUpdateSchema.safeParse(body);
+    if (!parseResult.success) {
+      return Response.json(
+        { error: "Invalid input", details: parseResult.error.flatten() },
+        { status: 400 },
+      );
+    }
+
+    const { displayName, companyName, industry, businessGoals, preferredBotType } =
+      parseResult.data;
 
     await updateUserProfile({
       userId: user.id,

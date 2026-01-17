@@ -1,5 +1,6 @@
 import { getVoiceConfig, MAX_TTS_TEXT_LENGTH } from "@/lib/ai/voice-config";
 import type { BotType } from "@/lib/bot-personalities";
+import { getMessageCountByUserId } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
 import {
   CircuitBreakerError,
@@ -34,19 +35,32 @@ export async function POST(request: Request) {
       MAX_VOICE_REQUESTS_PER_DAY,
     );
 
-    if (rateLimitResult.source === "redis" && !rateLimitResult.allowed) {
-      const response = new ChatSDKError("rate_limit:chat").toResponse();
-      const headers = getRateLimitHeaders(
-        rateLimitResult.remaining,
-        MAX_VOICE_REQUESTS_PER_DAY,
-        rateLimitResult.reset,
-      );
-      for (const [key, value] of Object.entries(headers)) {
-        response.headers.set(key, value);
+    if (rateLimitResult.source === "redis") {
+      // Redis is available, use its result
+      if (!rateLimitResult.allowed) {
+        const response = new ChatSDKError("rate_limit:chat").toResponse();
+        const headers = getRateLimitHeaders(
+          rateLimitResult.remaining,
+          MAX_VOICE_REQUESTS_PER_DAY,
+          rateLimitResult.reset,
+        );
+        for (const [key, value] of Object.entries(headers)) {
+          response.headers.set(key, value);
+        }
+        return response;
       }
-      return response;
+    } else {
+      // SECURITY: Redis unavailable - verify via database (fail closed)
+      // Voice API is expensive (ElevenLabs costs), so we must enforce limits
+      const messageCount = await getMessageCountByUserId({
+        id: user.id,
+        differenceInHours: 24,
+      });
+
+      if (messageCount >= MAX_VOICE_REQUESTS_PER_DAY) {
+        return new ChatSDKError("rate_limit:chat").toResponse();
+      }
     }
-    // If database fallback, allow the request (voice is less critical than chat)
 
     const { text, botType } = (await request.json()) as {
       text: string;
@@ -91,19 +105,15 @@ export async function POST(request: Request) {
         segments.length > 1 ||
         (segments.length === 1 && segments[0].speaker !== "alexandria")
       ) {
-        const audioBuffers: ArrayBuffer[] = [];
+        // Filter out empty segments and generate audio in parallel for better performance
+        const validSegments = segments.filter((s) => s.text.trim());
 
-        for (const segment of segments) {
-          if (!segment.text.trim()) continue;
-
-          const voiceConfig = getVoiceConfig(segment.speaker);
-          const audioBuffer = await generateAudioForSegment(
-            segment.text,
-            voiceConfig,
-            apiKey,
-          );
-          audioBuffers.push(audioBuffer);
-        }
+        const audioBuffers = await Promise.all(
+          validSegments.map(async (segment) => {
+            const voiceConfig = getVoiceConfig(segment.speaker);
+            return generateAudioForSegment(segment.text, voiceConfig, apiKey);
+          }),
+        );
 
         // Concatenate all audio buffers
         const totalLength = audioBuffers.reduce(

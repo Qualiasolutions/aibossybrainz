@@ -230,9 +230,10 @@ export async function checkUserSubscription(userId: string): Promise<{
     };
   } catch (error) {
     console.error("checkUserSubscription error:", error);
-    // Fail open - don't block users if subscription check fails
+    // SECURITY: Fail closed - deny access if subscription check fails
+    // This prevents attackers from bypassing subscription checks via DB errors
     return {
-      isActive: true,
+      isActive: false,
       subscriptionType: null,
       daysRemaining: null,
       isAdmin: false,
@@ -346,12 +347,14 @@ export async function deleteChatById({ id }: { id: string }) {
       const supabase = await createClient();
       const deletedAt = new Date().toISOString();
 
-      // Soft delete related records first
-      await supabase.from("Vote_v2").update({ deletedAt }).eq("chatId", id);
-      await supabase.from("Message_v2").update({ deletedAt }).eq("chatId", id);
-      await supabase.from("Stream").update({ deletedAt }).eq("chatId", id);
+      // Soft delete related records in parallel for better performance
+      await Promise.all([
+        supabase.from("Vote_v2").update({ deletedAt }).eq("chatId", id),
+        supabase.from("Message_v2").update({ deletedAt }).eq("chatId", id),
+        supabase.from("Stream").update({ deletedAt }).eq("chatId", id),
+      ]);
 
-      // Soft delete the chat
+      // Soft delete the chat (after related records to maintain referential integrity)
       const { data, error } = await supabase
         .from("Chat")
         .update({ deletedAt })
@@ -388,18 +391,14 @@ export async function deleteAllChatsByUserId({ userId }: { userId: string }) {
 
       const chatIds = userChats.map((c) => c.id);
 
-      // Soft delete related records
-      await supabase
-        .from("Vote_v2")
-        .update({ deletedAt })
-        .in("chatId", chatIds);
-      await supabase
-        .from("Message_v2")
-        .update({ deletedAt })
-        .in("chatId", chatIds);
-      await supabase.from("Stream").update({ deletedAt }).in("chatId", chatIds);
+      // Soft delete related records in parallel for better performance
+      await Promise.all([
+        supabase.from("Vote_v2").update({ deletedAt }).in("chatId", chatIds),
+        supabase.from("Message_v2").update({ deletedAt }).in("chatId", chatIds),
+        supabase.from("Stream").update({ deletedAt }).in("chatId", chatIds),
+      ]);
 
-      // Soft delete chats
+      // Soft delete chats (after related records)
       const { data: deletedChats } = await supabase
         .from("Chat")
         .update({ deletedAt })
