@@ -28,6 +28,19 @@ Sentry.init({
     // Common benign errors
     "ResizeObserver loop",
     "Non-Error promise rejection",
+    // Vercel live preview feedback widget errors (not our code)
+    "Failed to execute 'selectNode' on 'Range'",
+    "InvalidNodeTypeError",
+  ],
+
+  // Filter out errors from third-party scripts
+  denyUrls: [
+    // Vercel live feedback widget
+    /_next-live\/feedback/,
+    // Browser extensions
+    /extensions\//i,
+    /^chrome:\/\//i,
+    /^moz-extension:\/\//i,
   ],
 
   // Before sending error, filter sensitive data
