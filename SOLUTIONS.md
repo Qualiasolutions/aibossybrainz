@@ -300,3 +300,21 @@ All six issues resolved through:
 6. **Database function hardening** - Added search_path safety pragma
 
 Each fix is minimal, focused, and maintains backward compatibility.
+
+---
+
+## Categorized Solutions Index
+
+For organized, searchable documentation with YAML frontmatter, see `docs/solutions/`:
+
+### Security Issues
+- [CSRF Validation Pattern](docs/solutions/security-issues/csrf-validation-api-routes.md) - Initial CSRF setup
+- [CSRF HOF Pattern](docs/solutions/security-issues/csrf-hof-pattern-api-routes.md) - DRY refactor with `withCsrf`
+
+### Performance Issues
+- [N+1 Query Fix](docs/solutions/performance-issues/n-plus-one-supabase-join.md) - Supabase foreign key JOINs
+- [Unstable Cache Pattern](docs/solutions/performance-issues/nextjs-unstable-cache-pattern.md) - Cache with fallback
+- [Cache Invalidation](docs/solutions/performance-issues/cache-invalidation-after-mutations.md) - `revalidateTag` after mutations
+
+### Build Errors
+- [Biome/TypeScript/Supabase Fixes](docs/solutions/build-errors/2026-01-17-biome-typescript-supabase-fixes.md) - Multi-layer build fixes
