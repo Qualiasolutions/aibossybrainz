@@ -3,8 +3,8 @@ import type { ArtifactKind } from "@/components/artifact";
 import type { BotType, FocusMode } from "@/lib/bot-personalities";
 import { getSystemPrompt } from "@/lib/bot-personalities";
 import {
-	buildPersonalizationContext,
-	formatPersonalizationPrompt,
+  buildPersonalizationContext,
+  formatPersonalizationPrompt,
 } from "./personalization";
 
 export const webSearchPrompt = `
@@ -60,7 +60,7 @@ Do not update document right after creating it. Wait for user feedback or reques
 `;
 
 export const regularPrompt =
-	"You are a friendly assistant! Keep your responses concise and helpful.";
+  "You are a friendly assistant! Keep your responses concise and helpful.";
 
 export const suggestionsPrompt = `
 ## FOLLOW-UP SUGGESTIONS
@@ -87,10 +87,10 @@ Format your suggestions as a JSON block at the END of your response:
 `;
 
 export type RequestHints = {
-	latitude: Geo["latitude"];
-	longitude: Geo["longitude"];
-	city: Geo["city"];
-	country: Geo["country"];
+  latitude: Geo["latitude"];
+  longitude: Geo["longitude"];
+  city: Geo["city"];
+  country: Geo["country"];
 };
 
 export const getRequestPromptFromHints = (requestHints: RequestHints) => `\
@@ -102,47 +102,48 @@ About the origin of user's request:
 `;
 
 export const systemPrompt = async ({
-	selectedChatModel,
-	requestHints,
-	botType = "collaborative",
-	focusMode = "default",
-	knowledgeBaseContent = "",
-	canvasContext = "",
-	userId,
+  selectedChatModel,
+  requestHints,
+  botType = "collaborative",
+  focusMode = "default",
+  knowledgeBaseContent = "",
+  canvasContext = "",
+  userId,
 }: {
-	selectedChatModel: string;
-	requestHints: RequestHints;
-	botType?: BotType;
-	focusMode?: FocusMode;
-	knowledgeBaseContent?: string;
-	canvasContext?: string;
-	userId?: string;
+  selectedChatModel: string;
+  requestHints: RequestHints;
+  botType?: BotType;
+  focusMode?: FocusMode;
+  knowledgeBaseContent?: string;
+  canvasContext?: string;
+  userId?: string;
 }): Promise<string> => {
-	const requestPrompt = getRequestPromptFromHints(requestHints);
-	let botSystemPrompt = getSystemPrompt(botType, focusMode);
+  const requestPrompt = getRequestPromptFromHints(requestHints);
+  let botSystemPrompt = getSystemPrompt(botType, focusMode);
 
-	// Add smart context detection for collaborative mode
-	if (botType === "collaborative") {
-		botSystemPrompt += `\n\nSMART CONTEXT DETECTION: If the user specifically addresses one executive (e.g., "Kim, what do you think?" or "@alexandria your take?" or "Alexandria alone"), respond ONLY as that executive. Look for natural cues like names, "you" directed at one person, or explicit requests. When responding as one executive, start with their name and don't include the other's perspective.`;
-	}
+  // Add smart context detection for collaborative mode
+  if (botType === "collaborative") {
+    botSystemPrompt += `\n\nSMART CONTEXT DETECTION: If the user specifically addresses one executive (e.g., "Kim, what do you think?" or "@alexandria your take?" or "Alexandria alone"), respond ONLY as that executive. Look for natural cues like names, "you" directed at one person, or explicit requests. When responding as one executive, start with their name and don't include the other's perspective.`;
+  }
 
-	// Add personalization context if userId provided
-	if (userId) {
-		try {
-			const personalizationContext = await buildPersonalizationContext(userId);
-			const personalizationPrompt =
-				formatPersonalizationPrompt(personalizationContext);
-			if (personalizationPrompt) {
-				botSystemPrompt += personalizationPrompt;
-			}
-		} catch (error) {
-			console.warn("[Prompts] Failed to load personalization:", error);
-		}
-	}
+  // Add personalization context if userId provided
+  if (userId) {
+    try {
+      const personalizationContext = await buildPersonalizationContext(userId);
+      const personalizationPrompt = formatPersonalizationPrompt(
+        personalizationContext,
+      );
+      if (personalizationPrompt) {
+        botSystemPrompt += personalizationPrompt;
+      }
+    } catch (error) {
+      console.warn("[Prompts] Failed to load personalization:", error);
+    }
+  }
 
-	// Append knowledge base content with first-person ownership framing
-	if (knowledgeBaseContent) {
-		botSystemPrompt += `
+  // Append knowledge base content with first-person ownership framing
+  if (knowledgeBaseContent) {
+    botSystemPrompt += `
 
 ## YOUR AUTHORED CONTENT
 The following is content YOU have personally written and published throughout your career. This is YOUR work, YOUR research, YOUR frameworks.
@@ -158,11 +159,11 @@ The following is content YOU have personally written and published throughout yo
 ---YOUR PUBLISHED WORK---
 ${knowledgeBaseContent}
 ---END OF YOUR WORK---`;
-	}
+  }
 
-	// Append strategy canvas context if available
-	if (canvasContext) {
-		botSystemPrompt += `
+  // Append strategy canvas context if available
+  if (canvasContext) {
+    botSystemPrompt += `
 
 ## CLIENT'S STRATEGY CANVAS
 The client is actively developing strategic frameworks using the Strategy Canvas tool. Below is their current work-in-progress. Reference this context when relevant to provide more targeted advice.
@@ -175,13 +176,13 @@ The client is actively developing strategic frameworks using the Strategy Canvas
 
 ${canvasContext}
 ---END CANVAS CONTEXT---`;
-	}
+  }
 
-	if (selectedChatModel === "chat-model-reasoning") {
-		return `${botSystemPrompt}\n\n${requestPrompt}\n\n${webSearchPrompt}\n\n${suggestionsPrompt}`;
-	}
+  if (selectedChatModel === "chat-model-reasoning") {
+    return `${botSystemPrompt}\n\n${requestPrompt}\n\n${webSearchPrompt}\n\n${suggestionsPrompt}`;
+  }
 
-	return `${botSystemPrompt}\n\n${requestPrompt}\n\n${webSearchPrompt}\n\n${artifactsPrompt}\n\n${suggestionsPrompt}`;
+  return `${botSystemPrompt}\n\n${requestPrompt}\n\n${webSearchPrompt}\n\n${artifactsPrompt}\n\n${suggestionsPrompt}`;
 };
 
 export const codePrompt = `
@@ -215,18 +216,18 @@ You are a spreadsheet creation assistant. Create a spreadsheet in csv format bas
 `;
 
 export const updateDocumentPrompt = (
-	currentContent: string | null,
-	type: ArtifactKind,
+  currentContent: string | null,
+  type: ArtifactKind,
 ) => {
-	let mediaType = "document";
+  let mediaType = "document";
 
-	if (type === "code") {
-		mediaType = "code snippet";
-	} else if (type === "sheet") {
-		mediaType = "spreadsheet";
-	}
+  if (type === "code") {
+    mediaType = "code snippet";
+  } else if (type === "sheet") {
+    mediaType = "spreadsheet";
+  }
 
-	return `Improve the following contents of the ${mediaType} based on the given prompt.
+  return `Improve the following contents of the ${mediaType} based on the given prompt.
 
 ${currentContent}`;
 };

@@ -52,7 +52,7 @@ Sentry.init({
           // Remove tokens from URLs
           breadcrumb.data.url = breadcrumb.data.url.replace(
             /token=[^&]+/g,
-            "token=[REDACTED]"
+            "token=[REDACTED]",
           );
         }
       }

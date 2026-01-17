@@ -1,22 +1,21 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowRight,
+  Check,
+  CheckSquare,
+  Copy,
+  Download,
+  Lightbulb,
+  Sparkles,
+  Target,
+  User,
+  X,
+} from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  X,
-  Copy,
-  Check,
-  Download,
-  Maximize2,
-  Lightbulb,
-  Target,
-  CheckSquare,
-  ArrowRight,
-  Sparkles,
-  User
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AnswerSection {
@@ -47,7 +46,7 @@ export function AnswerModal({
   title,
   content,
   sections,
-  timestamp
+  timestamp,
 }: AnswerModalProps) {
   const [copied, setCopied] = useState(false);
 
@@ -58,9 +57,9 @@ export function AnswerModal({
   };
 
   const handleExport = () => {
-    const blob = new Blob([content], { type: 'text/markdown' });
+    const blob = new Blob([content], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `${executiveName}-response-${Date.now()}.md`;
     a.click();
@@ -212,7 +211,7 @@ export function AnswerModal({
                       transition={{ delay: index * 0.1 }}
                       className={cn(
                         "p-5 rounded-xl bg-white/5 border-l-4",
-                        getSectionBorderColor(section.type)
+                        getSectionBorderColor(section.type),
                       )}
                     >
                       <div className="flex items-center gap-3 mb-3">
@@ -231,7 +230,7 @@ export function AnswerModal({
                 </div>
               ) : (
                 <div className="prose prose-invert prose-sm max-w-none text-foreground/80 leading-relaxed">
-                  {content.split('\n').map((paragraph, index) => (
+                  {content.split("\n").map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
                 </div>
@@ -267,7 +266,7 @@ export function useIsComprehensiveAnswer(content: string): boolean {
 // Parse markdown content into sections
 export function parseContentToSections(content: string): AnswerSection[] {
   const sections: AnswerSection[] = [];
-  const lines = content.split('\n');
+  const lines = content.split("\n");
   let currentSection: AnswerSection | null = null;
   let currentContent: string[] = [];
 
@@ -278,28 +277,32 @@ export function parseContentToSections(content: string): AnswerSection[] {
     if (headerMatch) {
       // Save previous section if exists
       if (currentSection) {
-        currentSection.content = currentContent.join('\n').trim();
+        currentSection.content = currentContent.join("\n").trim();
         sections.push(currentSection);
       }
 
       // Determine section type based on title
       const title = headerMatch[1].toLowerCase();
-      let type: AnswerSection["type"] = undefined;
+      let type: AnswerSection["type"];
 
-      if (title.includes('insight') || title.includes('key')) {
-        type = 'insight';
-      } else if (title.includes('analysis') || title.includes('overview')) {
-        type = 'analysis';
-      } else if (title.includes('action') || title.includes('next step') || title.includes('todo')) {
-        type = 'action';
-      } else if (title.includes('recommend') || title.includes('suggest')) {
-        type = 'recommendation';
+      if (title.includes("insight") || title.includes("key")) {
+        type = "insight";
+      } else if (title.includes("analysis") || title.includes("overview")) {
+        type = "analysis";
+      } else if (
+        title.includes("action") ||
+        title.includes("next step") ||
+        title.includes("todo")
+      ) {
+        type = "action";
+      } else if (title.includes("recommend") || title.includes("suggest")) {
+        type = "recommendation";
       }
 
       currentSection = {
         title: headerMatch[1],
-        content: '',
-        type
+        content: "",
+        type,
       };
       currentContent = [];
     } else if (currentSection) {
@@ -309,7 +312,7 @@ export function parseContentToSections(content: string): AnswerSection[] {
 
   // Add last section
   if (currentSection) {
-    currentSection.content = currentContent.join('\n').trim();
+    currentSection.content = currentContent.join("\n").trim();
     sections.push(currentSection);
   }
 

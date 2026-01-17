@@ -1,165 +1,174 @@
-import { createClient } from "@/lib/supabase/server";
 import type { ArtifactKind } from "@/components/artifact";
 import {
-	deleteDocumentsByIdAfterTimestamp,
-	getDocumentsById,
-	saveDocument,
+  deleteDocumentsByIdAfterTimestamp,
+  getDocumentsById,
+  saveDocument,
 } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
+import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 30; // Document operations timeout
 
 export async function GET(request: Request) {
-	try {
-		const { searchParams } = new URL(request.url);
-		const id = searchParams.get("id");
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
 
-		if (!id) {
-			return new ChatSDKError(
-				"bad_request:api",
-				"Parameter id is missing",
-			).toResponse();
-		}
+    if (!id) {
+      return new ChatSDKError(
+        "bad_request:api",
+        "Parameter id is missing",
+      ).toResponse();
+    }
 
-		const supabase = await createClient();
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-		if (!user) {
-			return new ChatSDKError("unauthorized:document").toResponse();
-		}
+    if (!user) {
+      return new ChatSDKError("unauthorized:document").toResponse();
+    }
 
-		const documents = await getDocumentsById({ id });
+    const documents = await getDocumentsById({ id });
 
-		const [document] = documents;
+    const [document] = documents;
 
-		if (!document) {
-			return new ChatSDKError("not_found:document").toResponse();
-		}
+    if (!document) {
+      return new ChatSDKError("not_found:document").toResponse();
+    }
 
-		if (document.userId !== user.id) {
-			return new ChatSDKError("forbidden:document").toResponse();
-		}
+    if (document.userId !== user.id) {
+      return new ChatSDKError("forbidden:document").toResponse();
+    }
 
-		return Response.json(documents, { status: 200 });
-	} catch (error) {
-		if (error instanceof ChatSDKError) {
-			return error.toResponse();
-		}
-		console.error("Document GET error:", error);
-		return new ChatSDKError("bad_request:document", "Failed to fetch document").toResponse();
-	}
+    return Response.json(documents, { status: 200 });
+  } catch (error) {
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
+    console.error("Document GET error:", error);
+    return new ChatSDKError(
+      "bad_request:document",
+      "Failed to fetch document",
+    ).toResponse();
+  }
 }
 
 export async function POST(request: Request) {
-	try {
-		const { searchParams } = new URL(request.url);
-		const id = searchParams.get("id");
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
 
-		if (!id) {
-			return new ChatSDKError(
-				"bad_request:api",
-				"Parameter id is required.",
-			).toResponse();
-		}
+    if (!id) {
+      return new ChatSDKError(
+        "bad_request:api",
+        "Parameter id is required.",
+      ).toResponse();
+    }
 
-		const supabase = await createClient();
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-		if (!user) {
-			return new ChatSDKError("unauthorized:document").toResponse();
-		}
+    if (!user) {
+      return new ChatSDKError("unauthorized:document").toResponse();
+    }
 
-		const {
-			content,
-			title,
-			kind,
-		}: { content: string; title: string; kind: ArtifactKind } =
-			await request.json();
+    const {
+      content,
+      title,
+      kind,
+    }: { content: string; title: string; kind: ArtifactKind } =
+      await request.json();
 
-		const documents = await getDocumentsById({ id });
+    const documents = await getDocumentsById({ id });
 
-		if (documents.length > 0) {
-			const [doc] = documents;
+    if (documents.length > 0) {
+      const [doc] = documents;
 
-			if (doc.userId !== user.id) {
-				return new ChatSDKError("forbidden:document").toResponse();
-			}
-		}
+      if (doc.userId !== user.id) {
+        return new ChatSDKError("forbidden:document").toResponse();
+      }
+    }
 
-		const document = await saveDocument({
-			id,
-			content,
-			title,
-			kind,
-			userId: user.id,
-		});
+    const document = await saveDocument({
+      id,
+      content,
+      title,
+      kind,
+      userId: user.id,
+    });
 
-		return Response.json(document, { status: 200 });
-	} catch (error) {
-		if (error instanceof ChatSDKError) {
-			return error.toResponse();
-		}
-		console.error("Document POST error:", error);
-		return new ChatSDKError("bad_request:document", "Failed to save document").toResponse();
-	}
+    return Response.json(document, { status: 200 });
+  } catch (error) {
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
+    console.error("Document POST error:", error);
+    return new ChatSDKError(
+      "bad_request:document",
+      "Failed to save document",
+    ).toResponse();
+  }
 }
 
 export async function DELETE(request: Request) {
-	try {
-		const { searchParams } = new URL(request.url);
-		const id = searchParams.get("id");
-		const timestamp = searchParams.get("timestamp");
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    const timestamp = searchParams.get("timestamp");
 
-		if (!id) {
-			return new ChatSDKError(
-				"bad_request:api",
-				"Parameter id is required.",
-			).toResponse();
-		}
+    if (!id) {
+      return new ChatSDKError(
+        "bad_request:api",
+        "Parameter id is required.",
+      ).toResponse();
+    }
 
-		if (!timestamp) {
-			return new ChatSDKError(
-				"bad_request:api",
-				"Parameter timestamp is required.",
-			).toResponse();
-		}
+    if (!timestamp) {
+      return new ChatSDKError(
+        "bad_request:api",
+        "Parameter timestamp is required.",
+      ).toResponse();
+    }
 
-		const supabase = await createClient();
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-		if (!user) {
-			return new ChatSDKError("unauthorized:document").toResponse();
-		}
+    if (!user) {
+      return new ChatSDKError("unauthorized:document").toResponse();
+    }
 
-		const documents = await getDocumentsById({ id });
+    const documents = await getDocumentsById({ id });
 
-		const [document] = documents;
+    const [document] = documents;
 
-		if (!document) {
-			return new ChatSDKError("not_found:document").toResponse();
-		}
+    if (!document) {
+      return new ChatSDKError("not_found:document").toResponse();
+    }
 
-		if (document.userId !== user.id) {
-			return new ChatSDKError("forbidden:document").toResponse();
-		}
+    if (document.userId !== user.id) {
+      return new ChatSDKError("forbidden:document").toResponse();
+    }
 
-		const documentsDeleted = await deleteDocumentsByIdAfterTimestamp({
-			id,
-			timestamp: new Date(timestamp),
-		});
+    const documentsDeleted = await deleteDocumentsByIdAfterTimestamp({
+      id,
+      timestamp: new Date(timestamp),
+    });
 
-		return Response.json(documentsDeleted, { status: 200 });
-	} catch (error) {
-		if (error instanceof ChatSDKError) {
-			return error.toResponse();
-		}
-		console.error("Document DELETE error:", error);
-		return new ChatSDKError("bad_request:document", "Failed to delete document").toResponse();
-	}
+    return Response.json(documentsDeleted, { status: 200 });
+  } catch (error) {
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
+    console.error("Document DELETE error:", error);
+    return new ChatSDKError(
+      "bad_request:document",
+      "Failed to delete document",
+    ).toResponse();
+  }
 }

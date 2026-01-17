@@ -3,20 +3,20 @@ import type {
   CoreToolMessage,
   UIMessage,
   UIMessagePart,
-} from 'ai';
-import { type ClassValue, clsx } from 'clsx';
-import { formatISO } from 'date-fns';
-import { twMerge } from 'tailwind-merge';
-import type { DBMessage, Document } from '@/lib/supabase/types';
-import { ChatSDKError, type ErrorCode } from './errors';
-import type { ChatMessage, ChatTools, CustomUIDataTypes } from './types';
+} from "ai";
+import { type ClassValue, clsx } from "clsx";
+import { formatISO } from "date-fns";
+import { twMerge } from "tailwind-merge";
+import type { DBMessage, Document } from "@/lib/supabase/types";
+import { ChatSDKError, type ErrorCode } from "./errors";
+import type { ChatMessage, ChatTools, CustomUIDataTypes } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 // CSRF token management
-const CSRF_HEADER_NAME = 'x-csrf-token';
+const CSRF_HEADER_NAME = "x-csrf-token";
 let csrfToken: string | null = null;
 let csrfInitPromise: Promise<string | null> | null = null;
 
@@ -39,13 +39,13 @@ export async function initCsrfToken(): Promise<string | null> {
 
   csrfInitPromise = (async () => {
     try {
-      const response = await fetch('/api/csrf', {
-        method: 'GET',
-        credentials: 'include',
+      const response = await fetch("/api/csrf", {
+        method: "GET",
+        credentials: "include",
       });
 
       if (!response.ok) {
-        console.error('Failed to fetch CSRF token');
+        console.error("Failed to fetch CSRF token");
         return null;
       }
 
@@ -53,7 +53,7 @@ export async function initCsrfToken(): Promise<string | null> {
       csrfToken = data.token;
       return csrfToken;
     } catch (error) {
-      console.error('CSRF initialization error:', error);
+      console.error("CSRF initialization error:", error);
       return null;
     } finally {
       csrfInitPromise = null;
@@ -85,7 +85,7 @@ export async function fetchWithErrorHandlers(
 ) {
   try {
     // Ensure CSRF token is initialized before making requests
-    if (!csrfToken && typeof window !== 'undefined') {
+    if (!csrfToken && typeof window !== "undefined") {
       await initCsrfToken();
     }
 
@@ -98,7 +98,7 @@ export async function fetchWithErrorHandlers(
     const response = await fetch(input, {
       ...init,
       headers,
-      credentials: 'include',
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -108,8 +108,8 @@ export async function fetchWithErrorHandlers(
 
     return response;
   } catch (error: unknown) {
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      throw new ChatSDKError('offline:chat');
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      throw new ChatSDKError("offline:chat");
     }
 
     throw error;
@@ -117,16 +117,16 @@ export async function fetchWithErrorHandlers(
 }
 
 export function getLocalStorage(key: string) {
-  if (typeof window !== 'undefined') {
-    return JSON.parse(localStorage.getItem(key) || '[]');
+  if (typeof window !== "undefined") {
+    return JSON.parse(localStorage.getItem(key) || "[]");
   }
   return [];
 }
 
 export function generateUUID(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -135,7 +135,7 @@ type ResponseMessageWithoutId = CoreToolMessage | CoreAssistantMessage;
 type ResponseMessage = ResponseMessageWithoutId & { id: string };
 
 export function getMostRecentUserMessage(messages: UIMessage[]) {
-  const userMessages = messages.filter((message) => message.role === 'user');
+  const userMessages = messages.filter((message) => message.role === "user");
   return userMessages.at(-1);
 }
 
@@ -143,8 +143,12 @@ export function getDocumentTimestampByIndex(
   documents: Document[],
   index: number,
 ) {
-  if (!documents) { return new Date(); }
-  if (index > documents.length) { return new Date(); }
+  if (!documents) {
+    return new Date();
+  }
+  if (index > documents.length) {
+    return new Date();
+  }
 
   return documents[index].createdAt;
 }
@@ -156,20 +160,25 @@ export function getTrailingMessageId({
 }): string | null {
   const trailingMessage = messages.at(-1);
 
-  if (!trailingMessage) { return null; }
+  if (!trailingMessage) {
+    return null;
+  }
 
   return trailingMessage.id;
 }
 
 export function sanitizeText(text: string) {
-  let result = text.replace('<has_function_call>', '');
+  let result = text.replace("<has_function_call>", "");
 
   // Remove suggestions block with code fence
-  result = result.replace(/```suggestions\s*[\s\S]*?```/g, '');
+  result = result.replace(/```suggestions\s*[\s\S]*?```/g, "");
 
   // Remove raw JSON suggestions array at the end of message
   // Matches: [{"category": "...", "text": "..."}, ...]
-  result = result.replace(/\n*\[\s*\{[\s\S]*?"category"[\s\S]*?"text"[\s\S]*?\}\s*\]\s*$/g, '');
+  result = result.replace(
+    /\n*\[\s*\{[\s\S]*?"category"[\s\S]*?"text"[\s\S]*?\}\s*\]\s*$/g,
+    "",
+  );
 
   return result.trim();
 }
@@ -177,18 +186,20 @@ export function sanitizeText(text: string) {
 export function convertToUIMessages(messages: DBMessage[]): ChatMessage[] {
   return messages.map((message) => ({
     id: message.id,
-    role: message.role as 'user' | 'assistant' | 'system',
+    role: message.role as "user" | "assistant" | "system",
     parts: message.parts as UIMessagePart<CustomUIDataTypes, ChatTools>[],
     metadata: {
       createdAt: formatISO(message.createdAt),
-      ...(message.botType && { botType: message.botType as 'alexandria' | 'kim' | 'collaborative' }),
+      ...(message.botType && {
+        botType: message.botType as "alexandria" | "kim" | "collaborative",
+      }),
     },
   }));
 }
 
 export function getTextFromMessage(message: ChatMessage): string {
   return message.parts
-    .filter((part) => part.type === 'text')
+    .filter((part) => part.type === "text")
     .map((part) => part.text)
-    .join('');
+    .join("");
 }

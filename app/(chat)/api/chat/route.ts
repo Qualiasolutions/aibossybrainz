@@ -1,25 +1,24 @@
 import { geolocation } from "@vercel/functions";
 import {
-	convertToModelMessages,
-	createUIMessageStream,
-	JsonToSseTransformStream,
-	stepCountIs,
-	streamText,
+  convertToModelMessages,
+  createUIMessageStream,
+  JsonToSseTransformStream,
+  stepCountIs,
+  streamText,
 } from "ai";
 import { unstable_cache as cache } from "next/cache";
 import { after } from "next/server";
 import {
-	createResumableStreamContext,
-	type ResumableStreamContext,
+  createResumableStreamContext,
+  type ResumableStreamContext,
 } from "resumable-stream";
 import type { ModelCatalog } from "tokenlens/core";
 import { fetchModels } from "tokenlens/fetch";
 import { getUsage } from "tokenlens/helpers";
-import { createClient } from "@/lib/supabase/server";
-import { type UserType } from "@/lib/ai/entitlements";
 import type { VisibilityType } from "@/components/visibility-selector";
-import { entitlementsByUserType } from "@/lib/ai/entitlements";
 import { formatCanvasContext } from "@/lib/ai/canvas-context";
+import { generateConversationSummary } from "@/lib/ai/conversation-summarizer";
+import { entitlementsByUserType, type UserType } from "@/lib/ai/entitlements";
 import { getKnowledgeBaseContent } from "@/lib/ai/knowledge-base";
 import type { ChatModel } from "@/lib/ai/models";
 import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
@@ -31,33 +30,33 @@ import { strategyCanvas } from "@/lib/ai/tools/strategy-canvas";
 import { updateDocument } from "@/lib/ai/tools/update-document";
 import { webSearch } from "@/lib/ai/tools/web-search";
 import { classifyTopic } from "@/lib/ai/topic-classifier";
-import { generateConversationSummary } from "@/lib/ai/conversation-summarizer";
+import type { Session } from "@/lib/artifacts/server";
+import type { BotType, FocusMode } from "@/lib/bot-personalities";
 import { isProductionEnvironment } from "@/lib/constants";
 import {
-	checkUserSubscription,
-	createStreamId,
-	deleteChatById,
-	ensureUserExists,
-	getAllUserCanvases,
-	getChatById,
-	getMessageCountByUserId,
-	getMessagesByChatId,
-	saveChat,
-	saveConversationSummary,
-	saveMessages,
-	updateChatLastContextById,
-	updateChatPinStatus,
-	updateChatTitle,
-	updateChatTopic,
+  checkUserSubscription,
+  createStreamId,
+  deleteChatById,
+  ensureUserExists,
+  getAllUserCanvases,
+  getChatById,
+  getMessageCountByUserId,
+  getMessagesByChatId,
+  saveChat,
+  saveConversationSummary,
+  saveMessages,
+  updateChatLastContextById,
+  updateChatPinStatus,
+  updateChatTitle,
+  updateChatTopic,
 } from "@/lib/db/queries";
-import type { Json } from "@/lib/supabase/types";
 import { ChatSDKError } from "@/lib/errors";
 import {
-	checkRateLimit,
-	getRateLimitHeaders,
+  checkRateLimit,
+  getRateLimitHeaders,
 } from "@/lib/security/rate-limiter";
-import type { BotType, FocusMode } from "@/lib/bot-personalities";
-import type { Session } from "@/lib/artifacts/server";
+import { createClient } from "@/lib/supabase/server";
+import type { Json } from "@/lib/supabase/types";
 import type { ChatMessage } from "@/lib/types";
 import type { AppUsage } from "@/lib/usage";
 import { convertToUIMessages, generateUUID } from "@/lib/utils";
@@ -74,15 +73,15 @@ const MAX_CONTEXT_MESSAGES = 60;
  * Keeps first message (for context) + most recent messages.
  */
 function truncateMessageHistory<T>(messages: T[]): T[] {
-	if (messages.length <= MAX_CONTEXT_MESSAGES) {
-		return messages;
-	}
+  if (messages.length <= MAX_CONTEXT_MESSAGES) {
+    return messages;
+  }
 
-	// Keep first message + last (MAX - 1) messages
-	const firstMessage = messages[0];
-	const recentMessages = messages.slice(-(MAX_CONTEXT_MESSAGES - 1));
+  // Keep first message + last (MAX - 1) messages
+  const firstMessage = messages[0];
+  const recentMessages = messages.slice(-(MAX_CONTEXT_MESSAGES - 1));
 
-	return [firstMessage, ...recentMessages];
+  return [firstMessage, ...recentMessages];
 }
 
 export const maxDuration = 60; // Vercel Pro limit is 60s - must match to avoid 504
@@ -90,459 +89,469 @@ export const maxDuration = 60; // Vercel Pro limit is 60s - must match to avoid 
 let globalStreamContext: ResumableStreamContext | null = null;
 
 const getTokenlensCatalog = cache(
-	async (): Promise<ModelCatalog | undefined> => {
-		try {
-			return await fetchModels();
-		} catch (err) {
-			console.warn(
-				"TokenLens: catalog fetch failed, using default catalog",
-				err,
-			);
-			return; // tokenlens helpers will fall back to defaultCatalog
-		}
-	},
-	["tokenlens-catalog"],
-	{ revalidate: 24 * 60 * 60 }, // 24 hours
+  async (): Promise<ModelCatalog | undefined> => {
+    try {
+      return await fetchModels();
+    } catch (err) {
+      console.warn(
+        "TokenLens: catalog fetch failed, using default catalog",
+        err,
+      );
+      return; // tokenlens helpers will fall back to defaultCatalog
+    }
+  },
+  ["tokenlens-catalog"],
+  { revalidate: 24 * 60 * 60 }, // 24 hours
 );
 
 export function getStreamContext() {
-	if (!globalStreamContext) {
-		try {
-			globalStreamContext = createResumableStreamContext({
-				waitUntil: after,
-			});
-		} catch (error: any) {
-			if (error.message.includes("REDIS_URL")) {
-				console.log(
-					" > Resumable streams are disabled due to missing REDIS_URL",
-				);
-			} else {
-				console.error(error);
-			}
-		}
-	}
+  if (!globalStreamContext) {
+    try {
+      globalStreamContext = createResumableStreamContext({
+        waitUntil: after,
+      });
+    } catch (error: any) {
+      if (error.message.includes("REDIS_URL")) {
+        console.log(
+          " > Resumable streams are disabled due to missing REDIS_URL",
+        );
+      } else {
+        console.error(error);
+      }
+    }
+  }
 
-	return globalStreamContext;
+  return globalStreamContext;
 }
 
 export async function POST(request: Request) {
-	let requestBody: PostRequestBody;
+  let requestBody: PostRequestBody;
 
-	try {
-		const json = await request.json();
-		console.log("Chat API request body:", JSON.stringify(json, null, 2));
-		requestBody = postRequestBodySchema.parse(json);
-	} catch (error) {
-		console.error("Request body validation error:", error);
-		console.error("Validation details:", JSON.stringify(error, null, 2));
-		return new ChatSDKError("bad_request:api").toResponse();
-	}
+  try {
+    const json = await request.json();
+    console.log("Chat API request body:", JSON.stringify(json, null, 2));
+    requestBody = postRequestBodySchema.parse(json);
+  } catch (error) {
+    console.error("Request body validation error:", error);
+    console.error("Validation details:", JSON.stringify(error, null, 2));
+    return new ChatSDKError("bad_request:api").toResponse();
+  }
 
-	try {
-		const {
-			id,
-			message,
-			selectedChatModel,
-			selectedVisibilityType,
-			selectedBotType = "collaborative",
-			focusMode = "default",
-		}: {
-			id: string;
-			message: ChatMessage;
-			selectedChatModel: ChatModel["id"];
-			selectedVisibilityType: VisibilityType;
-			selectedBotType: BotType;
-			focusMode: FocusMode;
-		} = requestBody;
+  try {
+    const {
+      id,
+      message,
+      selectedChatModel,
+      selectedVisibilityType,
+      selectedBotType = "collaborative",
+      focusMode = "default",
+    }: {
+      id: string;
+      message: ChatMessage;
+      selectedChatModel: ChatModel["id"];
+      selectedVisibilityType: VisibilityType;
+      selectedBotType: BotType;
+      focusMode: FocusMode;
+    } = requestBody;
 
-		const supabase = await createClient();
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-		if (!user) {
-			return new ChatSDKError("unauthorized:chat").toResponse();
-		}
+    if (!user) {
+      return new ChatSDKError("unauthorized:chat").toResponse();
+    }
 
-		// Ensure User record exists in our custom User table (syncs with Supabase Auth)
-		await ensureUserExists({
-			id: user.id,
-			email: user.email || "",
-		});
+    // Ensure User record exists in our custom User table (syncs with Supabase Auth)
+    await ensureUserExists({
+      id: user.id,
+      email: user.email || "",
+    });
 
-		// Check subscription status
-		const subscriptionStatus = await checkUserSubscription(user.id);
-		if (!subscriptionStatus.isActive) {
-			return new ChatSDKError("subscription_expired:chat").toResponse();
-		}
+    // Check subscription status
+    const subscriptionStatus = await checkUserSubscription(user.id);
+    if (!subscriptionStatus.isActive) {
+      return new ChatSDKError("subscription_expired:chat").toResponse();
+    }
 
-		const userType: UserType = "regular"; // Default to regular for now until user type is in metadata/db
-		const maxMessages = entitlementsByUserType[userType].maxMessagesPerDay;
+    const userType: UserType = "regular"; // Default to regular for now until user type is in metadata/db
+    const maxMessages = entitlementsByUserType[userType].maxMessagesPerDay;
 
-		// Try Redis-based rate limiting first (faster)
-		const rateLimitResult = await checkRateLimit(user.id, maxMessages);
+    // Try Redis-based rate limiting first (faster)
+    const rateLimitResult = await checkRateLimit(user.id, maxMessages);
 
-		if (rateLimitResult.source === "redis") {
-			// Redis is available, use its result
-			if (!rateLimitResult.allowed) {
-				const response = new ChatSDKError("rate_limit:chat").toResponse();
-				const headers = getRateLimitHeaders(
-					rateLimitResult.remaining,
-					maxMessages,
-					rateLimitResult.reset,
-				);
-				for (const [key, value] of Object.entries(headers)) {
-					response.headers.set(key, value);
-				}
-				return response;
-			}
-		} else {
-			// SECURITY: Redis unavailable - MUST verify via database (fail closed)
-			// This ensures rate limiting is enforced even when Redis is down
-			const messageCount = await getMessageCountByUserId({
-				id: user.id,
-				differenceInHours: 24,
-			});
+    if (rateLimitResult.source === "redis") {
+      // Redis is available, use its result
+      if (!rateLimitResult.allowed) {
+        const response = new ChatSDKError("rate_limit:chat").toResponse();
+        const headers = getRateLimitHeaders(
+          rateLimitResult.remaining,
+          maxMessages,
+          rateLimitResult.reset,
+        );
+        for (const [key, value] of Object.entries(headers)) {
+          response.headers.set(key, value);
+        }
+        return response;
+      }
+    } else {
+      // SECURITY: Redis unavailable - MUST verify via database (fail closed)
+      // This ensures rate limiting is enforced even when Redis is down
+      const messageCount = await getMessageCountByUserId({
+        id: user.id,
+        differenceInHours: 24,
+      });
 
-			if (messageCount >= maxMessages) {
-				return new ChatSDKError("rate_limit:chat").toResponse();
-			}
-		}
+      if (messageCount >= maxMessages) {
+        return new ChatSDKError("rate_limit:chat").toResponse();
+      }
+    }
 
-		// Fetch chat and messages in parallel to reduce latency
-		const [chat, messagesFromDb] = await Promise.all([
-			getChatById({ id }),
-			getMessagesByChatId({ id }),
-		]);
+    // Fetch chat and messages in parallel to reduce latency
+    const [chat, messagesFromDb] = await Promise.all([
+      getChatById({ id }),
+      getMessagesByChatId({ id }),
+    ]);
 
-		if (chat) {
-			if (chat.userId !== user.id) {
-				return new ChatSDKError("forbidden:chat").toResponse();
-			}
-		} else {
-			// Create chat with placeholder title - generate real title in background
-			await saveChat({
-				id,
-				userId: user.id,
-				title: "New conversation",
-				visibility: selectedVisibilityType,
-			});
+    if (chat) {
+      if (chat.userId !== user.id) {
+        return new ChatSDKError("forbidden:chat").toResponse();
+      }
+    } else {
+      // Create chat with placeholder title - generate real title in background
+      await saveChat({
+        id,
+        userId: user.id,
+        title: "New conversation",
+        visibility: selectedVisibilityType,
+      });
 
-			// Generate title and classify topic in background (non-blocking)
-			after(async () => {
-				try {
-					const title = await generateTitleFromUserMessage({ message });
-					await updateChatTitle({ chatId: id, title });
+      // Generate title and classify topic in background (non-blocking)
+      after(async () => {
+        try {
+          const title = await generateTitleFromUserMessage({ message });
+          await updateChatTitle({ chatId: id, title });
 
-					// Classify topic based on title and first message
-					const firstMessageText = message.parts
-						.filter((part) => part.type === "text")
-						.map((part) => (part as { type: "text"; text: string }).text)
-						.join(" ");
+          // Classify topic based on title and first message
+          const firstMessageText = message.parts
+            .filter((part) => part.type === "text")
+            .map((part) => (part as { type: "text"; text: string }).text)
+            .join(" ");
 
-					const topicResult = classifyTopic(title, firstMessageText);
-					if (topicResult) {
-						await updateChatTopic({
-							chatId: id,
-							topic: topicResult.topic,
-							topicColor: topicResult.color,
-						});
-					}
-				} catch (err) {
-					console.warn("Background title generation failed:", err);
-				}
-			});
-		}
-		// Truncate history to prevent context window overflow in long conversations
-		const uiMessages = truncateMessageHistory([
-			...convertToUIMessages(messagesFromDb),
-			message,
-		]);
+          const topicResult = classifyTopic(title, firstMessageText);
+          if (topicResult) {
+            await updateChatTopic({
+              chatId: id,
+              topic: topicResult.topic,
+              topicColor: topicResult.color,
+            });
+          }
+        } catch (err) {
+          console.warn("Background title generation failed:", err);
+        }
+      });
+    }
+    // Truncate history to prevent context window overflow in long conversations
+    const uiMessages = truncateMessageHistory([
+      ...convertToUIMessages(messagesFromDb),
+      message,
+    ]);
 
-		const { longitude, latitude, city, country } = geolocation(request);
+    const { longitude, latitude, city, country } = geolocation(request);
 
-		const requestHints: RequestHints = {
-			longitude,
-			latitude,
-			city,
-			country,
-		};
+    const requestHints: RequestHints = {
+      longitude,
+      latitude,
+      city,
+      country,
+    };
 
-		// Run knowledge base loading, canvas fetch, message save, and stream ID creation in parallel
-		const streamId = generateUUID();
-		const [knowledgeBaseContent, userCanvases] = await Promise.all([
-			getKnowledgeBaseContent(selectedBotType),
-			getAllUserCanvases({ userId: user.id }),
-			saveMessages({
-				messages: [
-					{
-						chatId: id,
-						id: message.id,
-						role: "user",
-						parts: message.parts as unknown as Json,
-						attachments: [] as unknown as Json,
-						createdAt: new Date().toISOString(),
-						botType: null,
-						deletedAt: null,
-					},
-				],
-			}),
-			createStreamId({ streamId, chatId: id }),
-		]);
+    // Run knowledge base loading, canvas fetch, message save, and stream ID creation in parallel
+    const streamId = generateUUID();
+    const [knowledgeBaseContent, userCanvases] = await Promise.all([
+      getKnowledgeBaseContent(selectedBotType),
+      getAllUserCanvases({ userId: user.id }),
+      saveMessages({
+        messages: [
+          {
+            chatId: id,
+            id: message.id,
+            role: "user",
+            parts: message.parts as unknown as Json,
+            attachments: [] as unknown as Json,
+            createdAt: new Date().toISOString(),
+            botType: null,
+            deletedAt: null,
+          },
+        ],
+      }),
+      createStreamId({ streamId, chatId: id }),
+    ]);
 
-		// Format canvas context for AI consumption
-		const canvasContext = formatCanvasContext(
-			userCanvases.map((c) => ({
-				canvasType: c.canvasType as "swot" | "bmc" | "journey" | "brainstorm",
-				data: c.data,
-			})),
-		);
+    // Format canvas context for AI consumption
+    const canvasContext = formatCanvasContext(
+      userCanvases.map((c) => ({
+        canvasType: c.canvasType as "swot" | "bmc" | "journey" | "brainstorm",
+        data: c.data,
+      })),
+    );
 
-		// Build system prompt with personalization (now async)
-		const systemPromptText = await systemPrompt({
-			selectedChatModel,
-			requestHints,
-			botType: selectedBotType,
-			focusMode: focusMode,
-			knowledgeBaseContent,
-			canvasContext,
-			userId: user.id,
-		});
+    // Build system prompt with personalization (now async)
+    const systemPromptText = await systemPrompt({
+      selectedChatModel,
+      requestHints,
+      botType: selectedBotType,
+      focusMode: focusMode,
+      knowledgeBaseContent,
+      canvasContext,
+      userId: user.id,
+    });
 
-		let finalMergedUsage: AppUsage | undefined;
+    let finalMergedUsage: AppUsage | undefined;
 
-		const stream = createUIMessageStream({
-			execute: ({ writer: dataStream }) => {
-				const result = streamText({
-					model: myProvider.languageModel(selectedChatModel),
-					system: systemPromptText,
-					messages: convertToModelMessages(uiMessages),
-					maxOutputTokens: 4096, // Prevent long responses from timing out
-					stopWhen: stepCountIs(3), // Reduced from 5 to 3 - prevents deep recursion latency
-					// Temporarily disabled tools and transforms for OpenRouter compatibility
-					// experimental_activeTools: [
-					//   "getWeather",
-					//   "createDocument",
-					//   "updateDocument",
-					//   "requestSuggestions",
-					//   "webSearch",
-					// ],
-					// experimental_transform: smoothStream({ chunking: "line" }),
-					tools: {
-						getWeather,
-						createDocument: createDocument({ session: { user } satisfies Session, dataStream }),
-						updateDocument: updateDocument({ session: { user } satisfies Session, dataStream }),
-						requestSuggestions: requestSuggestions({
-							session: { user } satisfies Session,
-							dataStream,
-						}),
-						webSearch,
-						strategyCanvas: strategyCanvas({ session: { user } satisfies Session, dataStream }),
-					},
-					experimental_telemetry: {
-						isEnabled: isProductionEnvironment,
-						functionId: "stream-text",
-					},
-					onFinish: async ({ usage }) => {
-						try {
-							const providers = await getTokenlensCatalog();
-							const modelId =
-								myProvider.languageModel(selectedChatModel).modelId;
-							if (!modelId) {
-								finalMergedUsage = usage;
-								dataStream.write({
-									type: "data-usage",
-									data: finalMergedUsage,
-								});
-								return;
-							}
+    const stream = createUIMessageStream({
+      execute: ({ writer: dataStream }) => {
+        const result = streamText({
+          model: myProvider.languageModel(selectedChatModel),
+          system: systemPromptText,
+          messages: convertToModelMessages(uiMessages),
+          maxOutputTokens: 4096, // Prevent long responses from timing out
+          stopWhen: stepCountIs(3), // Reduced from 5 to 3 - prevents deep recursion latency
+          // Temporarily disabled tools and transforms for OpenRouter compatibility
+          // experimental_activeTools: [
+          //   "getWeather",
+          //   "createDocument",
+          //   "updateDocument",
+          //   "requestSuggestions",
+          //   "webSearch",
+          // ],
+          // experimental_transform: smoothStream({ chunking: "line" }),
+          tools: {
+            getWeather,
+            createDocument: createDocument({
+              session: { user } satisfies Session,
+              dataStream,
+            }),
+            updateDocument: updateDocument({
+              session: { user } satisfies Session,
+              dataStream,
+            }),
+            requestSuggestions: requestSuggestions({
+              session: { user } satisfies Session,
+              dataStream,
+            }),
+            webSearch,
+            strategyCanvas: strategyCanvas({
+              session: { user } satisfies Session,
+              dataStream,
+            }),
+          },
+          experimental_telemetry: {
+            isEnabled: isProductionEnvironment,
+            functionId: "stream-text",
+          },
+          onFinish: async ({ usage }) => {
+            try {
+              const providers = await getTokenlensCatalog();
+              const modelId =
+                myProvider.languageModel(selectedChatModel).modelId;
+              if (!modelId) {
+                finalMergedUsage = usage;
+                dataStream.write({
+                  type: "data-usage",
+                  data: finalMergedUsage,
+                });
+                return;
+              }
 
-							if (!providers) {
-								finalMergedUsage = usage;
-								dataStream.write({
-									type: "data-usage",
-									data: finalMergedUsage,
-								});
-								return;
-							}
+              if (!providers) {
+                finalMergedUsage = usage;
+                dataStream.write({
+                  type: "data-usage",
+                  data: finalMergedUsage,
+                });
+                return;
+              }
 
-							const summary = getUsage({ modelId, usage, providers });
-							finalMergedUsage = { ...usage, ...summary, modelId } as AppUsage;
-							dataStream.write({ type: "data-usage", data: finalMergedUsage });
-						} catch (err) {
-							console.warn("TokenLens enrichment failed", err);
-							finalMergedUsage = usage;
-							dataStream.write({ type: "data-usage", data: finalMergedUsage });
-						}
-					},
-				});
+              const summary = getUsage({ modelId, usage, providers });
+              finalMergedUsage = { ...usage, ...summary, modelId } as AppUsage;
+              dataStream.write({ type: "data-usage", data: finalMergedUsage });
+            } catch (err) {
+              console.warn("TokenLens enrichment failed", err);
+              finalMergedUsage = usage;
+              dataStream.write({ type: "data-usage", data: finalMergedUsage });
+            }
+          },
+        });
 
-				result.consumeStream();
-				dataStream.merge(
-					result.toUIMessageStream({
-						sendReasoning: true,
-					}),
-				);
-			},
-			generateId: generateUUID,
-			onFinish: async ({ messages }) => {
-				await saveMessages({
-					messages: messages.map((currentMessage) => {
-						// Safely extract botType from message metadata
-						const messageMetadata = "metadata" in currentMessage
-							? (currentMessage.metadata as { botType?: BotType } | undefined)
-							: undefined;
+        result.consumeStream();
+        dataStream.merge(
+          result.toUIMessageStream({
+            sendReasoning: true,
+          }),
+        );
+      },
+      generateId: generateUUID,
+      onFinish: async ({ messages }) => {
+        await saveMessages({
+          messages: messages.map((currentMessage) => {
+            // Safely extract botType from message metadata
+            const messageMetadata =
+              "metadata" in currentMessage
+                ? (currentMessage.metadata as { botType?: BotType } | undefined)
+                : undefined;
 
-						return {
-							id: currentMessage.id,
-							role: currentMessage.role,
-							parts: currentMessage.parts as unknown as Json,
-							createdAt: new Date().toISOString(),
-							attachments: [] as unknown as Json,
-							chatId: id,
-							botType:
-								currentMessage.role === "assistant"
-									? messageMetadata?.botType || selectedBotType
-									: null,
-							deletedAt: null,
-						};
-					}),
-				});
+            return {
+              id: currentMessage.id,
+              role: currentMessage.role,
+              parts: currentMessage.parts as unknown as Json,
+              createdAt: new Date().toISOString(),
+              attachments: [] as unknown as Json,
+              chatId: id,
+              botType:
+                currentMessage.role === "assistant"
+                  ? messageMetadata?.botType || selectedBotType
+                  : null,
+              deletedAt: null,
+            };
+          }),
+        });
 
-				if (finalMergedUsage) {
-					try {
-						await updateChatLastContextById({
-							chatId: id,
-							context: finalMergedUsage,
-						});
-					} catch (err) {
-						console.warn("Unable to persist last usage for chat", id, err);
-					}
-				}
+        if (finalMergedUsage) {
+          try {
+            await updateChatLastContextById({
+              chatId: id,
+              context: finalMergedUsage,
+            });
+          } catch (err) {
+            console.warn("Unable to persist last usage for chat", id, err);
+          }
+        }
 
-				// Generate conversation summary for cross-chat memory (in background)
-				after(async () => {
-					try {
-						// Get all messages for this chat
-						const allMessages = await getMessagesByChatId({ id });
-						// Only summarize if conversation has substantive content (4+ messages)
-						if (allMessages.length >= 4) {
-							const summary = await generateConversationSummary(
-								allMessages.map((m) => ({
-									role: m.role,
-									parts: m.parts as unknown[],
-								})),
-							);
-							if (summary) {
-								await saveConversationSummary({
-									userId: user.id,
-									chatId: id,
-									summary: summary.text,
-									topics: summary.topics,
-									importance: summary.importance,
-								});
-							}
-						}
-					} catch (err) {
-						console.warn("Failed to generate conversation summary:", err);
-					}
-				});
-			},
-			onError: () => {
-				return "Oops, an error occurred!";
-			},
-		});
+        // Generate conversation summary for cross-chat memory (in background)
+        after(async () => {
+          try {
+            // Get all messages for this chat
+            const allMessages = await getMessagesByChatId({ id });
+            // Only summarize if conversation has substantive content (4+ messages)
+            if (allMessages.length >= 4) {
+              const summary = await generateConversationSummary(
+                allMessages.map((m) => ({
+                  role: m.role,
+                  parts: m.parts as unknown[],
+                })),
+              );
+              if (summary) {
+                await saveConversationSummary({
+                  userId: user.id,
+                  chatId: id,
+                  summary: summary.text,
+                  topics: summary.topics,
+                  importance: summary.importance,
+                });
+              }
+            }
+          } catch (err) {
+            console.warn("Failed to generate conversation summary:", err);
+          }
+        });
+      },
+      onError: () => {
+        return "Oops, an error occurred!";
+      },
+    });
 
-		// const streamContext = getStreamContext();
+    // const streamContext = getStreamContext();
 
-		// if (streamContext) {
-		//   return new Response(
-		//     await streamContext.resumableStream(streamId, () =>
-		//       stream.pipeThrough(new JsonToSseTransformStream())
-		//     )
-		//   );
-		// }
+    // if (streamContext) {
+    //   return new Response(
+    //     await streamContext.resumableStream(streamId, () =>
+    //       stream.pipeThrough(new JsonToSseTransformStream())
+    //     )
+    //   );
+    // }
 
-		return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
-	} catch (error: any) {
-		const vercelId = request.headers.get("x-vercel-id");
+    return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
+  } catch (error: any) {
+    const vercelId = request.headers.get("x-vercel-id");
 
-		if (error instanceof ChatSDKError) {
-			return error.toResponse();
-		}
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
 
-		// Log detailed error for debugging (no secrets)
-		console.error("Unhandled error in chat API:", {
-			message: error?.message,
-			name: error?.name,
-			cause: error?.cause,
-			stack: error?.stack?.split("\n").slice(0, 5).join("\n"),
-			vercelId,
-			hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY,
-		});
-		return new ChatSDKError("offline:chat").toResponse();
-	}
+    // Log detailed error for debugging (no secrets)
+    console.error("Unhandled error in chat API:", {
+      message: error?.message,
+      name: error?.name,
+      cause: error?.cause,
+      stack: error?.stack?.split("\n").slice(0, 5).join("\n"),
+      vercelId,
+      hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY,
+    });
+    return new ChatSDKError("offline:chat").toResponse();
+  }
 }
 
 export async function DELETE(request: Request) {
-	const { searchParams } = new URL(request.url);
-	const id = searchParams.get("id");
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
 
-	if (!id) {
-		return new ChatSDKError("bad_request:api").toResponse();
-	}
+  if (!id) {
+    return new ChatSDKError("bad_request:api").toResponse();
+  }
 
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-	if (!user) {
-		return new ChatSDKError("unauthorized:chat").toResponse();
-	}
+  if (!user) {
+    return new ChatSDKError("unauthorized:chat").toResponse();
+  }
 
-	const chat = await getChatById({ id });
+  const chat = await getChatById({ id });
 
-	if (chat?.userId !== user.id) {
-		return new ChatSDKError("forbidden:chat").toResponse();
-	}
+  if (chat?.userId !== user.id) {
+    return new ChatSDKError("forbidden:chat").toResponse();
+  }
 
-	const deletedChat = await deleteChatById({ id });
+  const deletedChat = await deleteChatById({ id });
 
-	return Response.json(deletedChat, { status: 200 });
+  return Response.json(deletedChat, { status: 200 });
 }
 
 export async function PATCH(request: Request) {
-	try {
-		const { id, isPinned } = await request.json();
+  try {
+    const { id, isPinned } = await request.json();
 
-		if (!id || typeof isPinned !== "boolean") {
-			return new ChatSDKError("bad_request:api").toResponse();
-		}
+    if (!id || typeof isPinned !== "boolean") {
+      return new ChatSDKError("bad_request:api").toResponse();
+    }
 
-		const supabase = await createClient();
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-		if (!user) {
-			return new ChatSDKError("unauthorized:chat").toResponse();
-		}
+    if (!user) {
+      return new ChatSDKError("unauthorized:chat").toResponse();
+    }
 
-		const chat = await getChatById({ id });
+    const chat = await getChatById({ id });
 
-		if (!chat) {
-			return new ChatSDKError("not_found:chat").toResponse();
-		}
+    if (!chat) {
+      return new ChatSDKError("not_found:chat").toResponse();
+    }
 
-		if (chat.userId !== user.id) {
-			return new ChatSDKError("forbidden:chat").toResponse();
-		}
+    if (chat.userId !== user.id) {
+      return new ChatSDKError("forbidden:chat").toResponse();
+    }
 
-		await updateChatPinStatus({ chatId: id, isPinned });
+    await updateChatPinStatus({ chatId: id, isPinned });
 
-		return Response.json({ success: true, isPinned }, { status: 200 });
-	} catch (_error) {
-		return new ChatSDKError("bad_request:api").toResponse();
-	}
+    return Response.json({ success: true, isPinned }, { status: 200 });
+  } catch (_error) {
+    return new ChatSDKError("bad_request:api").toResponse();
+  }
 }

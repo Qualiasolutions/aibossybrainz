@@ -32,7 +32,7 @@ test.describe("Chat activity", () => {
 
     const assistantMessage = await chatPage.getRecentAssistantMessageOrThrow();
     expect(assistantMessage.content).toContain(
-      "With Next.js, you can ship fast!"
+      "With Next.js, you can ship fast!",
     );
   });
 
@@ -106,7 +106,7 @@ test.describe("Chat activity", () => {
     const assistantMessage = await chatPage.getRecentAssistantMessageOrThrow();
 
     expect(assistantMessage.content).toBe(
-      "The current temperature in San Francisco is 17°C."
+      "The current temperature in San Francisco is 17°C.",
     );
   });
 

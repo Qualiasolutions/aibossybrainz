@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CloudAnimation } from "@/components/ui/cloud-animation";
 import { cn } from "@/lib/utils";
@@ -156,12 +156,15 @@ function formatBoldText(text: string) {
 function ChatDemo() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
-  const [selectedExec, setSelectedExec] = useState<"alexandria" | "kim" | "collaborative">("collaborative");
+  const [selectedExec, setSelectedExec] = useState<
+    "alexandria" | "kim" | "collaborative"
+  >("collaborative");
 
   const conversation = [
     {
       role: "user",
-      content: "I need a go-to-market strategy for our SaaS launch next quarter.",
+      content:
+        "I need a go-to-market strategy for our SaaS launch next quarter.",
     },
     {
       role: "assistant",
@@ -186,7 +189,8 @@ function ChatDemo() {
     },
     {
       role: "user",
-      content: "What's the best sales approach for landing our first 10 customers?",
+      content:
+        "What's the best sales approach for landing our first 10 customers?",
     },
     {
       role: "assistant",
@@ -222,13 +226,16 @@ function ChatDemo() {
           }, 1500);
         }
       },
-      currentStep === 0 ? 1000 : 2500
+      currentStep === 0 ? 1000 : 2500,
     );
 
     return () => clearTimeout(timer);
-  }, [currentStep, conversation.length]);
+  }, [currentStep]);
 
-  const visibleMessages = conversation.slice(0, Math.floor((currentStep + 1) / 2));
+  const visibleMessages = conversation.slice(
+    0,
+    Math.floor((currentStep + 1) / 2),
+  );
 
   return (
     <div className="relative w-full">
@@ -247,7 +254,9 @@ function ChatDemo() {
               alt="AI Boss Brainz"
               className="h-4 w-auto"
             />
-            <span className="text-[11px] text-stone-500">app.bossybrainz.ai</span>
+            <span className="text-[11px] text-stone-500">
+              app.bossybrainz.ai
+            </span>
           </div>
         </div>
 
@@ -257,14 +266,40 @@ function ChatDemo() {
           <div className="flex items-center justify-between border-b border-stone-100 bg-white/95 px-4 py-3 backdrop-blur-xl">
             {/* Left - Menu + New Chat */}
             <div className="flex items-center gap-2">
-              <button type="button" className="flex size-8 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-500 shadow-sm">
-                <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <button
+                type="button"
+                className="flex size-8 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-500 shadow-sm"
+              >
+                <svg
+                  className="size-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 </svg>
               </button>
-              <button type="button" className="flex h-8 items-center gap-1.5 rounded-lg border border-stone-200 bg-white px-2.5 text-xs font-medium text-stone-600 shadow-sm">
-                <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              <button
+                type="button"
+                className="flex h-8 items-center gap-1.5 rounded-lg border border-stone-200 bg-white px-2.5 text-xs font-medium text-stone-600 shadow-sm"
+              >
+                <svg
+                  className="size-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
                 <span className="hidden sm:inline">New</span>
               </button>
@@ -273,28 +308,45 @@ function ChatDemo() {
             {/* Center - Executive Selector */}
             <div className="flex items-center gap-1 rounded-full bg-stone-100 p-1">
               {[
-                { id: "alexandria", img: "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png" },
+                {
+                  id: "alexandria",
+                  img: "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png",
+                },
                 { id: "kim", img: "https://i.ibb.co/m7vk4JF/KIM-3.png" },
                 { id: "collaborative", icon: true },
               ].map((exec) => (
                 <button
                   key={exec.id}
                   type="button"
-                  onClick={() => setSelectedExec(exec.id as typeof selectedExec)}
+                  onClick={() =>
+                    setSelectedExec(exec.id as typeof selectedExec)
+                  }
                   className={cn(
                     "flex size-8 items-center justify-center rounded-full transition-all",
                     selectedExec === exec.id
                       ? "bg-white shadow-sm ring-1 ring-stone-200"
-                      : "hover:bg-stone-200/50"
+                      : "hover:bg-stone-200/50",
                   )}
                 >
                   {exec.icon ? (
                     <div className="flex -space-x-1">
-                      <img src="https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png" className="size-4 rounded-full border border-white" alt="" />
-                      <img src="https://i.ibb.co/m7vk4JF/KIM-3.png" className="size-4 rounded-full border border-white" alt="" />
+                      <img
+                        src="https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
+                        className="size-4 rounded-full border border-white"
+                        alt=""
+                      />
+                      <img
+                        src="https://i.ibb.co/m7vk4JF/KIM-3.png"
+                        className="size-4 rounded-full border border-white"
+                        alt=""
+                      />
                     </div>
                   ) : (
-                    <img src={exec.img} className="size-6 rounded-full" alt="" />
+                    <img
+                      src={exec.img}
+                      className="size-6 rounded-full"
+                      alt=""
+                    />
                   )}
                 </button>
               ))}
@@ -302,15 +354,41 @@ function ChatDemo() {
 
             {/* Right - SWOT + Menu */}
             <div className="flex items-center gap-1.5">
-              <button type="button" className="flex h-8 items-center gap-1.5 rounded-lg border border-stone-200 bg-white px-2.5 text-xs font-medium text-stone-500 shadow-sm">
-                <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              <button
+                type="button"
+                className="flex h-8 items-center gap-1.5 rounded-lg border border-stone-200 bg-white px-2.5 text-xs font-medium text-stone-500 shadow-sm"
+              >
+                <svg
+                  className="size-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                  />
                 </svg>
                 <span className="hidden sm:inline">SWOT</span>
               </button>
-              <button type="button" className="flex h-8 items-center gap-1 rounded-lg border border-stone-200 bg-white px-2 text-stone-500 shadow-sm">
-                <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+              <button
+                type="button"
+                className="flex h-8 items-center gap-1 rounded-lg border border-stone-200 bg-white px-2 text-stone-500 shadow-sm"
+              >
+                <svg
+                  className="size-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
+                  />
                 </svg>
               </button>
             </div>
@@ -326,7 +404,7 @@ function ChatDemo() {
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className={cn(
                   "flex w-full",
-                  message.role === "user" ? "justify-end" : "justify-start"
+                  message.role === "user" ? "justify-end" : "justify-start",
                 )}
               >
                 {message.role === "assistant" ? (
@@ -340,9 +418,10 @@ function ChatDemo() {
                       <div className="flex items-center gap-2.5 pl-3">
                         <div className="relative">
                           <img
-                            src={message.bot === "alexandria"
-                              ? "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
-                              : "https://i.ibb.co/m7vk4JF/KIM-3.png"
+                            src={
+                              message.bot === "alexandria"
+                                ? "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
+                                : "https://i.ibb.co/m7vk4JF/KIM-3.png"
                             }
                             alt=""
                             className="size-8 rounded-full border-2 border-rose-100 shadow-sm"
@@ -350,8 +429,12 @@ function ChatDemo() {
                           <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-white bg-green-500" />
                         </div>
                         <div>
-                          <div className="text-sm font-semibold text-stone-800">{message.name}</div>
-                          <div className="text-[11px] text-stone-500">{message.title}</div>
+                          <div className="text-sm font-semibold text-stone-800">
+                            {message.name}
+                          </div>
+                          <div className="text-[11px] text-stone-500">
+                            {message.title}
+                          </div>
                         </div>
                       </div>
 
@@ -360,7 +443,9 @@ function ChatDemo() {
                         {message.content.split("\n").map((line, i) => (
                           <span key={i}>
                             {formatBoldText(line)}
-                            {i < message.content.split("\n").length - 1 && <br />}
+                            {i < message.content.split("\n").length - 1 && (
+                              <br />
+                            )}
                           </span>
                         ))}
                       </div>
@@ -387,9 +472,10 @@ function ChatDemo() {
                     <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full bg-gradient-to-b from-rose-400 to-rose-600" />
                     <div className="flex items-center gap-2.5 pl-3">
                       <img
-                        src={visibleMessages.length === 1
-                          ? "https://i.ibb.co/m7vk4JF/KIM-3.png"
-                          : "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
+                        src={
+                          visibleMessages.length === 1
+                            ? "https://i.ibb.co/m7vk4JF/KIM-3.png"
+                            : "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
                         }
                         alt=""
                         className="size-8 rounded-full border-2 border-rose-100 shadow-sm"
@@ -409,7 +495,9 @@ function ChatDemo() {
                             />
                           ))}
                         </div>
-                        <span className="animate-pulse text-xs text-stone-500">Crafting response...</span>
+                        <span className="animate-pulse text-xs text-stone-500">
+                          Crafting response...
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -422,14 +510,19 @@ function ChatDemo() {
           <div className="border-t border-stone-100 bg-white/80 px-4 pb-4 pt-3 backdrop-blur-xl">
             {/* Focus Mode Chips */}
             <div className="mb-2 flex gap-1.5 overflow-x-auto">
-              {["Default", "Brand Crisis", "Pipeline Audit", "Deal Closing"].map((mode, i) => (
+              {[
+                "Default",
+                "Brand Crisis",
+                "Pipeline Audit",
+                "Deal Closing",
+              ].map((mode, i) => (
                 <span
                   key={mode}
                   className={cn(
                     "shrink-0 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
                     i === 0
                       ? "bg-red-100 text-red-700"
-                      : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+                      : "bg-stone-100 text-stone-500 hover:bg-stone-200",
                   )}
                 >
                   {mode}
@@ -439,10 +532,16 @@ function ChatDemo() {
 
             {/* Input field */}
             <div className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-red-300 focus-within:ring-2 focus-within:ring-red-100">
-              <button type="button" className="text-stone-400 transition-colors hover:text-stone-600">
+              <button
+                type="button"
+                className="text-stone-400 transition-colors hover:text-stone-600"
+              >
                 <Paperclip className="size-4" />
               </button>
-              <button type="button" className="text-stone-400 transition-colors hover:text-stone-600">
+              <button
+                type="button"
+                className="text-stone-400 transition-colors hover:text-stone-600"
+              >
                 <Mic className="size-4" />
               </button>
               <input
@@ -531,12 +630,14 @@ function ExecutiveCards() {
                   <div
                     className={cn(
                       "absolute inset-0 bg-gradient-to-t opacity-20",
-                      exec.color
+                      exec.color,
                     )}
                   />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-stone-900">{exec.name}</h3>
+                  <h3 className="text-xl font-bold text-stone-900">
+                    {exec.name}
+                  </h3>
                   <p className="mt-1 font-semibold text-red-600">{exec.role}</p>
                   <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
                     {exec.expertise.map((skill) => (
@@ -614,7 +715,9 @@ function BenefitsGrid() {
               <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-red-600 text-white shadow-lg shadow-red-500/25 transition-transform group-hover:scale-110">
                 <b.icon className="size-6" />
               </div>
-              <h3 className="text-lg font-semibold text-stone-900">{b.title}</h3>
+              <h3 className="text-lg font-semibold text-stone-900">
+                {b.title}
+              </h3>
               <p className="mt-2 text-stone-600">{b.desc}</p>
             </motion.div>
           ))}

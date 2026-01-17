@@ -10,7 +10,7 @@ interface PremiumLoaderProps {
 
 export function PremiumLoader({
   message = "Loading...",
-  showLogo = true
+  showLogo = true,
 }: PremiumLoaderProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background">
@@ -68,7 +68,9 @@ export function MiniLoader({ className = "" }: { className?: string }) {
 // Skeleton with shimmer effect
 export function PremiumSkeleton({ className = "" }: { className?: string }) {
   return (
-    <div className={`relative overflow-hidden rounded-lg bg-white/5 ${className}`}>
+    <div
+      className={`relative overflow-hidden rounded-lg bg-white/5 ${className}`}
+    >
       <motion.div
         animate={{ x: ["-100%", "100%"] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}

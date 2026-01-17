@@ -204,7 +204,7 @@ test.describe("Entitlements", () => {
 
     await chatPage.sendUserMessage("Why is the sky blue?");
     await chatPage.expectToastToContain(
-      getMessageByErrorCode("rate_limit:chat")
+      getMessageByErrorCode("rate_limit:chat"),
     );
   });
 });

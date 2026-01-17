@@ -30,7 +30,9 @@ export function CloudAnimation({
 
     for (let i = 0; i < particleCount; i++) {
       const randomX =
-        Math.floor(Math.random() * (canvas.width * 3 - canvas.width * 1.2 + 1)) +
+        Math.floor(
+          Math.random() * (canvas.width * 3 - canvas.width * 1.2 + 1),
+        ) +
         canvas.width * 1.2;
 
       const randomY =
@@ -44,7 +46,10 @@ export function CloudAnimation({
     }
   };
 
-  const draw = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
+  const draw = (
+    canvas: HTMLCanvasElement,
+    context: CanvasRenderingContext2D,
+  ) => {
     timerRef.current++;
     context.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -114,12 +119,9 @@ export function CloudAnimation({
         cancelAnimationFrame(requestIdRef.current);
       }
     };
-  }, [particleColor, particleCount]);
+  }, [draw, initParticles]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={`pointer-events-none ${className}`}
-    />
+    <canvas ref={canvasRef} className={`pointer-events-none ${className}`} />
   );
 }

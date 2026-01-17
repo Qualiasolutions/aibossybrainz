@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+const chalk = require("chalk");
 
 /**
  * Core Module Installer
@@ -15,14 +15,16 @@ async function install(options) {
   const { projectRoot, config, installedIDEs, logger } = options;
 
   try {
-    logger.log(chalk.blue('🏗️  Installing Core Module...'));
+    logger.log(chalk.blue("🏗️  Installing Core Module..."));
 
     // Core agent configs are created by the main installer's createAgentConfigs method
     // No need to create them here - they'll be handled along with all other agents
 
     // Handle IDE-specific configurations if needed
     if (installedIDEs && installedIDEs.length > 0) {
-      logger.log(chalk.cyan(`Configuring Core for IDEs: ${installedIDEs.join(', ')}`));
+      logger.log(
+        chalk.cyan(`Configuring Core for IDEs: ${installedIDEs.join(", ")}`),
+      );
 
       // Add any IDE-specific Core configurations here
       for (const ide of installedIDEs) {
@@ -30,7 +32,7 @@ async function install(options) {
       }
     }
 
-    logger.log(chalk.green('✓ Core Module installation complete'));
+    logger.log(chalk.green("✓ Core Module installation complete"));
     return true;
   } catch (error) {
     logger.error(chalk.red(`Error installing Core module: ${error.message}`));
@@ -45,7 +47,7 @@ async function install(options) {
 async function configureForIDE(ide) {
   // Add IDE-specific configurations here
   switch (ide) {
-    case 'claude-code': {
+    case "claude-code": {
       // Claude Code specific Core configurations
       break;
     }

@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Checkbox as CheckboxPrimitive } from "radix-ui"
-import { Check } from "lucide-react"
+import { Check } from "lucide-react";
+import { Checkbox as CheckboxPrimitive } from "radix-ui";
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
@@ -20,7 +20,7 @@ const Checkbox = React.forwardRef<
       "disabled:cursor-not-allowed disabled:opacity-50",
       "data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=checked]:text-white",
       "hover:border-red-400 transition-all duration-200",
-      className
+      className,
     )}
     {...props}
   >
@@ -30,7 +30,7 @@ const Checkbox = React.forwardRef<
       <Check className="h-3.5 w-3.5" strokeWidth={3} />
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
-))
-Checkbox.displayName = CheckboxPrimitive.Root.displayName
+));
+Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 
-export { Checkbox }
+export { Checkbox };

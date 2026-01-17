@@ -24,7 +24,7 @@ async function convertFile(filePath: string) {
 
     if (ext === ".pdf") {
       console.warn(
-        `Skipping ${basename}.pdf: PDF conversion temporarily disabled due to library issues.`
+        `Skipping ${basename}.pdf: PDF conversion temporarily disabled due to library issues.`,
       );
       return;
     }
