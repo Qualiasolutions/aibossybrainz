@@ -1,4 +1,5 @@
 import { geolocation } from "@vercel/functions";
+import { logger } from "@/lib/logger";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -112,11 +113,9 @@ export function getStreamContext() {
       });
     } catch (error: any) {
       if (error.message.includes("REDIS_URL")) {
-        console.log(
-          " > Resumable streams are disabled due to missing REDIS_URL",
-        );
+        logger.info("Resumable streams disabled due to missing REDIS_URL");
       } else {
-        console.error(error);
+        logger.error({ err: error }, "Stream context initialization failed");
       }
     }
   }
@@ -129,11 +128,10 @@ export async function POST(request: Request) {
 
   try {
     const json = await request.json();
-    console.log("Chat API request body:", JSON.stringify(json, null, 2));
+    logger.debug({ body: json }, "Chat API request received");
     requestBody = postRequestBodySchema.parse(json);
   } catch (error) {
-    console.error("Request body validation error:", error);
-    console.error("Validation details:", JSON.stringify(error, null, 2));
+    logger.error({ err: error }, "Request body validation failed");
     return new ChatSDKError("bad_request:api").toResponse();
   }
 
@@ -480,15 +478,14 @@ export async function POST(request: Request) {
       return error.toResponse();
     }
 
-    // Log detailed error for debugging (no secrets)
-    console.error("Unhandled error in chat API:", {
-      message: error?.message,
-      name: error?.name,
-      cause: error?.cause,
-      stack: error?.stack?.split("\n").slice(0, 5).join("\n"),
-      vercelId,
-      hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY,
-    });
+    logger.error(
+      {
+        err: error,
+        vercelId,
+        hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY,
+      },
+      "Unhandled error in chat API",
+    );
     return new ChatSDKError("offline:chat").toResponse();
   }
 }

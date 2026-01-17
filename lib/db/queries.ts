@@ -742,6 +742,7 @@ export async function getDocumentsById({ id }: { id: string }) {
       .from("Document")
       .select("*")
       .eq("id", id)
+      .is("deletedAt", null)
       .order("createdAt", { ascending: true });
 
     if (error) throw error;
@@ -761,6 +762,7 @@ export async function getDocumentById({ id }: { id: string }) {
       .from("Document")
       .select("*")
       .eq("id", id)
+      .is("deletedAt", null)
       .order("createdAt", { ascending: false })
       .limit(1)
       .single();
@@ -782,6 +784,7 @@ export async function getDocumentsByUserId({ userId }: { userId: string }) {
       .from("Document")
       .select("*")
       .eq("userId", userId)
+      .is("deletedAt", null)
       .order("createdAt", { ascending: false });
 
     if (error) throw error;
@@ -991,28 +994,14 @@ export async function getMessageCountByUserId({
       Date.now() - differenceInHours * 60 * 60 * 1000,
     ).toISOString();
 
-    // Get user's chats
-    const { data: userChats } = await supabase
-      .from("Chat")
-      .select("id")
-      .eq("userId", id);
-
-    if (!userChats || userChats.length === 0) {
-      return 0;
-    }
-
-    const chatIds = userChats.map((c) => c.id);
-
-    // Count user messages in those chats after cutoff
-    const { count, error } = await supabase
-      .from("Message_v2")
-      .select("*", { count: "exact", head: true })
-      .in("chatId", chatIds)
-      .eq("role", "user")
-      .gte("createdAt", cutoffTime);
+    // Use RPC function to count messages in a single query (fixes N+1)
+    const { data, error } = await supabase.rpc("get_user_message_count", {
+      p_user_id: id,
+      p_cutoff_time: cutoffTime,
+    });
 
     if (error) throw error;
-    return count || 0;
+    return data || 0;
   } catch (_error) {
     throw new ChatSDKError(
       "bad_request:database",

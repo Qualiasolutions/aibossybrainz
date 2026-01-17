@@ -779,7 +779,25 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      calculate_subscription_end_date:
+        | { Args: { start_date: string; sub_type: string }; Returns: string }
+        | {
+            Args: { start_date?: string; subscription_type: string };
+            Returns: string;
+          };
+      expire_subscriptions: { Args: never; Returns: undefined };
+      get_user_analytics_summary: {
+        Args: { p_end_date: string; p_start_date: string; p_user_id: string };
+        Returns: {
+          chat_count: number;
+          message_count: number;
+        }[];
+      };
+      get_user_message_count: {
+        Args: { p_cutoff_time: string; p_user_id: string };
+        Returns: number;
+      };
+      is_current_user_admin: { Args: never; Returns: boolean };
     };
     Enums: {
       [_ in never]: never;
