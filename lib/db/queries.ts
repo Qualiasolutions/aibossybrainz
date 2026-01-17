@@ -1,6 +1,6 @@
 import "server-only";
 
-import { unstable_cache } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
 import type { ArtifactKind } from "@/components/artifact";
 import { ChatSDKError } from "../errors";
 import { withRetry } from "../resilience";
@@ -521,6 +521,13 @@ export async function saveMessages({ messages }: { messages: DBMessage[] }) {
       .select();
 
     if (error) throw error;
+
+    // Invalidate message cache for affected chats
+    const chatIds = [...new Set(messages.map((m) => m.chatId))];
+    for (const chatId of chatIds) {
+      revalidateTag(`chat-${chatId}`, { expire: 0 });
+    }
+
     return data;
   } catch (_error) {
     throw new ChatSDKError("bad_request:database", "Failed to save messages");

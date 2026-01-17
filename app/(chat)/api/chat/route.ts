@@ -56,6 +56,7 @@ import {
   checkRateLimit,
   getRateLimitHeaders,
 } from "@/lib/security/rate-limiter";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/types";
 import type { ChatMessage } from "@/lib/types";
@@ -123,7 +124,7 @@ export function getStreamContext() {
   return globalStreamContext;
 }
 
-export async function POST(request: Request) {
+export const POST = withCsrf(async (request: Request) => {
   let requestBody: PostRequestBody;
 
   try {
@@ -488,9 +489,9 @@ export async function POST(request: Request) {
     );
     return new ChatSDKError("offline:chat").toResponse();
   }
-}
+});
 
-export async function DELETE(request: Request) {
+export const DELETE = withCsrf(async (request: Request) => {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
 
@@ -516,9 +517,9 @@ export async function DELETE(request: Request) {
   const deletedChat = await deleteChatById({ id });
 
   return Response.json(deletedChat, { status: 200 });
-}
+});
 
-export async function PATCH(request: Request) {
+export const PATCH = withCsrf(async (request: Request) => {
   try {
     const { id, isPinned } = await request.json();
 
@@ -551,4 +552,4 @@ export async function PATCH(request: Request) {
   } catch (_error) {
     return new ChatSDKError("bad_request:api").toResponse();
   }
-}
+});

@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { deleteAllChatsByUserId, getChatsByUserId } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function DELETE() {
+export const DELETE = withCsrf(async () => {
   try {
     const supabase = await createClient();
     const {
@@ -91,4 +92,4 @@ export async function DELETE() {
       "Failed to delete chat history",
     ).toResponse();
   }
-}
+});

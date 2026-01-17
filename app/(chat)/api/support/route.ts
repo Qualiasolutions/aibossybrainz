@@ -1,6 +1,7 @@
 import { createSupportTicket, getUserTickets } from "@/lib/db/support-queries";
 import { sendTicketNotificationEmail } from "@/lib/email/support-notifications";
 import { ChatSDKError } from "@/lib/errors";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 import type { TicketCategory } from "@/lib/supabase/types";
 
@@ -28,7 +29,7 @@ export async function GET() {
 }
 
 // POST: Create a new support ticket
-export async function POST(request: Request) {
+export const POST = withCsrf(async (request: Request) => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -80,4 +81,4 @@ export async function POST(request: Request) {
     console.error("Error creating ticket:", error);
     return new ChatSDKError("bad_request:api").toResponse();
   }
-}
+});

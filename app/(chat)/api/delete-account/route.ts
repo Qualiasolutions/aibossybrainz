@@ -1,17 +1,8 @@
 import { createAuditLog } from "@/lib/db/queries";
-import { validateCsrfRequest } from "@/lib/security/csrf";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 
-export async function POST(request: Request) {
-  // CSRF validation for state-changing operation
-  const csrf = await validateCsrfRequest(request);
-  if (!csrf.valid) {
-    return new Response(JSON.stringify({ error: csrf.error }), {
-      status: 403,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
+export const POST = withCsrf(async () => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -132,4 +123,4 @@ export async function POST(request: Request) {
     console.error("Failed to delete account:", error);
     return new Response("Failed to delete account", { status: 500 });
   }
-}
+});

@@ -5,6 +5,7 @@ import {
   saveStrategyCanvas,
 } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 import type { CanvasType } from "@/lib/supabase/types";
 
@@ -44,7 +45,7 @@ export async function GET(request: Request) {
 }
 
 // POST - Save canvas
-export async function POST(request: Request) {
+export const POST = withCsrf(async (request: Request) => {
   try {
     const supabase = await createClient();
     const {
@@ -76,10 +77,10 @@ export async function POST(request: Request) {
     console.error("[Canvas API] POST error:", error);
     return new ChatSDKError("bad_request:database").toResponse();
   }
-}
+});
 
 // DELETE - Delete canvas
-export async function DELETE(request: Request) {
+export const DELETE = withCsrf(async (request: Request) => {
   try {
     const supabase = await createClient();
     const {
@@ -103,4 +104,4 @@ export async function DELETE(request: Request) {
     console.error("[Canvas API] DELETE error:", error);
     return new ChatSDKError("bad_request:database").toResponse();
   }
-}
+});

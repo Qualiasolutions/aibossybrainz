@@ -8,6 +8,7 @@ import {
   validateFileContent,
   validateFileName,
 } from "@/lib/security/file-validation";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 
 // Use Blob instead of File since File is not available in Node.js environment
@@ -25,7 +26,7 @@ const FileSchema = z.object({
 // Route segment config - increase body size limit
 export const maxDuration = 30;
 
-export async function POST(request: Request) {
+export const POST = withCsrf(async (request: Request) => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -108,4 +109,4 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-}
+});

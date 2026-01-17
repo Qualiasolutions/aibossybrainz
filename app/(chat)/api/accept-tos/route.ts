@@ -1,8 +1,9 @@
 import { ensureUserExists } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 
-export async function POST() {
+export const POST = withCsrf(async () => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -30,7 +31,7 @@ export async function POST() {
   }
 
   return Response.json({ success: true, acceptedAt: new Date().toISOString() });
-}
+});
 
 export async function GET() {
   const supabase = await createClient();

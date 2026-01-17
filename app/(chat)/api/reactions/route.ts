@@ -5,7 +5,7 @@ import {
   getUserReactionsByType,
   removeMessageReaction,
 } from "@/lib/db/queries";
-import { validateCsrfRequest } from "@/lib/security/csrf";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 import type { ReactionType } from "@/lib/supabase/types";
 
@@ -73,16 +73,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
-  // CSRF validation for state-changing operation
-  const csrf = await validateCsrfRequest(request);
-  if (!csrf.valid) {
-    return new Response(JSON.stringify({ error: csrf.error }), {
-      status: 403,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
+export const POST = withCsrf(async (request: Request) => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -130,18 +121,9 @@ export async function POST(request: Request) {
     console.error("Failed to add reaction:", error);
     return new Response("Failed to add reaction", { status: 500 });
   }
-}
+});
 
-export async function DELETE(request: Request) {
-  // CSRF validation for state-changing operation
-  const csrf = await validateCsrfRequest(request);
-  if (!csrf.valid) {
-    return new Response(JSON.stringify({ error: csrf.error }), {
-      status: 403,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
+export const DELETE = withCsrf(async (request: Request) => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -168,4 +150,4 @@ export async function DELETE(request: Request) {
     console.error("Failed to remove reaction:", error);
     return new Response("Failed to remove reaction", { status: 500 });
   }
-}
+});

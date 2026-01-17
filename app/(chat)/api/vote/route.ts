@@ -1,6 +1,6 @@
 import { getChatById, getVotesByChatId, voteMessage } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
-import { validateCsrfRequest } from "@/lib/security/csrf";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
@@ -39,16 +39,7 @@ export async function GET(request: Request) {
   return Response.json(votes, { status: 200 });
 }
 
-export async function PATCH(request: Request) {
-  // CSRF validation for state-changing operation
-  const csrf = await validateCsrfRequest(request);
-  if (!csrf.valid) {
-    return new Response(JSON.stringify({ error: csrf.error }), {
-      status: 403,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
+export const PATCH = withCsrf(async (request: Request) => {
   const {
     chatId,
     messageId,
@@ -89,4 +80,4 @@ export async function PATCH(request: Request) {
   });
 
   return new Response("Message voted", { status: 200 });
-}
+});

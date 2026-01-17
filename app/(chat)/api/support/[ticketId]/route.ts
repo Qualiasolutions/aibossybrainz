@@ -3,6 +3,7 @@ import {
   updateTicketStatus,
 } from "@/lib/db/support-queries";
 import { ChatSDKError } from "@/lib/errors";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 import type { TicketStatus } from "@/lib/supabase/types";
 
@@ -37,44 +38,46 @@ export async function GET(
 }
 
 // PATCH: Update ticket (users can only close their tickets)
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ ticketId: string }> },
-) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export const PATCH = withCsrf(
+  async (
+    request: Request,
+    context?: { params: Promise<{ ticketId: string }> },
+  ) => {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    return new ChatSDKError("unauthorized:api").toResponse();
-  }
-
-  try {
-    const { ticketId } = await params;
-    const body = await request.json();
-    const { status } = body as { status: TicketStatus };
-
-    // Users can only close tickets
-    if (status !== "closed") {
-      return new ChatSDKError(
-        "bad_request:api",
-        "Users can only close tickets",
-      ).toResponse();
+    if (!user) {
+      return new ChatSDKError("unauthorized:api").toResponse();
     }
 
-    const ticket = await updateTicketStatus({
-      ticketId,
-      userId: user.id,
-      status,
-    });
+    try {
+      const { ticketId } = await context!.params; // biome-ignore lint/style/noNonNullAssertion: context is guaranteed by Next.js for dynamic routes
+      const body = await request.json();
+      const { status } = body as { status: TicketStatus };
 
-    return Response.json(ticket);
-  } catch (error) {
-    if (error instanceof ChatSDKError) {
-      return error.toResponse();
+      // Users can only close tickets
+      if (status !== "closed") {
+        return new ChatSDKError(
+          "bad_request:api",
+          "Users can only close tickets",
+        ).toResponse();
+      }
+
+      const ticket = await updateTicketStatus({
+        ticketId,
+        userId: user.id,
+        status,
+      });
+
+      return Response.json(ticket);
+    } catch (error) {
+      if (error instanceof ChatSDKError) {
+        return error.toResponse();
+      }
+      console.error("Error updating ticket:", error);
+      return new ChatSDKError("bad_request:api").toResponse();
     }
-    console.error("Error updating ticket:", error);
-    return new ChatSDKError("bad_request:api").toResponse();
-  }
-}
+  },
+);

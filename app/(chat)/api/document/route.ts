@@ -5,6 +5,7 @@ import {
   saveDocument,
 } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
+import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 30; // Document operations timeout
@@ -55,7 +56,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export const POST = withCsrf(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
@@ -112,9 +113,9 @@ export async function POST(request: Request) {
       "Failed to save document",
     ).toResponse();
   }
-}
+});
 
-export async function DELETE(request: Request) {
+export const DELETE = withCsrf(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
@@ -171,4 +172,4 @@ export async function DELETE(request: Request) {
       "Failed to delete document",
     ).toResponse();
   }
-}
+});
