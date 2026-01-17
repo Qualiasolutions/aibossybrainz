@@ -648,6 +648,114 @@ export type Database = {
           },
         ]
       }
+      SupportTicket: {
+        Row: {
+          id: string
+          userId: string
+          subject: string
+          status: "open" | "in_progress" | "resolved" | "closed"
+          priority: "low" | "normal" | "high" | "urgent"
+          category: "bug" | "feature" | "billing" | "account" | "general" | null
+          assignedAdminId: string | null
+          createdAt: string
+          updatedAt: string
+          resolvedAt: string | null
+          deletedAt: string | null
+        }
+        Insert: {
+          id?: string
+          userId: string
+          subject: string
+          status?: "open" | "in_progress" | "resolved" | "closed"
+          priority?: "low" | "normal" | "high" | "urgent"
+          category?: "bug" | "feature" | "billing" | "account" | "general" | null
+          assignedAdminId?: string | null
+          createdAt?: string
+          updatedAt?: string
+          resolvedAt?: string | null
+          deletedAt?: string | null
+        }
+        Update: {
+          id?: string
+          userId?: string
+          subject?: string
+          status?: "open" | "in_progress" | "resolved" | "closed"
+          priority?: "low" | "normal" | "high" | "urgent"
+          category?: "bug" | "feature" | "billing" | "account" | "general" | null
+          assignedAdminId?: string | null
+          createdAt?: string
+          updatedAt?: string
+          resolvedAt?: string | null
+          deletedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "SupportTicket_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "SupportTicket_assignedAdminId_fkey"
+            columns: ["assignedAdminId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      SupportTicketMessage: {
+        Row: {
+          id: string
+          ticketId: string
+          senderId: string
+          content: string
+          isAdminReply: boolean
+          isInternal: boolean
+          attachments: Json
+          createdAt: string
+          deletedAt: string | null
+        }
+        Insert: {
+          id?: string
+          ticketId: string
+          senderId: string
+          content: string
+          isAdminReply?: boolean
+          isInternal?: boolean
+          attachments?: Json
+          createdAt?: string
+          deletedAt?: string | null
+        }
+        Update: {
+          id?: string
+          ticketId?: string
+          senderId?: string
+          content?: string
+          isAdminReply?: boolean
+          isInternal?: boolean
+          attachments?: Json
+          createdAt?: string
+          deletedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "SupportTicketMessage_ticketId_fkey"
+            columns: ["ticketId"]
+            isOneToOne: false
+            referencedRelation: "SupportTicket"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "SupportTicketMessage_senderId_fkey"
+            columns: ["senderId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -703,3 +811,12 @@ export type StrategyCanvasInsert = Database["public"]["Tables"]["StrategyCanvas"
 export type ConversationSummary = Database["public"]["Tables"]["ConversationSummary"]["Row"]
 export type ConversationSummaryInsert = Database["public"]["Tables"]["ConversationSummary"]["Insert"]
 export type CanvasType = "swot" | "bmc" | "journey" | "brainstorm"
+
+// Support Ticket types
+export type TicketStatus = "open" | "in_progress" | "resolved" | "closed"
+export type TicketPriority = "low" | "normal" | "high" | "urgent"
+export type TicketCategory = "bug" | "feature" | "billing" | "account" | "general"
+export type SupportTicket = Database["public"]["Tables"]["SupportTicket"]["Row"]
+export type SupportTicketInsert = Database["public"]["Tables"]["SupportTicket"]["Insert"]
+export type SupportTicketMessage = Database["public"]["Tables"]["SupportTicketMessage"]["Row"]
+export type SupportTicketMessageInsert = Database["public"]["Tables"]["SupportTicketMessage"]["Insert"]

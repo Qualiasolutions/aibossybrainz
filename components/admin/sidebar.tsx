@@ -6,6 +6,7 @@ import {
 	LayoutDashboard,
 	Users,
 	MessageSquare,
+	Headphones,
 	BarChart3,
 	Settings,
 	ChevronLeft,
@@ -29,6 +30,11 @@ const navItems = [
 		title: "Conversations",
 		href: "/admin/conversations",
 		icon: MessageSquare,
+	},
+	{
+		title: "Support Tickets",
+		href: "/admin/support-tickets",
+		icon: Headphones,
 	},
 	{
 		title: "Analytics",

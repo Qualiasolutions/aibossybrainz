@@ -5,6 +5,8 @@ import {
 	validateCsrfToken,
 } from "@/lib/security/csrf";
 
+export const dynamic = "force-dynamic";
+
 const CSRF_COOKIE_NAME = "__csrf";
 
 /**
