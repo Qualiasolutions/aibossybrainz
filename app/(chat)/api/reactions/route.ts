@@ -1,3 +1,4 @@
+import { safeParseJson } from "@/lib/api-utils";
 import {
   addMessageReaction,
   getMessageReactionCounts,
@@ -5,6 +6,7 @@ import {
   getUserReactionsByType,
   removeMessageReaction,
 } from "@/lib/db/queries";
+import { ChatSDKError } from "@/lib/errors";
 import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 import type { ReactionType } from "@/lib/supabase/types";
@@ -80,14 +82,18 @@ export const POST = withCsrf(async (request: Request) => {
   } = await supabase.auth.getUser();
 
   if (!user?.id) {
-    return new Response("Unauthorized", { status: 401 });
+    return new ChatSDKError("unauthorized:api").toResponse();
   }
 
   try {
-    const { messageId, reactionType } = await request.json();
+    const { messageId, reactionType } =
+      await safeParseJson<{ messageId: string; reactionType: string }>(request);
 
     if (!messageId || !reactionType) {
-      return new Response("Missing messageId or reactionType", { status: 400 });
+      return new ChatSDKError(
+        "bad_request:api",
+        "Missing messageId or reactionType",
+      ).toResponse();
     }
 
     // Validate reaction type
@@ -100,7 +106,7 @@ export const POST = withCsrf(async (request: Request) => {
       "helpful",
     ];
     if (!validTypes.includes(reactionType)) {
-      return new Response("Invalid reaction type", { status: 400 });
+      return new ChatSDKError("bad_request:api", "Invalid reaction type").toResponse();
     }
 
     // Remove existing reaction first (if any)
@@ -113,13 +119,16 @@ export const POST = withCsrf(async (request: Request) => {
     await addMessageReaction({
       messageId,
       userId: user.id,
-      reactionType,
+      reactionType: reactionType as ReactionType,
     });
 
     return Response.json({ success: true });
   } catch (error) {
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
     console.error("Failed to add reaction:", error);
-    return new Response("Failed to add reaction", { status: 500 });
+    return new ChatSDKError("bad_request:api", "Failed to add reaction").toResponse();
   }
 });
 
@@ -130,14 +139,14 @@ export const DELETE = withCsrf(async (request: Request) => {
   } = await supabase.auth.getUser();
 
   if (!user?.id) {
-    return new Response("Unauthorized", { status: 401 });
+    return new ChatSDKError("unauthorized:api").toResponse();
   }
 
   try {
-    const { messageId } = await request.json();
+    const { messageId } = await safeParseJson<{ messageId: string }>(request);
 
     if (!messageId) {
-      return new Response("Missing messageId", { status: 400 });
+      return new ChatSDKError("bad_request:api", "Missing messageId").toResponse();
     }
 
     await removeMessageReaction({
@@ -147,7 +156,10 @@ export const DELETE = withCsrf(async (request: Request) => {
 
     return Response.json({ success: true });
   } catch (error) {
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
     console.error("Failed to remove reaction:", error);
-    return new Response("Failed to remove reaction", { status: 500 });
+    return new ChatSDKError("bad_request:api", "Failed to remove reaction").toResponse();
   }
 });

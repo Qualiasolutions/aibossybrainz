@@ -48,6 +48,54 @@ import type {
   Vote,
 } from "../supabase/types";
 
+// ============================================
+// TYPE GUARDS FOR JOIN QUERY RESULTS
+// ============================================
+
+interface JoinedChat {
+  id: string;
+  title: string;
+  topic: string | null;
+  topicColor: string | null;
+  deletedAt: string | null;
+}
+
+interface JoinedMessage {
+  id: string;
+  chatId: string;
+  parts: Json;
+  role: string;
+  botType: string | null;
+  createdAt: string;
+  deletedAt: string | null;
+  chat: JoinedChat | null;
+}
+
+function isJoinedChat(obj: unknown): obj is JoinedChat {
+  if (obj === null || typeof obj !== "object") return false;
+  const chat = obj as Record<string, unknown>;
+  return (
+    typeof chat.id === "string" &&
+    typeof chat.title === "string" &&
+    (chat.topic === null || typeof chat.topic === "string") &&
+    (chat.topicColor === null || typeof chat.topicColor === "string")
+  );
+}
+
+function isJoinedMessage(obj: unknown): obj is JoinedMessage {
+  if (obj === null || typeof obj !== "object") return false;
+  const msg = obj as Record<string, unknown>;
+  return (
+    typeof msg.id === "string" &&
+    typeof msg.chatId === "string" &&
+    msg.parts !== undefined &&
+    typeof msg.role === "string" &&
+    (msg.botType === null || typeof msg.botType === "string") &&
+    typeof msg.createdAt === "string" &&
+    (msg.chat === null || isJoinedChat(msg.chat))
+  );
+}
+
 // Re-export types for backwards compatibility
 export type {
   User,
@@ -1385,32 +1433,20 @@ export async function getUserReactionsByType({
     if (!data || data.length === 0) return [];
 
     // Transform to expected format, filtering out soft-deleted messages/chats
+    // Uses type guards instead of unsafe `as` assertions for runtime safety
     return data
       .filter((r) => {
-        const msg = r.message as {
-          deletedAt: string | null;
-          chat: { deletedAt: string | null } | null;
-        } | null;
+        // Validate message structure at runtime
+        if (!isJoinedMessage(r.message)) return false;
+        const msg = r.message;
         // Exclude if message is deleted or chat is deleted
-        if (msg?.deletedAt) return false;
-        if (msg?.chat?.deletedAt) return false;
+        if (msg.deletedAt) return false;
+        if (msg.chat?.deletedAt) return false;
         return true;
       })
       .map((r) => {
-        const msg = r.message as {
-          id: string;
-          chatId: string;
-          parts: Json;
-          role: string;
-          botType: string | null;
-          createdAt: string;
-          chat: {
-            id: string;
-            title: string;
-            topic: string | null;
-            topicColor: string | null;
-          } | null;
-        } | null;
+        // Type guard already validated in filter, safe to use
+        const msg = isJoinedMessage(r.message) ? r.message : null;
 
         return {
           id: r.id,

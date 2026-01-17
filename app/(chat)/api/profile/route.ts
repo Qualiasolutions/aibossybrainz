@@ -1,3 +1,4 @@
+import { safeParseJson } from "@/lib/api-utils";
 import {
   ensureUserExists,
   getUserProfile,
@@ -70,7 +71,7 @@ export const POST = withCsrf(async (request: Request) => {
     // Ensure User record exists (syncs from Supabase Auth)
     await ensureUserExists({ id: user.id, email: user.email });
 
-    const body = await request.json();
+    const body = await safeParseJson(request);
 
     // Validate input with Zod schema
     const parseResult = profileUpdateSchema.safeParse(body);
@@ -95,6 +96,9 @@ export const POST = withCsrf(async (request: Request) => {
 
     return Response.json({ success: true });
   } catch (error) {
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
     console.error("[Profile API] POST error:", error);
     return new ChatSDKError("bad_request:database").toResponse();
   }

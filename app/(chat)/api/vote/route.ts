@@ -1,3 +1,4 @@
+import { safeParseJson } from "@/lib/api-utils";
 import { getChatById, getVotesByChatId, voteMessage } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
 import { withCsrf } from "@/lib/security/with-csrf";
@@ -40,44 +41,51 @@ export async function GET(request: Request) {
 }
 
 export const PATCH = withCsrf(async (request: Request) => {
-  const {
-    chatId,
-    messageId,
-    type,
-  }: { chatId: string; messageId: string; type: "up" | "down" } =
-    await request.json();
+  try {
+    const { chatId, messageId, type } = await safeParseJson<{
+      chatId: string;
+      messageId: string;
+      type: "up" | "down";
+    }>(request);
 
-  if (!chatId || !messageId || !type) {
-    return new ChatSDKError(
-      "bad_request:api",
-      "Parameters chatId, messageId, and type are required.",
-    ).toResponse();
+    if (!chatId || !messageId || !type) {
+      return new ChatSDKError(
+        "bad_request:api",
+        "Parameters chatId, messageId, and type are required.",
+      ).toResponse();
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return new ChatSDKError("unauthorized:vote").toResponse();
+    }
+
+    const chat = await getChatById({ id: chatId });
+
+    if (!chat) {
+      return new ChatSDKError("not_found:vote").toResponse();
+    }
+
+    if (chat.userId !== user.id) {
+      return new ChatSDKError("forbidden:vote").toResponse();
+    }
+
+    await voteMessage({
+      chatId,
+      messageId,
+      type,
+    });
+
+    return new Response("Message voted", { status: 200 });
+  } catch (error) {
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
+    console.error("Failed to vote:", error);
+    return new ChatSDKError("bad_request:api", "Failed to vote").toResponse();
   }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return new ChatSDKError("unauthorized:vote").toResponse();
-  }
-
-  const chat = await getChatById({ id: chatId });
-
-  if (!chat) {
-    return new ChatSDKError("not_found:vote").toResponse();
-  }
-
-  if (chat.userId !== user.id) {
-    return new ChatSDKError("forbidden:vote").toResponse();
-  }
-
-  await voteMessage({
-    chatId,
-    messageId,
-    type,
-  });
-
-  return new Response("Message voted", { status: 200 });
 });

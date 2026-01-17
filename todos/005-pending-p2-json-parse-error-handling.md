@@ -1,9 +1,10 @@
 ---
-status: pending
+status: completed
 priority: p2
 issue_id: "005"
 tags: [code-review, reliability, error-handling]
 dependencies: []
+completed_at: 2026-01-18
 ---
 
 # Add JSON Parse Error Handling in API Routes
@@ -91,9 +92,9 @@ async function safeParseJson<T>(request: Request): Promise<{ data: T } | { error
 
 ## Acceptance Criteria
 
-- [ ] All `request.json()` calls have error handling
-- [ ] Malformed JSON returns 400 status
-- [ ] Clear error messages
+- [x] All `request.json()` calls have error handling
+- [x] Malformed JSON returns 400 status
+- [x] Clear error messages
 
 ## Work Log
 
@@ -104,3 +105,45 @@ async function safeParseJson<T>(request: Request): Promise<{ data: T } | { error
 **Actions:**
 - Identified missing JSON parse error handling
 - Catalogued affected routes
+
+### 2026-01-18 - Implementation Complete
+
+**By:** Claude Code
+
+**Solution:** Option 2 - Safe JSON Parser Utility
+
+**Actions:**
+- Created `lib/api-utils.ts` with `safeParseJson<T>()` utility
+- Updated `app/(chat)/api/reactions/route.ts` (POST, DELETE)
+- Updated `app/(chat)/api/vote/route.ts` (PATCH)
+- Updated `app/(chat)/api/profile/route.ts` (POST)
+- All handlers now properly catch and return `ChatSDKError` for invalid JSON
+
+**Code Added:**
+```typescript
+// lib/api-utils.ts
+export async function safeParseJson<T = unknown>(request: Request): Promise<T> {
+  try {
+    return await request.json();
+  } catch {
+    throw new ChatSDKError("bad_request:api", "Invalid JSON in request body");
+  }
+}
+```
+
+**Usage Pattern:**
+```typescript
+try {
+  const { messageId } = await safeParseJson<{ messageId: string }>(request);
+  // ... handler logic
+} catch (error) {
+  if (error instanceof ChatSDKError) {
+    return error.toResponse();
+  }
+  // ... other error handling
+}
+```
+
+**Learnings:**
+- Throwing `ChatSDKError` allows consistent error handling across routes
+- Generic type parameter provides type-safe destructuring
