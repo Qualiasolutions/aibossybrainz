@@ -43,7 +43,9 @@ export function VoiceInputButton({
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const recognitionRef = useRef<globalThis.SpeechRecognition | null>(null);
-  const transcriptRef = useRef<string>("");
+  // Store both final and interim transcripts
+  const finalTranscriptRef = useRef<string>("");
+  const interimTranscriptRef = useRef<string>("");
 
   const iconSizes = {
     sm: "h-3 w-3",
@@ -78,11 +80,15 @@ export function VoiceInputButton({
     try {
       const recognition = new SpeechRecognitionAPI();
       recognitionRef.current = recognition;
-      transcriptRef.current = "";
+      finalTranscriptRef.current = "";
+      interimTranscriptRef.current = "";
 
-      recognition.continuous = true;
+      // Use non-continuous mode for more reliable results on mobile
+      // The recognition will auto-stop after silence, which is fine for dictation
+      recognition.continuous = false;
       recognition.interimResults = true;
       recognition.lang = "en-US";
+      recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -90,18 +96,27 @@ export function VoiceInputButton({
       };
 
       recognition.onresult = (event) => {
-        let finalTranscript = "";
+        let interim = "";
+        let final = "";
 
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript;
+        // Process all results from the beginning (not just from resultIndex)
+        // This ensures we capture the complete transcript
+        for (let i = 0; i < event.results.length; i++) {
+          const result = event.results[i];
+          const transcript = result[0].transcript;
+
+          if (result.isFinal) {
+            final += transcript;
+          } else {
+            interim += transcript;
           }
         }
 
-        if (finalTranscript) {
-          transcriptRef.current += finalTranscript;
+        // Update refs with current state
+        if (final) {
+          finalTranscriptRef.current = final;
         }
+        interimTranscriptRef.current = interim;
       };
 
       recognition.onerror = (event) => {
@@ -114,22 +129,39 @@ export function VoiceInputButton({
             "Microphone access denied. Please enable microphone permissions.",
           );
         } else if (event.error === "no-speech") {
-          toast.info("No speech detected. Try again.");
-        } else if (event.error !== "aborted") {
+          // Don't show error for no-speech, just silently end
+          // This is a common case when user clicks but doesn't speak
+        } else if (event.error === "aborted") {
+          // User aborted, no error needed
+        } else if (event.error === "network") {
+          toast.error(
+            "Network error. Speech recognition requires an internet connection.",
+          );
+        } else {
           toast.error(`Speech recognition error: ${event.error}`);
         }
       };
 
       recognition.onend = () => {
         setIsListening(false);
-        if (transcriptRef.current.trim()) {
+
+        // Use final transcript if available, otherwise use interim
+        // This captures speech even if it wasn't finalized before stop
+        const transcript =
+          finalTranscriptRef.current || interimTranscriptRef.current;
+
+        if (transcript.trim()) {
           setIsProcessing(true);
           // Small delay for UX
           setTimeout(() => {
-            onTranscript(transcriptRef.current.trim());
+            onTranscript(transcript.trim());
             setIsProcessing(false);
-            transcriptRef.current = "";
-          }, 200);
+            finalTranscriptRef.current = "";
+            interimTranscriptRef.current = "";
+          }, 150);
+        } else {
+          finalTranscriptRef.current = "";
+          interimTranscriptRef.current = "";
         }
       };
 
