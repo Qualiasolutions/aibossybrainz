@@ -1,7 +1,17 @@
 import { createAuditLog } from "@/lib/db/queries";
+import { validateCsrfRequest } from "@/lib/security/csrf";
 import { createClient } from "@/lib/supabase/server";
 
-export async function POST() {
+export async function POST(request: Request) {
+  // CSRF validation for state-changing operation
+  const csrf = await validateCsrfRequest(request);
+  if (!csrf.valid) {
+    return new Response(JSON.stringify({ error: csrf.error }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

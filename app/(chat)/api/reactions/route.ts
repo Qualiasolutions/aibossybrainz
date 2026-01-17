@@ -5,6 +5,7 @@ import {
   getUserReactionsByType,
   removeMessageReaction,
 } from "@/lib/db/queries";
+import { validateCsrfRequest } from "@/lib/security/csrf";
 import { createClient } from "@/lib/supabase/server";
 import type { ReactionType } from "@/lib/supabase/types";
 
@@ -73,6 +74,15 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  // CSRF validation for state-changing operation
+  const csrf = await validateCsrfRequest(request);
+  if (!csrf.valid) {
+    return new Response(JSON.stringify({ error: csrf.error }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -123,6 +133,15 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  // CSRF validation for state-changing operation
+  const csrf = await validateCsrfRequest(request);
+  if (!csrf.valid) {
+    return new Response(JSON.stringify({ error: csrf.error }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

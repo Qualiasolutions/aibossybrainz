@@ -4,6 +4,7 @@ import {
   updateUserProfile,
 } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
+import { validateCsrfRequest } from "@/lib/security/csrf";
 import { createClient } from "@/lib/supabase/server";
 import type { BotType } from "@/lib/supabase/types";
 import { z } from "zod";
@@ -56,6 +57,15 @@ export async function GET() {
 
 // POST - Update user profile
 export async function POST(request: Request) {
+  // CSRF validation for state-changing operation
+  const csrf = await validateCsrfRequest(request);
+  if (!csrf.valid) {
+    return new Response(JSON.stringify({ error: csrf.error }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const supabase = await createClient();
     const {

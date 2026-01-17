@@ -555,26 +555,29 @@ const _getCachedMessages = (chatId: string) => {
 
 export async function getMessagesByChatId({ id }: { id: string }) {
   try {
-    // Temporarily bypass cache to debug the issue
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("Message_v2")
-      .select("*")
-      .eq("chatId", id)
-      .is("deletedAt", null)
-      .order("createdAt", { ascending: true });
-
-    if (error) {
-      console.error("getMessagesByChatId Supabase error:", error);
-      throw error;
-    }
-    return data || [];
+    // Use cached version for performance (10s cache with tags for invalidation)
+    return await _getCachedMessages(id);
   } catch (error) {
-    console.error("getMessagesByChatId error:", error);
-    throw new ChatSDKError(
-      "bad_request:database",
-      "Failed to get messages by chat id",
-    );
+    // Fallback to direct query if cache fails
+    console.error("getMessagesByChatId cache error, falling back:", error);
+    try {
+      const supabase = await createClient();
+      const { data, error: dbError } = await supabase
+        .from("Message_v2")
+        .select("*")
+        .eq("chatId", id)
+        .is("deletedAt", null)
+        .order("createdAt", { ascending: true });
+
+      if (dbError) throw dbError;
+      return data || [];
+    } catch (fallbackError) {
+      console.error("getMessagesByChatId fallback error:", fallbackError);
+      throw new ChatSDKError(
+        "bad_request:database",
+        "Failed to get messages by chat id",
+      );
+    }
   }
 }
 
@@ -1308,6 +1311,7 @@ export async function getUserReactionForMessage({
 }
 
 // Get all reactions by type for a user with message and chat details
+// Uses a single JOIN query instead of 3 sequential queries (fixes N+1)
 export async function getUserReactionsByType({
   userId,
   reactionType,
@@ -1339,51 +1343,93 @@ export async function getUserReactionsByType({
   try {
     const supabase = await createClient();
 
-    // Get reactions with message details
-    const { data: reactions, error } = await supabase
+    // Single query with JOINs via Supabase's foreign key relationship syntax
+    const { data, error } = await supabase
       .from("MessageReaction")
-      .select("*")
+      .select(
+        `
+        id,
+        messageId,
+        reactionType,
+        createdAt,
+        message:Message_v2!messageId (
+          id,
+          chatId,
+          parts,
+          role,
+          botType,
+          createdAt,
+          deletedAt,
+          chat:Chat!chatId (
+            id,
+            title,
+            topic,
+            topicColor,
+            deletedAt
+          )
+        )
+      `,
+      )
       .eq("userId", userId)
       .eq("reactionType", reactionType)
       .order("createdAt", { ascending: false });
 
     if (error) throw error;
-    if (!reactions || reactions.length === 0) return [];
+    if (!data || data.length === 0) return [];
 
-    // Get message details for each reaction
-    const messageIds = reactions.map((r) => r.messageId);
-    const { data: messages, error: msgError } = await supabase
-      .from("Message_v2")
-      .select("id, chatId, parts, role, botType, createdAt")
-      .in("id", messageIds);
+    // Transform to expected format, filtering out soft-deleted messages/chats
+    return data
+      .filter((r) => {
+        const msg = r.message as {
+          deletedAt: string | null;
+          chat: { deletedAt: string | null } | null;
+        } | null;
+        // Exclude if message is deleted or chat is deleted
+        if (msg?.deletedAt) return false;
+        if (msg?.chat?.deletedAt) return false;
+        return true;
+      })
+      .map((r) => {
+        const msg = r.message as {
+          id: string;
+          chatId: string;
+          parts: Json;
+          role: string;
+          botType: string | null;
+          createdAt: string;
+          chat: {
+            id: string;
+            title: string;
+            topic: string | null;
+            topicColor: string | null;
+          } | null;
+        } | null;
 
-    if (msgError) throw msgError;
-
-    // Get chat details
-    const chatIds = [...new Set(messages?.map((m) => m.chatId) || [])];
-    const { data: chats, error: chatError } = await supabase
-      .from("Chat")
-      .select("id, title, topic, topicColor")
-      .in("id", chatIds);
-
-    if (chatError) throw chatError;
-
-    // Combine the data
-    const messagesMap = new Map(messages?.map((m) => [m.id, m]) || []);
-    const chatsMap = new Map(chats?.map((c) => [c.id, c]) || []);
-
-    return reactions.map((r) => {
-      const message = messagesMap.get(r.messageId) || null;
-      const chat = message ? chatsMap.get(message.chatId) || null : null;
-      return {
-        id: r.id,
-        messageId: r.messageId,
-        reactionType: r.reactionType,
-        createdAt: r.createdAt || new Date().toISOString(),
-        message,
-        chat,
-      };
-    });
+        return {
+          id: r.id,
+          messageId: r.messageId,
+          reactionType: r.reactionType,
+          createdAt: r.createdAt || new Date().toISOString(),
+          message: msg
+            ? {
+                id: msg.id,
+                chatId: msg.chatId,
+                parts: msg.parts,
+                role: msg.role,
+                botType: msg.botType,
+                createdAt: msg.createdAt,
+              }
+            : null,
+          chat: msg?.chat
+            ? {
+                id: msg.chat.id,
+                title: msg.chat.title,
+                topic: msg.chat.topic,
+                topicColor: msg.chat.topicColor,
+              }
+            : null,
+        };
+      });
   } catch (_error) {
     throw new ChatSDKError(
       "bad_request:database",
