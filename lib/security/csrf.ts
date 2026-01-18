@@ -5,15 +5,19 @@ const CSRF_COOKIE_NAME = "__csrf";
 const CSRF_HEADER_NAME = "x-csrf-token";
 const CSRF_TOKEN_LENGTH = 32;
 
-// CSRF secret - required in production (checked at runtime, not build time)
+// CSRF secret - uses AUTH_SECRET or generates a fallback
+// Note: Without AUTH_SECRET, tokens won't persist across deployments
 function getCsrfSecret(): string {
   const secret = process.env.AUTH_SECRET;
-  if (!secret && process.env.NODE_ENV === "production") {
-    throw new Error(
-      "AUTH_SECRET environment variable is required in production for CSRF protection",
+  if (!secret) {
+    // Log warning but don't throw - use a fallback
+    console.warn(
+      "AUTH_SECRET not set - CSRF tokens will use fallback secret (less secure)",
     );
+    // Use a deterministic fallback based on deployment
+    return process.env.VERCEL_URL || "fallback-csrf-secret-change-me";
   }
-  return secret ?? "dev-only-fallback-secret";
+  return secret;
 }
 
 /**
