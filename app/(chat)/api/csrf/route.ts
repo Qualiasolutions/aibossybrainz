@@ -6,6 +6,7 @@ import {
 } from "@/lib/security/csrf";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs"; // Required for node:crypto
 
 const CSRF_COOKIE_NAME = "__csrf";
 
