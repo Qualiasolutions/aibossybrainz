@@ -79,13 +79,6 @@ export async function POST(request: Request) {
     // Truncate text if too long
     const truncatedText = text.slice(0, MAX_TTS_TEXT_LENGTH);
 
-    // Strip markdown formatting for cleaner speech
-    const cleanText = stripMarkdown(truncatedText);
-
-    if (!cleanText.trim()) {
-      return new ChatSDKError("bad_request:api").toResponse();
-    }
-
     const apiKey = process.env.ELEVENLABS_API_KEY;
 
     if (!apiKey) {
@@ -96,17 +89,24 @@ export async function POST(request: Request) {
       );
     }
 
-    // For collaborative mode, parse speaker segments and generate audio for each
+    // For collaborative mode, parse speaker segments BEFORE stripping markdown
+    // (stripMarkdown removes the speaker markers, so we must parse first)
     if (botType === "collaborative") {
-      const segments = parseCollaborativeSegments(cleanText);
+      const segments = parseCollaborativeSegments(truncatedText);
 
       // If we have multiple speakers, generate audio for each segment
       if (
         segments.length > 1 ||
         (segments.length === 1 && segments[0].speaker !== "alexandria")
       ) {
-        // Filter out empty segments and generate audio in parallel for better performance
-        const validSegments = segments.filter((s) => s.text.trim());
+        // Filter out empty segments, strip markdown from each, and generate audio in parallel
+        const validSegments = segments
+          .map((s) => ({ ...s, text: stripMarkdown(s.text) }))
+          .filter((s) => s.text.trim());
+
+        if (validSegments.length === 0) {
+          return new ChatSDKError("bad_request:api").toResponse();
+        }
 
         const audioBuffers = await Promise.all(
           validSegments.map(async (segment) => {
@@ -134,6 +134,13 @@ export async function POST(request: Request) {
           },
         });
       }
+    }
+
+    // Strip markdown formatting for cleaner speech (single voice path)
+    const cleanText = stripMarkdown(truncatedText);
+
+    if (!cleanText.trim()) {
+      return new ChatSDKError("bad_request:api").toResponse();
     }
 
     // Single voice path (non-collaborative or single speaker)
