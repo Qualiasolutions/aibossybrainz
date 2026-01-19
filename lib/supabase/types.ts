@@ -774,6 +774,50 @@ export type Database = {
           },
         ];
       };
+      LandingPageContent: {
+        Row: {
+          id: string;
+          section: string;
+          key: string;
+          value: string;
+          type: string;
+          metadata: Json;
+          updatedBy: string | null;
+          createdAt: string;
+          updatedAt: string;
+        };
+        Insert: {
+          id?: string;
+          section: string;
+          key: string;
+          value: string;
+          type?: string;
+          metadata?: Json;
+          updatedBy?: string | null;
+          createdAt?: string;
+          updatedAt?: string;
+        };
+        Update: {
+          id?: string;
+          section?: string;
+          key?: string;
+          value?: string;
+          type?: string;
+          metadata?: Json;
+          updatedBy?: string | null;
+          createdAt?: string;
+          updatedAt?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "LandingPageContent_updatedBy_fkey";
+            columns: ["updatedBy"];
+            isOneToOne: false;
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -873,3 +917,36 @@ export type SupportTicketMessage =
   Database["public"]["Tables"]["SupportTicketMessage"]["Row"];
 export type SupportTicketMessageInsert =
   Database["public"]["Tables"]["SupportTicketMessage"]["Insert"];
+
+// Landing Page CMS types
+export type LandingPageContentType = "text" | "textarea" | "url" | "color" | "list";
+export type LandingPageSection = "hero" | "executives" | "benefits" | "cta" | "theme" | "header" | "footer";
+
+export interface LandingPageContent {
+  id: string;
+  section: LandingPageSection;
+  key: string;
+  value: string;
+  type: LandingPageContentType;
+  metadata: Json;
+  updatedBy: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LandingPageContentInsert {
+  id?: string;
+  section: LandingPageSection;
+  key: string;
+  value: string;
+  type?: LandingPageContentType;
+  metadata?: Json;
+  updatedBy?: string | null;
+}
+
+export interface LandingPageContentUpdate {
+  value?: string;
+  type?: LandingPageContentType;
+  metadata?: Json;
+  updatedBy?: string | null;
+}

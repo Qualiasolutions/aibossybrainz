@@ -3,6 +3,7 @@
 import {
   BarChart3,
   ChevronLeft,
+  Globe,
   Headphones,
   LayoutDashboard,
   MessageSquare,
@@ -40,6 +41,11 @@ const navItems = [
     title: "Analytics",
     href: "/admin/analytics",
     icon: BarChart3,
+  },
+  {
+    title: "Landing Page",
+    href: "/admin/landing-page",
+    icon: Globe,
   },
   {
     title: "Settings",
