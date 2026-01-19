@@ -7,6 +7,7 @@ import {
   Check,
   Clock,
   Gift,
+  Loader2,
   MessageSquare,
   Phone,
   Sparkles,
@@ -16,7 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -86,7 +87,7 @@ const pricingPlans: PricingPlan[] = [
     ctaLink: "/login",
   },
   {
-    id: "annual",
+    id: "biannual",
     name: "Best Value",
     price: 1500,
     period: "One-Time",
@@ -123,9 +124,20 @@ const pricingPlans: PricingPlan[] = [
   },
 ];
 
-function PricingCard({ plan, index }: { plan: PricingPlan; index: number }) {
+function PricingCard({
+  plan,
+  index,
+  loading,
+  onSelectPlan,
+}: {
+  plan: PricingPlan;
+  index: number;
+  loading: string | null;
+  onSelectPlan: (planId: string) => void;
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const isLoading = loading === plan.id;
 
   return (
     <motion.div
@@ -255,21 +267,30 @@ function PricingCard({ plan, index }: { plan: PricingPlan; index: number }) {
         </div>
 
         {/* CTA */}
-        <Link href={plan.ctaLink} className="mt-6 block">
-          <Button
-            size="lg"
-            className={cn(
-              "w-full gap-2 text-base",
-              plan.popular
-                ? "shadow-xl shadow-red-500/20"
-                : "bg-stone-900 hover:bg-stone-800",
-            )}
-            variant={plan.popular ? "default" : "premium"}
-          >
-            {plan.cta}
-            <ArrowRight className="size-4" />
-          </Button>
-        </Link>
+        <Button
+          size="lg"
+          className={cn(
+            "mt-6 w-full gap-2 text-base",
+            plan.popular
+              ? "shadow-xl shadow-red-500/20"
+              : "bg-stone-900 hover:bg-stone-800",
+          )}
+          variant={plan.popular ? "default" : "premium"}
+          onClick={() => onSelectPlan(plan.id)}
+          disabled={loading !== null}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              {plan.cta}
+              <ArrowRight className="size-4" />
+            </>
+          )}
+        </Button>
       </div>
     </motion.div>
   );
@@ -400,6 +421,37 @@ function GuaranteeSection() {
 }
 
 export default function PricingPage() {
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleSelectPlan = async (planId: string) => {
+    setLoading(planId);
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        // User not logged in, redirect to login with return URL
+        window.location.href = `/login?returnTo=/pricing&plan=${planId}`;
+        return;
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error("No checkout URL returned");
+        setLoading(null);
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      setLoading(null);
+    }
+  };
+
   return (
     <>
       {/* Hero */}
@@ -443,7 +495,13 @@ export default function PricingPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2">
             {pricingPlans.map((plan, index) => (
-              <PricingCard key={plan.id} plan={plan} index={index} />
+              <PricingCard
+                key={plan.id}
+                plan={plan}
+                index={index}
+                loading={loading}
+                onSelectPlan={handleSelectPlan}
+              />
             ))}
           </div>
         </div>

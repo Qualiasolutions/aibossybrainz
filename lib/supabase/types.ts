@@ -394,6 +394,8 @@ export type Database = {
           subscriptionStartDate: string | null;
           subscriptionEndDate: string | null;
           subscriptionStatus: "active" | "expired" | "cancelled" | null;
+          stripeCustomerId: string | null;
+          stripeSubscriptionId: string | null;
         };
         Insert: {
           email: string;
@@ -414,6 +416,8 @@ export type Database = {
           subscriptionStartDate?: string | null;
           subscriptionEndDate?: string | null;
           subscriptionStatus?: "active" | "expired" | "cancelled" | null;
+          stripeCustomerId?: string | null;
+          stripeSubscriptionId?: string | null;
         };
         Update: {
           email?: string;
@@ -434,6 +438,8 @@ export type Database = {
           subscriptionStartDate?: string | null;
           subscriptionEndDate?: string | null;
           subscriptionStatus?: "active" | "expired" | "cancelled" | null;
+          stripeCustomerId?: string | null;
+          stripeSubscriptionId?: string | null;
         };
         Relationships: [];
       };

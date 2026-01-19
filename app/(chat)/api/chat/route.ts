@@ -174,8 +174,10 @@ export const POST = withCsrf(async (request: Request) => {
       return new ChatSDKError("subscription_expired:chat").toResponse();
     }
 
-    const userType: UserType = "regular"; // Default to regular for now until user type is in metadata/db
-    const maxMessages = entitlementsByUserType[userType].maxMessagesPerDay;
+    // Get entitlements based on subscription type
+    const userType: UserType =
+      (subscriptionStatus.subscriptionType as UserType) || "trial";
+    const maxMessages = entitlementsByUserType[userType]?.maxMessagesPerDay ?? 100;
 
     // Try Redis-based rate limiting first (faster)
     const rateLimitResult = await checkRateLimit(user.id, maxMessages);

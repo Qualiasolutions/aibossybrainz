@@ -49,7 +49,7 @@ export function EnhancedModelSelector({
 
   const { availableChatModelIds } =
     entitlementsByUserType[userType as keyof typeof entitlementsByUserType] ||
-    entitlementsByUserType.regular;
+    entitlementsByUserType.trial;
 
   const availableChatModels = chatModels.filter((chatModel) =>
     availableChatModelIds.includes(chatModel.id),

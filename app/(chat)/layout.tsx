@@ -2,6 +2,7 @@ import Script from "next/script";
 import { AppSidebar } from "@/components/app-sidebar";
 import { DataStreamProvider } from "@/components/data-stream-provider";
 import { MobileSidebarProvider } from "@/components/mobile-sidebar-context";
+import { SubscriptionProvider } from "@/components/subscription";
 import { TosPopup } from "@/components/tos-popup";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { WelcomeTutorial } from "@/components/welcome-tutorial";
@@ -37,14 +38,16 @@ export default async function Layout({
       />
       <TosPopup />
       <WelcomeTutorial />
-      <DataStreamProvider>
-        <MobileSidebarProvider>
-          <SidebarProvider defaultOpen={true}>
-            <AppSidebar user={user || undefined} isAdmin={isAdmin} />
-            <SidebarInset>{children}</SidebarInset>
-          </SidebarProvider>
-        </MobileSidebarProvider>
-      </DataStreamProvider>
+      <SubscriptionProvider>
+        <DataStreamProvider>
+          <MobileSidebarProvider>
+            <SidebarProvider defaultOpen={true}>
+              <AppSidebar user={user || undefined} isAdmin={isAdmin} />
+              <SidebarInset>{children}</SidebarInset>
+            </SidebarProvider>
+          </MobileSidebarProvider>
+        </DataStreamProvider>
+      </SubscriptionProvider>
     </>
   );
 }
