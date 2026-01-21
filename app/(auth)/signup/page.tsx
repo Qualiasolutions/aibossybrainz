@@ -8,9 +8,9 @@ import { AuthForm } from "@/components/auth-form";
 import { AuthShell } from "@/components/auth-shell";
 import { SubmitButton } from "@/components/submit-button";
 import { toast } from "@/components/toast";
-import { type LoginActionState, login } from "../actions";
+import { type SignupActionState, signup } from "../actions";
 
-const loginHighlights = [
+const signupHighlights = [
   {
     title: "You're Here to Build",
     description:
@@ -28,7 +28,7 @@ const loginHighlights = [
   },
 ];
 
-function LoginContent() {
+function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan");
@@ -38,8 +38,8 @@ function LoginContent() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const hasRedirected = useRef(false);
 
-  const [state, formAction] = useActionState<LoginActionState, FormData>(
-    login,
+  const [state, formAction] = useActionState<SignupActionState, FormData>(
+    signup,
     {
       status: "idle",
     },
@@ -49,13 +49,19 @@ function LoginContent() {
     if (state.status === "failed") {
       toast({
         type: "error",
-        description: "Invalid credentials!",
+        description: "Something went wrong. Please try again.",
       });
     } else if (state.status === "invalid_data") {
       toast({
         type: "error",
-        description: "Failed validating your submission!",
+        description: "Please enter a valid email and password (min 6 characters).",
       });
+    } else if (state.status === "user_exists") {
+      toast({
+        type: "error",
+        description: "An account with this email already exists. Please sign in instead.",
+      });
+      router.push(`/login${plan ? `?plan=${plan}` : ""}`);
     } else if (state.status === "success" && !hasRedirected.current) {
       hasRedirected.current = true;
       setIsSuccessful(true);
@@ -63,6 +69,7 @@ function LoginContent() {
       // If there's a plan, redirect to checkout
       if (plan) {
         setIsRedirecting(true);
+        // Call the checkout API to create a Stripe session
         fetch("/api/stripe/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -94,15 +101,15 @@ function LoginContent() {
 
   return (
     <AuthShell
-      description="We're excited to talk to you. Don't forget, you can hear our voices too. Ask Alexandria and Kim anything when it comes to sales and marketing."
-      highlights={loginHighlights}
-      title="Welcome Back to Your Sales & Marketing Superheroes"
+      description="Join thousands of founders using AI-powered sales and marketing executives to grow their business."
+      highlights={signupHighlights}
+      title="Start Your Sales & Marketing Transformation"
     >
       <div className="space-y-2 text-center">
-        <h2 className="font-semibold text-2xl text-slate-900">Sign in</h2>
+        <h2 className="font-semibold text-2xl text-slate-900">Create Account</h2>
         <p className="text-slate-500 text-sm">
           {plan ? (
-            <>Continue with the <span className="font-medium text-rose-600">{plan === "monthly" ? "Most Flexible" : plan === "annual" ? "Best Value" : "Exclusive Lifetime"}</span> plan</>
+            <>Get started with the <span className="font-medium text-rose-600">{plan === "monthly" ? "Most Flexible" : plan === "annual" ? "Best Value" : "Exclusive Lifetime"}</span> plan</>
           ) : (
             "The AI Boss Brainz Workspace — Powered by Alecci Media"
           )}
@@ -114,26 +121,26 @@ function LoginContent() {
         defaultEmail={email}
       >
         <SubmitButton isSuccessful={isSuccessful || isRedirecting}>
-          {isRedirecting ? "Redirecting to checkout..." : "Sign in"}
+          {isRedirecting ? "Redirecting to checkout..." : "Create Account"}
         </SubmitButton>
       </AuthForm>
       <p className="text-center text-sm text-slate-500">
-        Don't have an account?{" "}
+        Already have an account?{" "}
         <Link
-          href={`/signup${plan ? `?plan=${plan}` : ""}`}
+          href={`/login${plan ? `?plan=${plan}` : ""}`}
           className="font-medium text-rose-600 hover:text-rose-700"
         >
-          Create one
+          Sign in
         </Link>
       </p>
     </AuthShell>
   );
 }
 
-export default function Page() {
+export default function SignupPage() {
   return (
     <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
-      <LoginContent />
+      <SignupContent />
     </Suspense>
   );
 }

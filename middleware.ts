@@ -15,8 +15,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-     * - /login, /register, and /demo (allow access without authentication)
+     * - /login, /signup, /register, and /demo (allow access without authentication)
      */
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|login|register|demo).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|login|signup|register|demo).*)",
   ],
 };

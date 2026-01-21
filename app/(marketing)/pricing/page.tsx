@@ -74,7 +74,7 @@ const pricingPlans: PricingPlan[] = [
       },
     ],
     cta: "Get Started",
-    ctaLink: "/login",
+    ctaLink: "/signup?plan=monthly",
   },
   {
     id: "annual",
@@ -110,7 +110,7 @@ const pricingPlans: PricingPlan[] = [
       },
     ],
     cta: "Get Best Value",
-    ctaLink: "/login",
+    ctaLink: "/signup?plan=annual",
   },
   {
     id: "lifetime",
@@ -147,7 +147,7 @@ const pricingPlans: PricingPlan[] = [
       },
     ],
     cta: "Claim Your Seat",
-    ctaLink: "/login",
+    ctaLink: "/signup?plan=lifetime",
   },
 ];
 
@@ -462,8 +462,8 @@ export default function PricingPage() {
       const data = await response.json();
 
       if (response.status === 401) {
-        // User not logged in, redirect to login with return URL
-        window.location.href = `/login?returnTo=/pricing&plan=${planId}`;
+        // User not logged in, redirect to signup with plan
+        window.location.href = `/signup?plan=${planId}`;
         return;
       }
 
@@ -554,9 +554,9 @@ export default function PricingPage() {
                 Contact Us
               </Button>
             </Link>
-            <Link href="/login">
+            <Link href="/signup">
               <Button size="lg" className="gap-2 shadow-lg shadow-red-500/20">
-                Start Free Trial
+                Get Started
                 <ArrowRight className="size-4" />
               </Button>
             </Link>
