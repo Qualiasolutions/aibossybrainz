@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useCsrf } from "@/hooks/use-csrf";
 import type { SupportTicket, TicketCategory } from "@/lib/supabase/types";
 
 export function SupportNewTicket({
@@ -25,15 +26,16 @@ export function SupportNewTicket({
   const [category, setCategory] = useState<TicketCategory | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { csrfFetch, isLoading: isCsrfLoading } = useCsrf();
 
   const handleSubmit = async () => {
-    if (!subject.trim() || !message.trim() || isSubmitting) return;
+    if (!subject.trim() || !message.trim() || isSubmitting || isCsrfLoading) return;
 
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const res = await fetch("/api/support", {
+      const res = await csrfFetch("/api/support", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -122,7 +124,7 @@ export function SupportNewTicket({
       <div className="pt-4">
         <Button
           onClick={handleSubmit}
-          disabled={!subject.trim() || !message.trim() || isSubmitting}
+          disabled={!subject.trim() || !message.trim() || isSubmitting || isCsrfLoading}
           className="w-full bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700"
         >
           {isSubmitting ? (
