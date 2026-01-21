@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import useSWR, { mutate } from "swr";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useCsrf } from "@/hooks/use-csrf";
 import type { SupportTicket, SupportTicketMessage } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ export function SupportTicketConversation({ ticketId }: { ticketId: string }) {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { csrfFetch } = useCsrf();
 
   const { data, isLoading, error } = useSWR<TicketWithMessages>(
     `/api/support/${ticketId}`,
@@ -40,7 +42,7 @@ export function SupportTicketConversation({ ticketId }: { ticketId: string }) {
 
     setIsSending(true);
     try {
-      const res = await fetch(`/api/support/${ticketId}/messages`, {
+      const res = await csrfFetch(`/api/support/${ticketId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: message }),
@@ -57,7 +59,7 @@ export function SupportTicketConversation({ ticketId }: { ticketId: string }) {
 
   const handleClose = async () => {
     try {
-      const res = await fetch(`/api/support/${ticketId}`, {
+      const res = await csrfFetch(`/api/support/${ticketId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "closed" }),
