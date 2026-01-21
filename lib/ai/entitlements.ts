@@ -2,7 +2,7 @@ import type { ChatModel } from "./models";
 import type { SubscriptionType } from "@/lib/supabase/types";
 
 // User types for entitlements
-export type UserType = "guest" | "trial" | "monthly" | "biannual";
+export type UserType = "guest" | "trial" | "monthly" | "annual" | "lifetime";
 
 type Entitlements = {
   maxMessagesPerDay: number;
@@ -35,10 +35,18 @@ export const entitlementsByUserType: Record<UserType, Entitlements> = {
   },
 
   /*
-   * For biannual subscription users ($1500 one-time for 6 months)
+   * For annual subscription users ($2,500/year)
    */
-  biannual: {
+  annual: {
     maxMessagesPerDay: 5000,
+    availableChatModelIds: ["chat-model", "chat-model-reasoning"],
+  },
+
+  /*
+   * For lifetime subscription users ($3,500 one-time)
+   */
+  lifetime: {
+    maxMessagesPerDay: 10000,
     availableChatModelIds: ["chat-model", "chat-model-reasoning"],
   },
 };

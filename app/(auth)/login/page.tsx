@@ -11,19 +11,19 @@ import { type LoginActionState, login } from "../actions";
 
 const loginHighlights = [
   {
-    title: "Executive Continuity",
+    title: "You're Here to Build",
     description:
-      "Pick up every thread with Alexandria and Kim preserved exactly as you left it.",
+      "This isn't a content vault for 'someday.' Every tool, every prompt, every checklist is built to help your business grow.",
   },
   {
-    title: "Faster Launch Windows",
+    title: "Your Prompt Matters",
     description:
-      "Deploy new GTM experiments in minutes with reusable playbooks and ready-made briefs.",
+      "The more detailed your prompts, the more detailed your responses. The more specific your ask, the better the strategy.",
   },
   {
-    title: "Enterprise Guardrails",
+    title: "Implement, Don't Hoard",
     description:
-      "Role-based access plus tone control keeps every output on brand and on message.",
+      "Clarity without action is just procrastination. Pick one thing and implement it to achieve better business outcomes.",
   },
 ];
 
@@ -67,14 +67,14 @@ export default function Page() {
 
   return (
     <AuthShell
-      description="Sign in to continue orchestrating GTM experiments with Alexandria and Kim inside the secure Alecci Media workspace."
+      description="We're excited to talk to you. Don't forget, you can hear our voices too. Ask Alexandria and Kim anything when it comes to sales and marketing."
       highlights={loginHighlights}
-      title="Welcome back to your AI executive suite"
+      title="Welcome Back to Your Sales & Marketing Superheroes"
     >
       <div className="space-y-2 text-center">
         <h2 className="font-semibold text-2xl text-slate-900">Sign in</h2>
         <p className="text-slate-500 text-sm">
-          Use your Alecci Media credentials to rejoin the live workspace.
+          The AI Boss Brainz Workspace — Powered by Alecci Media
         </p>
       </div>
       <AuthForm

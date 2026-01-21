@@ -151,8 +151,11 @@ function calculateSubscriptionEndDate(
     case "monthly":
       endDate.setMonth(endDate.getMonth() + 1);
       break;
-    case "biannual":
-      endDate.setMonth(endDate.getMonth() + 6);
+    case "annual":
+      endDate.setMonth(endDate.getMonth() + 12);
+      break;
+    case "lifetime":
+      endDate.setFullYear(endDate.getFullYear() + 100);
       break;
   }
   return endDate;
@@ -621,7 +624,8 @@ export async function getRecentActivity(
 export interface SubscriptionStats {
   trial: number;
   monthly: number;
-  biannual: number;
+  annual: number;
+  lifetime: number;
   expired: number;
   mrr: number;
   activeSubscribers: number;
@@ -639,7 +643,8 @@ export async function getSubscriptionStats(): Promise<SubscriptionStats> {
   const stats = {
     trial: 0,
     monthly: 0,
-    biannual: 0,
+    annual: 0,
+    lifetime: 0,
     expired: 0,
     activeSubscribers: 0,
   };
@@ -656,15 +661,18 @@ export async function getSubscriptionStats(): Promise<SubscriptionStats> {
         case "monthly":
           stats.monthly++;
           break;
-        case "biannual":
-          stats.biannual++;
+        case "annual":
+          stats.annual++;
+          break;
+        case "lifetime":
+          stats.lifetime++;
           break;
       }
     }
   }
 
-  // Calculate MRR: monthly * $297 + biannual * ($1500/6) = $250/mo
-  const mrr = stats.monthly * 297 + stats.biannual * 250;
+  // Calculate MRR: monthly * $297 + annual * ($2500/12) = $208/mo + lifetime (one-time)
+  const mrr = stats.monthly * 297 + stats.annual * 208;
 
   return { ...stats, mrr };
 }

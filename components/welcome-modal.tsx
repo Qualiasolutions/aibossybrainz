@@ -340,16 +340,16 @@ export function WelcomeModal({ forceOpen, onClose }: WelcomeModalProps) {
 
   const steps = [
     {
-      title: "Welcome to Boss Brainz",
+      title: "Welcome to the AI Boss Brainz Workspace",
       description:
-        "Your AI-powered sales and marketing executives, available 24/7.",
+        "Your Sales & Marketing Superheroes are ready to help. We're excited to talk to you!",
       icon: Brain,
       content: <AppDemoAnimation />,
     },
     {
       title: "Choose Your Executive",
       description:
-        "Toggle between Alexandria (CMO), Kim (CSO), or work with both for a combined strategy.",
+        "Ask Alexandria and Kim anything when it comes to sales and marketing. You can even hear their voices!",
       icon: Target,
       content: (
         <div className="grid grid-cols-3 gap-3">
@@ -398,9 +398,9 @@ export function WelcomeModal({ forceOpen, onClose }: WelcomeModalProps) {
       ),
     },
     {
-      title: "Be Specific for Better Results",
+      title: "Your Prompt Matters",
       description:
-        "The more details you share, the more tailored strategies you'll receive.",
+        "The more detailed your prompts, the more detailed responses. The more specific your ask, the better the strategy.",
       icon: MessageSquare,
       content: (
         <div className="space-y-3">
@@ -435,9 +435,9 @@ export function WelcomeModal({ forceOpen, onClose }: WelcomeModalProps) {
       ),
     },
     {
-      title: "Talk or Type",
+      title: "Don't Just Browse. IMPLEMENT.",
       description:
-        "Use voice input to speak naturally, or type your questions. Listen to responses with adjustable speed.",
+        "Clarity without action is just procrastination. Pick one thing and implement it to achieve better business outcomes.",
       icon: Mic,
       content: (
         <div className="grid grid-cols-2 gap-4">

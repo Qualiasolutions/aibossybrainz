@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
   try {
     switch (event.type) {
-      // Handle successful checkout (one-time payment for biannual)
+      // Handle successful checkout (one-time payment for annual/lifetime)
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
 
@@ -55,7 +55,8 @@ export async function POST(request: Request) {
           const userId = session.metadata?.userId;
           const subscriptionType = session.metadata?.subscriptionType as
             | "monthly"
-            | "biannual"
+            | "annual"
+            | "lifetime"
             | undefined;
 
           if (userId && subscriptionType) {
@@ -77,7 +78,8 @@ export async function POST(request: Request) {
         const userId = subscription.metadata?.userId;
         const subscriptionType = subscription.metadata?.subscriptionType as
           | "monthly"
-          | "biannual"
+          | "annual"
+          | "lifetime"
           | undefined;
 
         if (userId && subscriptionType) {

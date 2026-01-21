@@ -48,29 +48,19 @@ const pricingPlans: PricingPlan[] = [
     name: "Most Flexible",
     price: 297,
     period: "Monthly",
-    description: "6 Month Membership",
+    description: "12 Month Membership",
     popular: false,
-    totalValue: "$3,600+",
+    totalValue: "$6,180+",
     features: [
-      {
-        text: "6 Strategy Sales & Marketing Calls",
-        value: "$3,000",
-        icon: Phone,
-      },
       {
         text: "Sales and Marketing Message Makeover",
         value: "$50",
         icon: MessageSquare,
       },
       {
-        text: "The Sales & Marketing Checkup",
-        value: "$27",
-        icon: Target,
-      },
-      {
-        text: "Bonus Call in December",
-        value: "$500",
-        icon: Gift,
+        text: "Prompt Guide",
+        value: "$33",
+        icon: Zap,
       },
       {
         text: "24/7 Access",
@@ -78,23 +68,23 @@ const pricingPlans: PricingPlan[] = [
         icon: Clock,
       },
       {
-        text: "Prompt Guide",
-        value: "$33",
-        icon: Zap,
+        text: "Cancel Anytime",
+        value: "Flexibility",
+        icon: Check,
       },
     ],
     cta: "Get Started",
     ctaLink: "/login",
   },
   {
-    id: "biannual",
+    id: "annual",
     name: "Best Value",
-    price: 1500,
-    period: "One-Time",
-    description: "6 Month Membership Paid in Full",
+    price: 2500,
+    period: "Annual",
+    description: "Annual Membership",
     popular: true,
-    totalValue: "$4,100+",
-    savings: "SAVE: $282 + GET 1 PRIVATE STRATEGY CALL",
+    totalValue: "$7,100+",
+    savings: "SAVE $1,000 + EXCLUSIVE BONUSES",
     features: [
       {
         text: "Everything in Monthly Subscription",
@@ -102,24 +92,61 @@ const pricingPlans: PricingPlan[] = [
         icon: Check,
       },
       {
-        text: "1 Private Strategy Call",
-        value: "$500",
+        text: "Monthly Group Sales & Marketing Strategy Call",
+        value: "$6,000",
+        icon: Phone,
+        highlight: true,
+      },
+      {
+        text: "Access to Our Resource Library",
+        value: "$1,000+",
+        icon: Gift,
+        highlight: true,
+      },
+      {
+        text: "The Sales & Marketing Checkup",
+        value: "$97",
+        icon: Target,
+      },
+    ],
+    cta: "Get Best Value",
+    ctaLink: "/login",
+  },
+  {
+    id: "lifetime",
+    name: "Exclusive Lifetime",
+    price: 3500,
+    period: "One-Time",
+    description: "Limited to 10 Seats Only",
+    popular: false,
+    totalValue: "Unlimited",
+    savings: "ONE PAYMENT. NO SURPRISES. EVER.",
+    features: [
+      {
+        text: "Everything in Monthly Membership",
+        value: "Forever",
+        icon: Check,
+      },
+      {
+        text: "Private Quarterly Coaching Calls",
+        value: "Priceless",
         icon: Users,
         highlight: true,
       },
       {
-        text: "Save $282 on Total Cost",
-        value: "Savings",
+        text: "Lifetime Sales + Marketing Support",
+        value: "Forever",
         icon: Star,
         highlight: true,
       },
       {
-        text: "Priority Support",
+        text: "Fresh insights & real-time pivots every 90 days",
         value: "Included",
-        icon: Zap,
+        icon: Sparkles,
+        highlight: true,
       },
     ],
-    cta: "Get Best Value",
+    cta: "Claim Your Seat",
     ctaLink: "/login",
   },
 ];
@@ -302,19 +329,14 @@ function FAQSection() {
 
   const faqs = [
     {
-      question: "What's included in the Strategy Calls?",
-      answer:
-        "Each 45-minute call covers personalized marketing and sales strategy tailored to your business. You'll get actionable frameworks, templates, and expert guidance from our AI executives.",
-    },
-    {
       question: "Can I cancel my subscription?",
       answer:
-        "The 6-month membership is a commitment to your business growth. However, if you're not satisfied within the first 30 days, we offer a full refund, no questions asked.",
+        "Yes! You can cancel anytime with our monthly plan. We believe in earning your business every month. If you're not satisfied within the first 30 days, we offer a full refund, no questions asked.",
     },
     {
       question: "What is 24/7 Access?",
       answer:
-        "You get unlimited access to our AI executive platform anytime, anywhere. Chat with Alexandria (CMO) or Kim (CSO) whenever you need strategic guidance - day or night.",
+        "You get unlimited access to our AI executive platform anytime, anywhere. Chat with Alexandria (CMO) or Kim (CSO) whenever you need strategic guidance - day or night. Don't forget, you can hear their voices too!",
     },
     {
       question: "What's the Sales & Marketing Checkup?",
@@ -322,9 +344,14 @@ function FAQSection() {
         "A comprehensive audit of your current sales and marketing operations. We analyze your pipeline, messaging, campaigns, and provide a prioritized action plan.",
     },
     {
-      question: "Why should I pay in full?",
+      question: "Why choose the Annual plan?",
       answer:
-        "The Best Value plan saves you $282 AND includes a bonus private strategy call worth $500. It's the smartest investment for serious business growth.",
+        "The Annual plan saves you $1,000 compared to monthly AND includes exclusive bonuses: Monthly Group Strategy Calls ($6,000 value), Resource Library access ($1,000+ value), and the Sales & Marketing Checkup ($97 value).",
+    },
+    {
+      question: "What's included in Lifetime Access?",
+      answer:
+        "Limited to just 10 seats, Lifetime Access includes everything in the monthly membership PLUS Private Quarterly Coaching Calls with founders Alexandria and Kim, and Lifetime Sales + Marketing Support. One payment. No BS. No surprises. Ever.",
     },
   ];
 
@@ -492,8 +519,8 @@ export default function PricingPage() {
 
       {/* Pricing Cards */}
       <section className="pb-20 sm:pb-32">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-2">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {pricingPlans.map((plan, index) => (
               <PricingCard
                 key={plan.id}

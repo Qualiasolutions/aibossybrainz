@@ -59,8 +59,8 @@ export async function createCheckoutSession({
   const priceId = STRIPE_PRICES[planId];
   const planDetails = PLAN_DETAILS[planId];
 
-  // Biannual is a one-time payment, monthly is a subscription
-  const isOneTime = planId === "biannual";
+  // Annual and Lifetime are one-time payments, monthly is a subscription
+  const isOneTime = planId === "annual" || planId === "lifetime";
 
   const session = await getStripe().checkout.sessions.create({
     customer: customerId,
@@ -146,12 +146,13 @@ export async function activateSubscription({
   stripeSubscriptionId,
 }: {
   userId: string;
-  subscriptionType: "monthly" | "biannual";
+  subscriptionType: "monthly" | "annual" | "lifetime";
   stripeSubscriptionId?: string;
 }): Promise<void> {
   const supabase = createServiceClient();
 
-  const durationMonths = subscriptionType === "monthly" ? 1 : 6;
+  // Calculate duration: monthly=1, annual=12, lifetime=9999
+  const durationMonths = subscriptionType === "monthly" ? 1 : subscriptionType === "annual" ? 12 : 9999;
   const endDate = new Date();
   endDate.setMonth(endDate.getMonth() + durationMonths);
 

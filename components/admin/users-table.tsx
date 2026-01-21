@@ -66,8 +66,10 @@ function formatSubscriptionType(
       return "Trial (7 days)";
     case "monthly":
       return "Monthly";
-    case "biannual":
-      return "6 Months";
+    case "annual":
+      return "Annual";
+    case "lifetime":
+      return "Lifetime";
     default:
       return "None";
   }
@@ -254,16 +256,19 @@ export function UsersTable({
                                   ? "bg-amber-50 text-amber-700"
                                   : user.subscriptionType === "monthly"
                                     ? "bg-blue-50 text-blue-700"
-                                    : user.subscriptionType === "biannual"
+                                    : user.subscriptionType === "annual"
                                       ? "bg-purple-50 text-purple-700"
-                                      : "bg-neutral-100 text-neutral-500"
+                                      : user.subscriptionType === "lifetime"
+                                        ? "bg-rose-50 text-rose-700"
+                                        : "bg-neutral-100 text-neutral-500"
                               }`}
                             >
                               {user.subscriptionType === "trial" && (
                                 <Clock className="h-3 w-3" />
                               )}
                               {(user.subscriptionType === "monthly" ||
-                                user.subscriptionType === "biannual") && (
+                                user.subscriptionType === "annual" ||
+                                user.subscriptionType === "lifetime") && (
                                 <CreditCard className="h-3 w-3" />
                               )}
                               {formatSubscriptionType(user.subscriptionType)}
@@ -467,8 +472,9 @@ export function UsersTable({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="trial">Trial (7 days)</SelectItem>
-                  <SelectItem value="monthly">Monthly (1 month)</SelectItem>
-                  <SelectItem value="biannual">6 Months</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="annual">Annual</SelectItem>
+                  <SelectItem value="lifetime">Lifetime</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -515,8 +521,9 @@ export function UsersTable({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="trial">Trial (7 days)</SelectItem>
-                  <SelectItem value="monthly">Monthly (1 month)</SelectItem>
-                  <SelectItem value="biannual">6 Months</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="annual">Annual</SelectItem>
+                  <SelectItem value="lifetime">Lifetime</SelectItem>
                 </SelectContent>
               </Select>
             </div>

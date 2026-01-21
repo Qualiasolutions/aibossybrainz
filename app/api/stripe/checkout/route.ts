@@ -5,7 +5,7 @@ import type { StripePlanId } from "@/lib/stripe/config";
 import { createClient } from "@/lib/supabase/server";
 
 const checkoutSchema = z.object({
-  planId: z.enum(["monthly", "biannual"]),
+  planId: z.enum(["monthly", "annual", "lifetime"]),
 });
 
 export async function POST(request: Request) {

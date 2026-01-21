@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 export interface SubscriptionStatsData {
   trial: number;
   monthly: number;
-  biannual: number;
+  annual: number;
+  lifetime: number;
   expired: number;
   mrr: number;
   activeSubscribers: number;
@@ -18,7 +19,7 @@ interface SubscriptionStatsProps {
 }
 
 export function SubscriptionStats({ stats }: SubscriptionStatsProps) {
-  const total = stats.trial + stats.monthly + stats.biannual;
+  const total = stats.trial + stats.monthly + stats.annual + stats.lifetime;
 
   const tiers = [
     {
@@ -36,11 +37,18 @@ export function SubscriptionStats({ stats }: SubscriptionStatsProps) {
       price: "$297/mo",
     },
     {
-      name: "Biannual",
-      count: stats.biannual,
+      name: "Annual",
+      count: stats.annual,
       color: "from-violet-400 to-purple-500",
       bgColor: "bg-violet-50",
-      price: "$1,500/6mo",
+      price: "$2,500/yr",
+    },
+    {
+      name: "Lifetime",
+      count: stats.lifetime,
+      color: "from-rose-400 to-red-500",
+      bgColor: "bg-rose-50",
+      price: "$3,500",
     },
   ];
 

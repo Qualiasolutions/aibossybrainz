@@ -22,7 +22,8 @@ interface UsersPreviewProps {
 const subscriptionColors: Record<string, string> = {
   trial: "bg-amber-100 text-amber-700",
   monthly: "bg-emerald-100 text-emerald-700",
-  biannual: "bg-violet-100 text-violet-700",
+  annual: "bg-violet-100 text-violet-700",
+  lifetime: "bg-rose-100 text-rose-700",
 };
 
 export function UsersPreview({ users }: UsersPreviewProps) {

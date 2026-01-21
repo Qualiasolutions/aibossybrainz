@@ -7,7 +7,7 @@ export type Json =
   | Json[];
 
 // Subscription types
-export type SubscriptionType = "trial" | "monthly" | "biannual";
+export type SubscriptionType = "trial" | "monthly" | "annual" | "lifetime";
 export type SubscriptionStatus = "active" | "expired" | "cancelled";
 
 export type Database = {
@@ -390,7 +390,7 @@ export type Database = {
           profileUpdatedAt: string | null;
           deletedAt: string | null;
           isAdmin: boolean | null;
-          subscriptionType: "trial" | "monthly" | "biannual" | null;
+          subscriptionType: "trial" | "monthly" | "annual" | "lifetime" | null;
           subscriptionStartDate: string | null;
           subscriptionEndDate: string | null;
           subscriptionStatus: "active" | "expired" | "cancelled" | null;
@@ -412,7 +412,7 @@ export type Database = {
           profileUpdatedAt?: string | null;
           deletedAt?: string | null;
           isAdmin?: boolean | null;
-          subscriptionType?: "trial" | "monthly" | "biannual" | null;
+          subscriptionType?: "trial" | "monthly" | "annual" | "lifetime" | null;
           subscriptionStartDate?: string | null;
           subscriptionEndDate?: string | null;
           subscriptionStatus?: "active" | "expired" | "cancelled" | null;
@@ -434,7 +434,7 @@ export type Database = {
           profileUpdatedAt?: string | null;
           deletedAt?: string | null;
           isAdmin?: boolean | null;
-          subscriptionType?: "trial" | "monthly" | "biannual" | null;
+          subscriptionType?: "trial" | "monthly" | "annual" | "lifetime" | null;
           subscriptionStartDate?: string | null;
           subscriptionEndDate?: string | null;
           subscriptionStatus?: "active" | "expired" | "cancelled" | null;

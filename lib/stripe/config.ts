@@ -41,8 +41,10 @@ export const stripe = {
 export const STRIPE_PRICES = {
   // Monthly plan: $297/month
   monthly: process.env.STRIPE_PRICE_MONTHLY || "price_monthly_placeholder",
-  // Biannual plan: $1,500 one-time for 6 months
-  biannual: process.env.STRIPE_PRICE_BIANNUAL || "price_biannual_placeholder",
+  // Annual plan: $2,500 one-time for 12 months
+  annual: process.env.STRIPE_PRICE_ANNUAL || "price_annual_placeholder",
+  // Lifetime plan: $3,500 one-time forever
+  lifetime: process.env.STRIPE_PRICE_LIFETIME || "price_lifetime_placeholder",
 } as const;
 
 export type StripePlanId = keyof typeof STRIPE_PRICES;
@@ -53,7 +55,7 @@ export const PLAN_DETAILS: Record<
     name: string;
     price: number;
     period: string;
-    subscriptionType: "monthly" | "biannual";
+    subscriptionType: "monthly" | "annual" | "lifetime";
     durationMonths: number;
   }
 > = {
@@ -64,11 +66,18 @@ export const PLAN_DETAILS: Record<
     subscriptionType: "monthly",
     durationMonths: 1,
   },
-  biannual: {
+  annual: {
     name: "Best Value",
-    price: 1500,
+    price: 2500,
+    period: "Annual",
+    subscriptionType: "annual",
+    durationMonths: 12,
+  },
+  lifetime: {
+    name: "Exclusive Lifetime",
+    price: 3500,
     period: "One-Time",
-    subscriptionType: "biannual",
-    durationMonths: 6,
+    subscriptionType: "lifetime",
+    durationMonths: 9999, // Effectively forever
   },
 };
