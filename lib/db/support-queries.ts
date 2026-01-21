@@ -348,11 +348,13 @@ export async function updateTicketAdmin({
   status,
   priority,
   assignedAdminId,
+  timeSpentMinutes,
 }: {
   ticketId: string;
   status?: TicketStatus;
   priority?: TicketPriority;
   assignedAdminId?: string | null;
+  timeSpentMinutes?: number;
 }): Promise<SupportTicket> {
   const supabase = createServiceClient();
 
@@ -367,6 +369,7 @@ export async function updateTicketAdmin({
   }
   if (priority) updates.priority = priority;
   if (assignedAdminId !== undefined) updates.assignedAdminId = assignedAdminId;
+  if (timeSpentMinutes !== undefined) updates.timeSpentMinutes = timeSpentMinutes;
 
   const { data, error } = await supabase
     .from("SupportTicket")

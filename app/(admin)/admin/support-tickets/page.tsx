@@ -26,6 +26,12 @@ async function updateTicketPriority(
   revalidatePath("/admin/support-tickets");
 }
 
+async function updateTicketTimeSpent(ticketId: string, timeSpentMinutes: number) {
+  "use server";
+  await updateTicketAdmin({ ticketId, timeSpentMinutes });
+  revalidatePath("/admin/support-tickets");
+}
+
 export default async function SupportTicketsPage() {
   const [tickets, stats] = await Promise.all([
     getAllTicketsAdmin(),
@@ -69,6 +75,7 @@ export default async function SupportTicketsPage() {
         tickets={tickets}
         onUpdateStatus={updateTicketStatus}
         onUpdatePriority={updateTicketPriority}
+        onUpdateTimeSpent={updateTicketTimeSpent}
       />
     </div>
   );

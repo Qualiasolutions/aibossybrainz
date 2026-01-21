@@ -9,6 +9,7 @@ import {
   MessageSquare,
   MoreHorizontal,
   Search,
+  Timer,
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
@@ -65,6 +66,7 @@ export function SupportTicketsTable({
   tickets,
   onUpdateStatus,
   onUpdatePriority,
+  onUpdateTimeSpent,
 }: {
   tickets: AdminTicketWithUser[];
   onUpdateStatus: (ticketId: string, status: TicketStatus) => Promise<void>;
@@ -72,10 +74,13 @@ export function SupportTicketsTable({
     ticketId: string,
     priority: TicketPriority,
   ) => Promise<void>;
+  onUpdateTimeSpent: (ticketId: string, timeSpentMinutes: number) => Promise<void>;
 }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isPending, startTransition] = useTransition();
+  const [editingTimeId, setEditingTimeId] = useState<string | null>(null);
+  const [timeValue, setTimeValue] = useState<string>("");
 
   const filteredTickets = tickets.filter((ticket) => {
     const matchesSearch =
@@ -96,6 +101,26 @@ export function SupportTicketsTable({
     startTransition(async () => {
       await onUpdatePriority(ticketId, priority);
     });
+  };
+
+  const handleTimeSpentSave = (ticketId: string) => {
+    const minutes = parseInt(timeValue, 10);
+    if (!isNaN(minutes) && minutes >= 0) {
+      startTransition(async () => {
+        await onUpdateTimeSpent(ticketId, minutes);
+        setEditingTimeId(null);
+        setTimeValue("");
+      });
+    }
+  };
+
+  const formatTimeSpent = (minutes: number) => {
+    if (minutes === 0) return "—";
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours === 0) return `${mins}m`;
+    if (mins === 0) return `${hours}h`;
+    return `${hours}h ${mins}m`;
   };
 
   return (
@@ -135,6 +160,7 @@ export function SupportTicketsTable({
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Priority</th>
               <th className="px-4 py-3 font-medium">Messages</th>
+              <th className="px-4 py-3 font-medium">Time Spent</th>
               <th className="px-4 py-3 font-medium">Created</th>
               <th className="px-4 py-3 font-medium">Actions</th>
             </tr>
@@ -143,7 +169,7 @@ export function SupportTicketsTable({
             {filteredTickets.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-4 py-12 text-center text-neutral-500"
                 >
                   <MessageSquare className="mx-auto mb-2 h-8 w-8 text-neutral-300" />
@@ -198,6 +224,48 @@ export function SupportTicketsTable({
                     </td>
                     <td className="px-4 py-3 text-sm text-neutral-600">
                       {ticket.messageCount}
+                    </td>
+                    <td className="px-4 py-3">
+                      {editingTimeId === ticket.id ? (
+                        <div className="flex items-center gap-1">
+                          <Input
+                            type="number"
+                            min="0"
+                            placeholder="mins"
+                            value={timeValue}
+                            onChange={(e) => setTimeValue(e.target.value)}
+                            className="h-7 w-16 text-xs"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleTimeSpentSave(ticket.id);
+                              if (e.key === "Escape") {
+                                setEditingTimeId(null);
+                                setTimeValue("");
+                              }
+                            }}
+                            autoFocus
+                          />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6"
+                            onClick={() => handleTimeSpentSave(ticket.id)}
+                          >
+                            <CheckCircle className="h-3 w-3 text-emerald-600" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingTimeId(ticket.id);
+                            setTimeValue(ticket.timeSpentMinutes?.toString() || "0");
+                          }}
+                          className="flex items-center gap-1 text-sm text-neutral-600 hover:text-rose-600"
+                        >
+                          <Timer className="h-3 w-3" />
+                          {formatTimeSpent(ticket.timeSpentMinutes || 0)}
+                        </button>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-sm text-neutral-500">
                       {formatDistanceToNow(new Date(ticket.createdAt), {

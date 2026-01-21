@@ -669,6 +669,7 @@ export type Database = {
             | "general"
             | null;
           assignedAdminId: string | null;
+          timeSpentMinutes: number;
           createdAt: string;
           updatedAt: string;
           resolvedAt: string | null;
@@ -688,6 +689,7 @@ export type Database = {
             | "general"
             | null;
           assignedAdminId?: string | null;
+          timeSpentMinutes?: number;
           createdAt?: string;
           updatedAt?: string;
           resolvedAt?: string | null;
@@ -707,6 +709,7 @@ export type Database = {
             | "general"
             | null;
           assignedAdminId?: string | null;
+          timeSpentMinutes?: number;
           createdAt?: string;
           updatedAt?: string;
           resolvedAt?: string | null;
