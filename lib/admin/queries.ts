@@ -613,3 +613,185 @@ export async function getRecentActivity(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 }
+
+// ============================================
+// DASHBOARD WIDGET QUERIES
+// ============================================
+
+export interface SubscriptionStats {
+  trial: number;
+  monthly: number;
+  biannual: number;
+  expired: number;
+  mrr: number;
+  activeSubscribers: number;
+}
+
+export async function getSubscriptionStats(): Promise<SubscriptionStats> {
+  const supabase = createServiceClient();
+
+  // Get subscription counts by type
+  const { data: users } = await supabase
+    .from("User")
+    .select("subscriptionType, subscriptionStatus")
+    .is("deletedAt", null);
+
+  const stats = {
+    trial: 0,
+    monthly: 0,
+    biannual: 0,
+    expired: 0,
+    activeSubscribers: 0,
+  };
+
+  for (const user of users || []) {
+    if (user.subscriptionStatus === "expired") {
+      stats.expired++;
+    } else if (user.subscriptionStatus === "active") {
+      stats.activeSubscribers++;
+      switch (user.subscriptionType) {
+        case "trial":
+          stats.trial++;
+          break;
+        case "monthly":
+          stats.monthly++;
+          break;
+        case "biannual":
+          stats.biannual++;
+          break;
+      }
+    }
+  }
+
+  // Calculate MRR: monthly * $297 + biannual * ($1500/6) = $250/mo
+  const mrr = stats.monthly * 297 + stats.biannual * 250;
+
+  return { ...stats, mrr };
+}
+
+export interface UserPreview {
+  id: string;
+  email: string;
+  displayName: string | null;
+  companyName: string | null;
+  subscriptionType: string | null;
+  subscriptionStatus: string | null;
+  onboardedAt: string | null;
+}
+
+export async function getRecentUsers(limit = 5): Promise<UserPreview[]> {
+  const supabase = createServiceClient();
+
+  const { data, error } = await supabase
+    .from("User")
+    .select(
+      "id, email, displayName, companyName, subscriptionType, subscriptionStatus, onboardedAt",
+    )
+    .is("deletedAt", null)
+    .order("onboardedAt", { ascending: false, nullsFirst: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
+export interface ConversationPreview {
+  id: string;
+  title: string;
+  userEmail: string;
+  messageCount: number;
+  topic: string | null;
+  topicColor: string | null;
+  createdAt: string;
+}
+
+export async function getRecentConversations(
+  limit = 5,
+): Promise<ConversationPreview[]> {
+  const supabase = createServiceClient();
+
+  const { data: chats, error } = await supabase
+    .from("Chat")
+    .select("id, title, userId, topic, topicColor, createdAt")
+    .is("deletedAt", null)
+    .order("createdAt", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+
+  // Enrich with user email and message count
+  const enriched = await Promise.all(
+    (chats || []).map(async (chat) => {
+      const [{ data: user }, { count }] = await Promise.all([
+        supabase.from("User").select("email").eq("id", chat.userId).single(),
+        supabase
+          .from("Message_v2")
+          .select("*", { count: "exact", head: true })
+          .eq("chatId", chat.id)
+          .is("deletedAt", null),
+      ]);
+
+      return {
+        id: chat.id,
+        title: chat.title,
+        userEmail: user?.email || "Unknown",
+        messageCount: count || 0,
+        topic: chat.topic,
+        topicColor: chat.topicColor,
+        createdAt: chat.createdAt,
+      };
+    }),
+  );
+
+  return enriched;
+}
+
+export interface SupportTicketPreview {
+  id: string;
+  subject: string;
+  userEmail: string;
+  status: "open" | "in_progress" | "resolved" | "closed";
+  priority: "low" | "medium" | "high" | "urgent";
+  createdAt: string;
+}
+
+export async function getRecentSupportTickets(
+  limit = 5,
+): Promise<SupportTicketPreview[]> {
+  const supabase = createServiceClient();
+
+  const { data: tickets, error } = await supabase
+    .from("SupportTicket")
+    .select("id, subject, userId, status, priority, createdAt")
+    .is("deletedAt", null)
+    .order("createdAt", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    // Table might not exist yet
+    console.warn("SupportTicket query failed:", error);
+    return [];
+  }
+
+  // Enrich with user email
+  const enriched = await Promise.all(
+    (tickets || []).map(async (ticket) => {
+      const { data: user } = await supabase
+        .from("User")
+        .select("email")
+        .eq("id", ticket.userId)
+        .single();
+
+      return {
+        id: ticket.id,
+        subject: ticket.subject,
+        userEmail: user?.email || "Unknown",
+        status: ticket.status as SupportTicketPreview["status"],
+        priority: ticket.priority as SupportTicketPreview["priority"],
+        createdAt: ticket.createdAt,
+      };
+    }),
+  );
+
+  return enriched;
+}
