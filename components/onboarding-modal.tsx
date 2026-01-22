@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import {
@@ -136,6 +137,10 @@ export function OnboardingModal() {
               exit={{ opacity: 0 }}
               className="flex flex-col items-center gap-4 py-8"
             >
+              <VisuallyHidden.Root>
+                <DialogTitle>Welcome Complete</DialogTitle>
+                <DialogDescription>Your profile has been set up</DialogDescription>
+              </VisuallyHidden.Root>
               <motion.div
                 className="flex size-16 items-center justify-center rounded-full bg-emerald-500/20"
                 initial={{ scale: 0 }}
