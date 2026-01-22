@@ -153,7 +153,8 @@ export async function createUser({
 
 /**
  * Ensures a User record exists for the authenticated Supabase Auth user.
- * Creates one if it doesn't exist. This syncs Supabase Auth users with our custom User table.
+ * Creates one with 7-day trial subscription if it doesn't exist.
+ * This syncs Supabase Auth users with our custom User table.
  */
 export async function ensureUserExists({
   id,
@@ -166,15 +167,37 @@ export async function ensureUserExists({
     // Use service client to bypass RLS for user creation
     const supabase = createServiceClient();
 
-    // Upsert user - creates if not exists, updates email if exists
+    // First check if user exists
+    const { data: existingUser } = await supabase
+      .from("User")
+      .select("id")
+      .eq("id", id)
+      .single();
+
+    if (existingUser) {
+      return existingUser;
+    }
+
+    // New user - create with 7-day trial subscription
+    const now = new Date();
+    const trialEndDate = new Date(now);
+    trialEndDate.setDate(trialEndDate.getDate() + 7);
+
     const { data, error } = await supabase
       .from("User")
-      .upsert({ id, email }, { onConflict: "id" })
+      .insert({
+        id,
+        email,
+        subscriptionType: "trial",
+        subscriptionStartDate: now.toISOString(),
+        subscriptionEndDate: trialEndDate.toISOString(),
+        subscriptionStatus: "active",
+      })
       .select("id")
       .single();
 
     if (error) {
-      console.error("[ensureUserExists] Upsert error:", error);
+      console.error("[ensureUserExists] Insert error:", error);
       throw error;
     }
 
