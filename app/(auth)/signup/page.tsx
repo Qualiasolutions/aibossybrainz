@@ -66,7 +66,12 @@ function SignupContent() {
       hasRedirected.current = true;
       setIsSuccessful(true);
 
-      // If there's a plan, redirect to checkout
+      toast({
+        type: "success",
+        description: "Account created successfully!",
+      });
+
+      // If there's a plan, redirect to checkout via success page
       if (plan) {
         setIsRedirecting(true);
         // Call the checkout API to create a Stripe session
@@ -81,15 +86,16 @@ function SignupContent() {
               window.location.href = data.url;
             } else {
               toast({ type: "error", description: "Failed to start checkout" });
-              router.push("/new");
+              router.push(`/signup-success${plan ? `?plan=${plan}` : ""}`);
             }
           })
           .catch(() => {
             toast({ type: "error", description: "Failed to start checkout" });
-            router.push("/new");
+            router.push(`/signup-success${plan ? `?plan=${plan}` : ""}`);
           });
       } else {
-        router.push("/new");
+        // Show success page before going to app
+        router.push("/signup-success");
       }
     }
   }, [router, state.status, plan]);

@@ -3,6 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Building2, Loader2, Sparkles, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useCsrf } from "@/hooks/use-csrf";
+import { toast } from "@/components/toast";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -38,6 +40,7 @@ interface UserProfile {
   displayName: string | null;
   companyName: string | null;
   industry: string | null;
+  onboardedAt: string | null;
 }
 
 export function OnboardingModal() {
@@ -48,16 +51,18 @@ export function OnboardingModal() {
   const [companyName, setCompanyName] = useState("");
   const [industry, setIndustry] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const { csrfFetch, isLoading: csrfLoading } = useCsrf();
 
-  // Check if user needs onboarding
+  // Check if user needs onboarding - only show if never onboarded before
   useEffect(() => {
     async function checkProfile() {
       try {
         const res = await fetch("/api/profile");
         if (res.ok) {
           const profile: UserProfile = await res.json();
-          // Show modal if user hasn't set their name yet
-          if (!profile.displayName) {
+          // Only show modal if user has NEVER been onboarded
+          // Using onboardedAt timestamp ensures it shows once per user account
+          if (!profile.onboardedAt) {
             setIsOpen(true);
           }
         }
@@ -75,9 +80,15 @@ export function OnboardingModal() {
     e.preventDefault();
     if (!displayName.trim()) return;
 
+    // Wait for CSRF token if still loading
+    if (csrfLoading) {
+      toast({ type: "error", description: "Please wait a moment and try again." });
+      return;
+    }
+
     setIsSaving(true);
     try {
-      const res = await fetch("/api/profile", {
+      const res = await csrfFetch("/api/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,14 +100,18 @@ export function OnboardingModal() {
 
       if (res.ok) {
         setShowSuccess(true);
+        toast({ type: "success", description: `Welcome, ${displayName.trim()}!` });
         setTimeout(() => {
           setIsOpen(false);
         }, 1500);
       } else {
-        console.error("Failed to save profile");
+        const errorData = await res.json().catch(() => ({}));
+        console.error("Failed to save profile:", errorData);
+        toast({ type: "error", description: "Failed to save your profile. Please try again." });
       }
     } catch (error) {
       console.error("Failed to save profile:", error);
+      toast({ type: "error", description: "Something went wrong. Please try again." });
     } finally {
       setIsSaving(false);
     }

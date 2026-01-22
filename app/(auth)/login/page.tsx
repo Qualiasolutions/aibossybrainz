@@ -113,6 +113,14 @@ function LoginContent() {
         className="px-0 sm:px-0"
         defaultEmail={email}
       >
+        <div className="flex justify-end -mt-2">
+          <Link
+            href="/forgot-password"
+            className="text-sm font-medium text-rose-600 hover:text-rose-700"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <SubmitButton isSuccessful={isSuccessful || isRedirecting}>
           {isRedirecting ? "Redirecting to checkout..." : "Sign in"}
         </SubmitButton>

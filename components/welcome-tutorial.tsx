@@ -17,7 +17,6 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 const TUTORIAL_COMPLETED_KEY = "alecci_tutorial_completed";
-const TOS_ACCEPTED_KEY = "alecci_tos_accepted";
 
 interface TutorialStep {
   id: number;
@@ -90,17 +89,44 @@ export function WelcomeTutorial() {
 
   useEffect(() => {
     setMounted(true);
-    // Wait for TOS to be accepted before showing tutorial
-    const tosAccepted = localStorage.getItem(TOS_ACCEPTED_KEY);
-    const tutorialCompleted = localStorage.getItem(TUTORIAL_COMPLETED_KEY);
 
-    if (tosAccepted && !tutorialCompleted) {
-      // Small delay to let TOS modal close
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-      }, 500);
-      return () => clearTimeout(timer);
+    async function checkTutorialStatus() {
+      // First check localStorage for quick response
+      const tutorialCompleted = localStorage.getItem(TUTORIAL_COMPLETED_KEY);
+      if (tutorialCompleted) {
+        return; // Already completed locally, don't show
+      }
+
+      try {
+        // Check if user has been onboarded (database is source of truth)
+        const res = await fetch("/api/profile");
+        if (res.ok) {
+          const profile = await res.json();
+          // If user is onboarded, they've seen the tutorial - mark in localStorage and don't show
+          if (profile.onboardedAt) {
+            localStorage.setItem(TUTORIAL_COMPLETED_KEY, profile.onboardedAt);
+            return;
+          }
+        }
+
+        // Check if TOS was accepted (required before showing tutorial)
+        const tosRes = await fetch("/api/accept-tos");
+        if (tosRes.ok) {
+          const tosData = await tosRes.json();
+          if (tosData.accepted) {
+            // TOS accepted but not onboarded yet - show tutorial after delay
+            const timer = setTimeout(() => {
+              setIsOpen(true);
+            }, 500);
+            return () => clearTimeout(timer);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to check tutorial status:", error);
+      }
     }
+
+    checkTutorialStatus();
   }, []);
 
   const handleComplete = useCallback(() => {
