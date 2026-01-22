@@ -2,7 +2,7 @@
 
 import type { User } from "@supabase/supabase-js";
 import { motion } from "framer-motion";
-import { Plus, Trash2 } from "lucide-react";
+import { Phone, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -129,6 +129,24 @@ export function AppSidebar({
                   <span className="text-xs font-medium">New Chat</span>
                 </Button>
               </div>
+
+              {/* Voice Call Button */}
+              {user && (
+                <Link href="/call">
+                  <Button
+                    className="h-9 w-full rounded-lg border border-emerald-200/50 bg-emerald-50/50 text-emerald-700 shadow-none hover:border-emerald-300 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 dark:hover:bg-emerald-900/50"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setOpenMobile(false);
+                      setIsMobileSidebarOpen(false);
+                    }}
+                  >
+                    <Phone className="mr-1.5 h-3.5 w-3.5" />
+                    <span className="text-xs font-medium">Voice Call</span>
+                  </Button>
+                </Link>
+              )}
             </div>
           </SidebarMenu>
         </SidebarHeader>
@@ -195,6 +213,20 @@ export function AppSidebar({
                     <span className="text-xs">New</span>
                   </Button>
                 </div>
+
+                {/* Mobile Voice Call Button */}
+                {user && (
+                  <Link href="/call" onClick={() => setIsMobileSidebarOpen(false)}>
+                    <Button
+                      className="h-9 w-full rounded-lg border border-emerald-200/50 bg-emerald-50/50 text-emerald-700 shadow-none hover:border-emerald-300 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 dark:hover:bg-emerald-900/50"
+                      variant="ghost"
+                      size="sm"
+                    >
+                      <Phone className="mr-1.5 h-3.5 w-3.5" />
+                      <span className="text-xs font-medium">Voice Call</span>
+                    </Button>
+                  </Link>
+                )}
               </div>
             </SheetHeader>
 
