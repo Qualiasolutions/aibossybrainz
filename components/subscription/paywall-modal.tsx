@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Calendar, Check, Crown, Sparkles, Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/toast";
 import { cn } from "@/lib/utils";
 
 interface PaywallModalProps {
@@ -63,14 +64,30 @@ export function PaywallModal({
 
       const data = await response.json();
 
+      if (!response.ok) {
+        toast({
+          type: "error",
+          description: data.error || "Something went wrong. Please try again.",
+        });
+        setLoading(null);
+        return;
+      }
+
       if (data.url) {
         window.location.href = data.url;
       } else {
-        console.error("No checkout URL returned");
+        toast({
+          type: "error",
+          description: "Unable to start checkout. Please try again.",
+        });
         setLoading(null);
       }
     } catch (error) {
       console.error("Checkout error:", error);
+      toast({
+        type: "error",
+        description: "Network error. Please check your connection.",
+      });
       setLoading(null);
     }
   };

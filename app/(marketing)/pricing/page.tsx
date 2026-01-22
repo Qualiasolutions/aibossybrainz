@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/toast";
 import { cn } from "@/lib/utils";
 
 interface PricingFeature {
@@ -467,14 +468,31 @@ export default function PricingPage() {
         return;
       }
 
+      if (!response.ok) {
+        // Show error message from API
+        toast({
+          type: "error",
+          description: data.error || "Something went wrong. Please try again.",
+        });
+        setLoading(null);
+        return;
+      }
+
       if (data.url) {
         window.location.href = data.url;
       } else {
-        console.error("No checkout URL returned");
+        toast({
+          type: "error",
+          description: "Unable to start checkout. Please try again.",
+        });
         setLoading(null);
       }
     } catch (error) {
       console.error("Checkout error:", error);
+      toast({
+        type: "error",
+        description: "Network error. Please check your connection and try again.",
+      });
       setLoading(null);
     }
   };

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createCheckoutSession } from "@/lib/stripe/actions";
-import type { StripePlanId } from "@/lib/stripe/config";
+import { STRIPE_PRICES, type StripePlanId } from "@/lib/stripe/config";
 import { createClient } from "@/lib/supabase/server";
 
 const checkoutSchema = z.object({
@@ -10,6 +10,15 @@ const checkoutSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // Validate Stripe configuration at runtime
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error("[Stripe Checkout] STRIPE_SECRET_KEY is not configured");
+      return NextResponse.json(
+        { error: "Payment system is not configured. Please contact support." },
+        { status: 503 }
+      );
+    }
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -24,6 +33,16 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const { planId } = checkoutSchema.parse(body);
+
+    // Check if price ID is configured for this plan
+    const priceId = STRIPE_PRICES[planId as StripePlanId];
+    if (!priceId || priceId.includes("placeholder")) {
+      console.error(`[Stripe Checkout] Price ID not configured for plan: ${planId}. Current value: ${priceId}`);
+      return NextResponse.json(
+        { error: "This plan is not yet available. Please contact support." },
+        { status: 503 }
+      );
+    }
 
     const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "";
 
@@ -46,8 +65,24 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check for specific Stripe errors
+    if (error instanceof Error) {
+      if (error.message.includes("STRIPE_SECRET_KEY")) {
+        return NextResponse.json(
+          { error: "Payment system is not configured. Please contact support." },
+          { status: 503 }
+        );
+      }
+      if (error.message.includes("No such price")) {
+        return NextResponse.json(
+          { error: "This pricing plan is not available. Please contact support." },
+          { status: 503 }
+        );
+      }
+    }
+
     return NextResponse.json(
-      { error: "Failed to create checkout session" },
+      { error: "Failed to create checkout session. Please try again." },
       { status: 500 }
     );
   }
