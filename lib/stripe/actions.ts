@@ -1,4 +1,5 @@
 import "server-only";
+import Stripe from "stripe";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getStripe, STRIPE_PRICES, PLAN_DETAILS, type StripePlanId } from "./config";
 
@@ -62,9 +63,8 @@ export async function createCheckoutSession({
   // Annual and Lifetime are one-time payments, monthly is a subscription
   const isOneTime = planId === "annual" || planId === "lifetime";
 
-  const session = await getStripe().checkout.sessions.create({
+  const sessionParams: Stripe.Checkout.SessionCreateParams = {
     customer: customerId,
-    payment_method_types: ["card"],
     line_items: [
       {
         price: priceId,
@@ -79,26 +79,28 @@ export async function createCheckoutSession({
       planId,
       subscriptionType: planDetails.subscriptionType,
     },
-    // For one-time payments, we need to handle subscription activation in webhook
-    payment_intent_data: isOneTime
-      ? {
-          metadata: {
-            userId,
-            planId,
-            subscriptionType: planDetails.subscriptionType,
-          },
-        }
-      : undefined,
-    subscription_data: !isOneTime
-      ? {
-          metadata: {
-            userId,
-            planId,
-            subscriptionType: planDetails.subscriptionType,
-          },
-        }
-      : undefined,
-  });
+  };
+
+  // Add metadata to payment intent or subscription
+  if (isOneTime) {
+    sessionParams.payment_intent_data = {
+      metadata: {
+        userId,
+        planId,
+        subscriptionType: planDetails.subscriptionType,
+      },
+    };
+  } else {
+    sessionParams.subscription_data = {
+      metadata: {
+        userId,
+        planId,
+        subscriptionType: planDetails.subscriptionType,
+      },
+    };
+  }
+
+  const session = await getStripe().checkout.sessions.create(sessionParams);
 
   if (!session.url) {
     throw new Error("Failed to create checkout session");
