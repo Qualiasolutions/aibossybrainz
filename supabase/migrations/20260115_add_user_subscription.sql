@@ -1,5 +1,5 @@
 -- Add subscription fields to User table for trial and membership tracking
--- Subscription types: 'trial' (7 days), 'monthly' (1 month), 'biannual' (6 months)
+-- Subscription types: 'trial' (7 days), 'monthly' (1 month), 'annual' (12 months), 'lifetime' (forever)
 
 -- Add subscription columns to User table
 ALTER TABLE "User"
@@ -11,7 +11,7 @@ ADD COLUMN IF NOT EXISTS "subscriptionStatus" text DEFAULT 'active';
 -- Add constraints for subscription type
 ALTER TABLE "User"
 ADD CONSTRAINT "User_subscriptionType_check"
-CHECK ("subscriptionType" IN ('trial', 'monthly', 'biannual'));
+CHECK ("subscriptionType" IN ('trial', 'monthly', 'annual', 'lifetime'));
 
 -- Add constraints for subscription status
 ALTER TABLE "User"
@@ -23,7 +23,7 @@ CREATE INDEX IF NOT EXISTS "User_subscriptionEndDate_idx" ON "User" ("subscripti
 CREATE INDEX IF NOT EXISTS "User_subscriptionStatus_idx" ON "User" ("subscriptionStatus");
 
 -- Comment on columns
-COMMENT ON COLUMN "User"."subscriptionType" IS 'Type of subscription: trial (7 days), monthly (1 month), biannual (6 months)';
+COMMENT ON COLUMN "User"."subscriptionType" IS 'Type of subscription: trial (7 days), monthly (1 month), annual (12 months), lifetime (forever)';
 COMMENT ON COLUMN "User"."subscriptionStartDate" IS 'When the current subscription period started';
 COMMENT ON COLUMN "User"."subscriptionEndDate" IS 'When the current subscription period ends';
 COMMENT ON COLUMN "User"."subscriptionStatus" IS 'Current status: active, expired, or cancelled';
@@ -37,7 +37,8 @@ BEGIN
   CASE sub_type
     WHEN 'trial' THEN RETURN start_date + interval '7 days';
     WHEN 'monthly' THEN RETURN start_date + interval '1 month';
-    WHEN 'biannual' THEN RETURN start_date + interval '6 months';
+    WHEN 'annual' THEN RETURN start_date + interval '12 months';
+    WHEN 'lifetime' THEN RETURN start_date + interval '100 years';
     ELSE RETURN start_date + interval '7 days';
   END CASE;
 END;
