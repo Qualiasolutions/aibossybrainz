@@ -125,16 +125,10 @@ export function OnboardingModal() {
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
-        className="max-w-lg overflow-hidden border-0 bg-gradient-to-br from-stone-950 via-stone-900 to-stone-950 p-0 shadow-2xl shadow-rose-500/10"
+        className="max-w-lg overflow-hidden border border-stone-200 bg-white p-0 shadow-2xl shadow-rose-500/5"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        {/* Animated gradient border */}
-        <div className="pointer-events-none absolute inset-0 rounded-lg">
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-rose-500/20 via-red-500/20 to-rose-600/20 opacity-50" />
-          <div className="absolute inset-[1px] rounded-lg bg-gradient-to-br from-stone-950 via-stone-900 to-stone-950" />
-        </div>
-
         <AnimatePresence mode="wait">
           {step === "welcome" && (
             <WelcomeStep key="welcome" onNext={() => setStep("meet-team")} />
@@ -188,7 +182,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
         <div className="flex size-20 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 shadow-lg shadow-rose-500/30">
           <Sparkles className="size-10 text-white" />
         </div>
-        <div className="absolute -inset-2 -z-10 rounded-3xl bg-gradient-to-br from-rose-500/20 to-red-600/20 blur-xl" />
+        <div className="absolute -inset-2 -z-10 rounded-3xl bg-gradient-to-br from-rose-500/10 to-red-600/10 blur-xl" />
       </motion.div>
 
       {/* Welcome text */}
@@ -196,7 +190,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mb-2 bg-gradient-to-r from-white to-stone-300 bg-clip-text text-center font-bold text-2xl text-transparent"
+        className="mb-2 bg-gradient-to-r from-stone-900 to-stone-700 bg-clip-text text-center font-bold text-2xl text-transparent"
       >
         Welcome to Boss Brainz
       </motion.h2>
@@ -205,7 +199,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="mb-8 max-w-sm text-center text-stone-400"
+        className="mb-8 max-w-sm text-center text-stone-500"
       >
         Your personal executive consulting team is ready to help you grow your business.
       </motion.p>
@@ -219,7 +213,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
       >
         <div className="relative flex -space-x-4">
           {alexandria.avatar && (
-            <div className="relative size-16 overflow-hidden rounded-full border-2 border-stone-800 shadow-lg">
+            <div className="relative size-16 overflow-hidden rounded-full border-2 border-white shadow-lg ring-2 ring-rose-100">
               <Image
                 src={alexandria.avatar}
                 alt={alexandria.name}
@@ -230,7 +224,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
             </div>
           )}
           {kim.avatar && (
-            <div className="relative size-16 overflow-hidden rounded-full border-2 border-stone-800 shadow-lg">
+            <div className="relative size-16 overflow-hidden rounded-full border-2 border-white shadow-lg ring-2 ring-rose-100">
               <Image
                 src={kim.avatar}
                 alt={kim.name}
@@ -291,8 +285,8 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6 text-center"
       >
-        <h2 className="mb-1 font-semibold text-lg text-white">Meet Your Executive Team</h2>
-        <p className="text-sm text-stone-400">Two experts, one mission: your success</p>
+        <h2 className="mb-1 font-semibold text-lg text-stone-900">Meet Your Executive Team</h2>
+        <p className="text-sm text-stone-500">Two experts, one mission: your success</p>
       </motion.div>
 
       {/* Executive tabs */}
@@ -304,8 +298,8 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
             onClick={() => setActiveExec(key)}
             className={`flex flex-1 items-center gap-3 rounded-xl border p-3 transition-all ${
               activeExec === key
-                ? "border-rose-500/50 bg-rose-500/10"
-                : "border-stone-700 bg-stone-800/50 hover:border-stone-600"
+                ? "border-rose-200 bg-rose-50"
+                : "border-stone-200 bg-stone-50 hover:border-stone-300"
             }`}
           >
             {data.avatar && (
@@ -320,10 +314,10 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
               </div>
             )}
             <div className="text-left">
-              <p className={`font-medium text-sm ${activeExec === key ? "text-white" : "text-stone-300"}`}>
+              <p className={`font-medium text-sm ${activeExec === key ? "text-rose-700" : "text-stone-700"}`}>
                 {data.name.split(" ")[0]}
               </p>
-              <p className="text-stone-500 text-xs">{data.role.split(" ")[0]}</p>
+              <p className="text-stone-400 text-xs">{data.role.split(" ")[0]}</p>
             </div>
           </button>
         ))}
@@ -337,13 +331,13 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="mb-6 overflow-hidden rounded-2xl border border-stone-700/50 bg-gradient-to-br from-stone-800/80 to-stone-900/80 backdrop-blur-sm"
+          className="mb-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm"
         >
           {/* Executive header */}
           <div className={`bg-gradient-to-r ${currentExec.color} p-4`}>
             <div className="flex items-center gap-4">
               {currentExec.avatar && (
-                <div className="relative size-16 overflow-hidden rounded-xl border-2 border-white/20 shadow-lg">
+                <div className="relative size-16 overflow-hidden rounded-xl border-2 border-white/30 shadow-lg">
                   <Image
                     src={currentExec.avatar}
                     alt={currentExec.name}
@@ -362,12 +356,12 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
 
           {/* Executive info */}
           <div className="p-4">
-            <p className="mb-4 text-sm text-stone-300">{currentExec.personality}</p>
+            <p className="mb-4 text-sm text-stone-600">{currentExec.personality}</p>
             <div className="flex flex-wrap gap-2">
               {currentExec.expertise.slice(0, 3).map((skill) => (
                 <span
                   key={skill}
-                  className="rounded-full bg-stone-700/50 px-3 py-1 text-stone-300 text-xs"
+                  className="rounded-full bg-stone-100 px-3 py-1 text-stone-600 text-xs"
                 >
                   {skill}
                 </span>
@@ -427,12 +421,12 @@ function ProfileStep({
         animate={{ opacity: 1, y: 0 }}
         className="mb-6 flex items-center gap-4"
       >
-        <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500/20 to-red-600/20">
-          <Briefcase className="size-6 text-rose-400" />
+        <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-100 to-red-100">
+          <Briefcase className="size-6 text-rose-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-lg text-white">Tell us about yourself</h2>
-          <p className="text-sm text-stone-400">So we can personalize your experience</p>
+          <h2 className="font-semibold text-lg text-stone-900">Tell us about yourself</h2>
+          <p className="text-sm text-stone-500">So we can personalize your experience</p>
         </div>
       </motion.div>
 
@@ -444,15 +438,15 @@ function ProfileStep({
           transition={{ delay: 0.1 }}
           className="space-y-2"
         >
-          <Label htmlFor="displayName" className="font-medium text-sm text-stone-200">
-            Your Name <span className="text-rose-400">*</span>
+          <Label htmlFor="displayName" className="font-medium text-sm text-stone-700">
+            Your Name <span className="text-rose-500">*</span>
           </Label>
           <Input
             id="displayName"
             placeholder="How should we address you?"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="h-11 border-stone-700 bg-stone-800/50 text-white placeholder:text-stone-500 focus:border-rose-500 focus:ring-rose-500/20"
+            className="h-11 border-stone-200 bg-white text-stone-900 placeholder:text-stone-400 focus:border-rose-500 focus:ring-rose-500/20"
             autoFocus
             required
           />
@@ -465,15 +459,15 @@ function ProfileStep({
           transition={{ delay: 0.2 }}
           className="space-y-2"
         >
-          <Label htmlFor="companyName" className="font-medium text-sm text-stone-200">
-            Company Name <span className="text-stone-500 text-xs">(optional)</span>
+          <Label htmlFor="companyName" className="font-medium text-sm text-stone-700">
+            Company Name <span className="text-stone-400 text-xs">(optional)</span>
           </Label>
           <Input
             id="companyName"
             placeholder="Your company or business name"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="h-11 border-stone-700 bg-stone-800/50 text-white placeholder:text-stone-500 focus:border-rose-500 focus:ring-rose-500/20"
+            className="h-11 border-stone-200 bg-white text-stone-900 placeholder:text-stone-400 focus:border-rose-500 focus:ring-rose-500/20"
           />
         </motion.div>
 
@@ -484,22 +478,22 @@ function ProfileStep({
           transition={{ delay: 0.3 }}
           className="space-y-2"
         >
-          <Label htmlFor="industry" className="font-medium text-sm text-stone-200">
-            Industry <span className="text-stone-500 text-xs">(optional)</span>
+          <Label htmlFor="industry" className="font-medium text-sm text-stone-700">
+            Industry <span className="text-stone-400 text-xs">(optional)</span>
           </Label>
           <Select value={industry} onValueChange={setIndustry}>
             <SelectTrigger
               id="industry"
-              className="h-11 border-stone-700 bg-stone-800/50 text-white focus:border-rose-500 focus:ring-rose-500/20 [&>span]:text-stone-500 [&[data-state=open]>span]:text-white [&:has([data-placeholder='false'])>span]:text-white"
+              className="h-11 border-stone-200 bg-white text-stone-900 focus:border-rose-500 focus:ring-rose-500/20"
             >
               <SelectValue placeholder="Select your industry" />
             </SelectTrigger>
-            <SelectContent className="border-stone-700 bg-stone-800">
+            <SelectContent className="border-stone-200 bg-white">
               {industries.map((ind) => (
                 <SelectItem
                   key={ind}
                   value={ind}
-                  className="text-stone-200 focus:bg-rose-500/20 focus:text-white"
+                  className="text-stone-700 focus:bg-rose-50 focus:text-rose-700"
                 >
                   {ind}
                 </SelectItem>
@@ -565,7 +559,7 @@ function SuccessStep({ displayName }: { displayName: string }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
         </div>
-        <div className="absolute -inset-2 -z-10 rounded-full bg-gradient-to-br from-emerald-500/20 to-green-600/20 blur-xl" />
+        <div className="absolute -inset-2 -z-10 rounded-full bg-gradient-to-br from-emerald-500/10 to-green-600/10 blur-xl" />
       </motion.div>
 
       {/* Welcome message */}
@@ -573,7 +567,7 @@ function SuccessStep({ displayName }: { displayName: string }) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mb-2 bg-gradient-to-r from-white to-stone-300 bg-clip-text text-center font-bold text-xl text-transparent"
+        className="mb-2 bg-gradient-to-r from-stone-900 to-stone-700 bg-clip-text text-center font-bold text-xl text-transparent"
       >
         Welcome, {displayName}!
       </motion.h3>
@@ -582,7 +576,7 @@ function SuccessStep({ displayName }: { displayName: string }) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="mb-6 text-center text-stone-400"
+        className="mb-6 text-center text-stone-500"
       >
         Your executive advisors are ready to help you succeed.
       </motion.p>
@@ -596,7 +590,7 @@ function SuccessStep({ displayName }: { displayName: string }) {
       >
         {alexandria.avatar && (
           <div className="relative">
-            <div className="relative size-14 overflow-hidden rounded-full border-2 border-rose-500/50 shadow-lg">
+            <div className="relative size-14 overflow-hidden rounded-full border-2 border-white shadow-lg ring-2 ring-rose-100">
               <Image
                 src={alexandria.avatar}
                 alt={alexandria.name}
@@ -609,7 +603,7 @@ function SuccessStep({ displayName }: { displayName: string }) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.6 }}
-              className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-emerald-500"
+              className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-emerald-500 shadow-sm"
             >
               <svg className="size-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -619,7 +613,7 @@ function SuccessStep({ displayName }: { displayName: string }) {
         )}
         {kim.avatar && (
           <div className="relative">
-            <div className="relative size-14 overflow-hidden rounded-full border-2 border-rose-500/50 shadow-lg">
+            <div className="relative size-14 overflow-hidden rounded-full border-2 border-white shadow-lg ring-2 ring-rose-100">
               <Image
                 src={kim.avatar}
                 alt={kim.name}
@@ -632,7 +626,7 @@ function SuccessStep({ displayName }: { displayName: string }) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.7 }}
-              className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-emerald-500"
+              className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-emerald-500 shadow-sm"
             >
               <svg className="size-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
