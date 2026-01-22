@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 interface MarketingLayoutClientProps {
   children: React.ReactNode;
   content: LandingPageCMSContent;
+  isLoggedIn?: boolean;
 }
 
 const navLinks = [
@@ -20,7 +21,7 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-function Header({ content }: { content: LandingPageCMSContent }) {
+function Header({ content, isLoggedIn }: { content: LandingPageCMSContent; isLoggedIn?: boolean }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -70,12 +71,12 @@ function Header({ content }: { content: LandingPageCMSContent }) {
 
           {/* CTA Button */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link href="/login">
+            <Link href={isLoggedIn ? "/new" : "/login"}>
               <Button
                 size="sm"
                 className="bg-gradient-to-r from-red-500 to-red-600 shadow-lg shadow-red-500/20 hover:from-red-600 hover:to-red-700"
               >
-                Sign In
+                {isLoggedIn ? "Go to Chat" : "Sign In"}
               </Button>
             </Link>
 
@@ -136,11 +137,11 @@ function Header({ content }: { content: LandingPageCMSContent }) {
                 </Link>
               ))}
               <Link
-                href="/login"
+                href={isLoggedIn ? "/new" : "/login"}
                 onClick={() => setMobileMenuOpen(false)}
                 className="mt-1 rounded-lg px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
-                Sign In
+                {isLoggedIn ? "Go to Chat" : "Sign In"}
               </Link>
             </div>
           </motion.div>
@@ -276,10 +277,11 @@ function Footer({ content }: { content: LandingPageCMSContent }) {
 export function MarketingLayoutClient({
   children,
   content,
+  isLoggedIn,
 }: MarketingLayoutClientProps) {
   return (
     <div className="min-h-screen bg-background">
-      <Header content={content} />
+      <Header content={content} isLoggedIn={isLoggedIn} />
       <main>{children}</main>
       <Footer content={content} />
     </div>
