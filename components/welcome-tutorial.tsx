@@ -1,18 +1,6 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Menu,
-  Phone,
-  Send,
-  Sparkles,
-  Target,
-  Users,
-  X,
-} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -22,62 +10,50 @@ interface TutorialStep {
   id: number;
   title: string;
   description: string;
-  icon: React.ReactNode;
-  highlight?: string;
   position: "center" | "top-left" | "top-right" | "bottom-center";
 }
 
 const tutorialSteps: TutorialStep[] = [
   {
     id: 1,
-    title: "Welcome to Alecci Media",
+    title: "Welcome",
     description:
-      "Your AI executive team is ready to help with brand strategy, sales optimization, and business growth. Let's take a quick tour of your command center.",
-    icon: <Sparkles className="size-6" />,
+      "Your AI executive team is ready. Alexandria handles brand strategy, Kim drives sales growth. Let's show you around.",
     position: "center",
   },
   {
     id: 2,
-    title: "Navigation Sidebar",
+    title: "Navigation",
     description:
-      "Click the menu icon to open your sidebar. Access chat history, analytics, strategy canvas, and meet your executive team.",
-    icon: <Menu className="size-6" />,
-    highlight: "sidebar-toggle",
+      "Open the sidebar to access chat history, analytics, and your strategy canvas.",
     position: "top-left",
   },
   {
     id: 3,
     title: "Choose Your Executive",
     description:
-      "Select who you want to consult: Alexandria (Brand Strategy), Kim (Sales & Revenue), or both working together collaboratively.",
-    icon: <Users className="size-6" />,
-    highlight: "executive-switch",
+      "Select Alexandria for marketing, Kim for sales, or both for collaborative strategy.",
     position: "top-left",
   },
   {
     id: 4,
     title: "Quick Actions",
     description:
-      "Start a new conversation anytime with New Chat. Use the Call button for real-time voice conversations with your executives.",
-    icon: <Phone className="size-6" />,
-    highlight: "chat-header",
+      "Start new conversations anytime. Use voice for real-time discussions.",
     position: "top-right",
   },
   {
     id: 5,
     title: "Smart Input",
     description:
-      "Attach files for analysis, use voice input for hands-free messaging, or simply type your questions. Your executives understand context from your conversation.",
-    icon: <Send className="size-6" />,
-    highlight: "multimodal-input",
+      "Attach files, use voice, or type. Your executives understand context from your conversation.",
     position: "bottom-center",
   },
   {
     id: 6,
-    title: "You're Ready!",
+    title: "You're Ready",
     description:
-      "Start by asking about your brand positioning, sales pipeline, or any strategic challenge. Your AI executives are here 24/7.",
-    icon: <Target className="size-6" />,
+      "Ask about brand positioning, sales pipeline, or any strategic challenge. Available 24/7.",
     position: "center",
   },
 ];
@@ -91,30 +67,25 @@ export function WelcomeTutorial() {
     setMounted(true);
 
     async function checkTutorialStatus() {
-      // First check localStorage for quick response
       const tutorialCompleted = localStorage.getItem(TUTORIAL_COMPLETED_KEY);
       if (tutorialCompleted) {
-        return; // Already completed locally, don't show
+        return;
       }
 
       try {
-        // Check if user has been onboarded (database is source of truth)
         const res = await fetch("/api/profile");
         if (res.ok) {
           const profile = await res.json();
-          // If user is onboarded, they've seen the tutorial - mark in localStorage and don't show
           if (profile.onboardedAt) {
             localStorage.setItem(TUTORIAL_COMPLETED_KEY, profile.onboardedAt);
             return;
           }
         }
 
-        // Check if TOS was accepted (required before showing tutorial)
         const tosRes = await fetch("/api/accept-tos");
         if (tosRes.ok) {
           const tosData = await tosRes.json();
           if (tosData.accepted) {
-            // TOS accepted but not onboarded yet - show tutorial after delay
             const timer = setTimeout(() => {
               setIsOpen(true);
             }, 500);
@@ -152,6 +123,10 @@ export function WelcomeTutorial() {
     handleComplete();
   }, [handleComplete]);
 
+  const handleStepClick = useCallback((index: number) => {
+    setCurrentStep(index);
+  }, []);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -179,6 +154,7 @@ export function WelcomeTutorial() {
 
   const step = tutorialSteps[currentStep];
   const progress = ((currentStep + 1) / tutorialSteps.length) * 100;
+  const isLastStep = currentStep === tutorialSteps.length - 1;
 
   return (
     <AnimatePresence>
@@ -189,157 +165,116 @@ export function WelcomeTutorial() {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[200] flex items-center justify-center"
         >
-          {/* Backdrop - soft white overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-white/95 backdrop-blur-sm"
-          />
+          {/* Backdrop - clean white */}
+          <div className="absolute inset-0 bg-white" />
 
           {/* Tutorial Card */}
           <motion.div
             key={step.id}
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -30, scale: 0.95 }}
-            transition={{ type: "spring", duration: 0.5 }}
-            className="relative z-10 mx-4 w-full max-w-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+            className="relative z-10 mx-6 w-full max-w-sm"
           >
             {/* Card */}
-            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl shadow-neutral-200/50">
+            <div className="overflow-hidden rounded-2xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.04),0_8px_40px_-12px_rgba(0,0,0,0.12)]">
               {/* Progress bar */}
-              <div className="h-1 bg-neutral-100">
+              <div className="h-0.5 bg-neutral-100">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-red-500 to-red-400"
+                  className="h-full bg-neutral-900"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
                 />
               </div>
 
-              {/* Header */}
-              <div className="border-b border-neutral-100 p-6 pb-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                    {/* Icon with pulse animation */}
-                    <motion.div
-                      className="flex size-14 items-center justify-center rounded-xl bg-gradient-to-br from-red-50 to-red-100 text-red-500"
-                      animate={{
-                        boxShadow: [
-                          "0 0 0 0 rgba(239, 68, 68, 0)",
-                          "0 0 0 8px rgba(239, 68, 68, 0.08)",
-                          "0 0 0 0 rgba(239, 68, 68, 0)",
-                        ],
-                      }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      {step.icon}
-                    </motion.div>
-                    <div>
-                      <p className="mb-1 text-xs font-medium text-red-500">
-                        Step {currentStep + 1} of {tutorialSteps.length}
-                      </p>
-                      <h2 className="text-xl font-semibold text-neutral-900">
-                        {step.title}
-                      </h2>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleSkip}
-                    className="size-8 rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
-                  >
-                    <X className="size-4" />
-                  </Button>
-                </div>
-              </div>
-
               {/* Content */}
-              <div className="p-6">
+              <div className="p-8">
+                {/* Step indicator */}
+                <p className="mb-4 font-medium text-neutral-400 text-xs tracking-wide uppercase">
+                  {currentStep + 1} / {tutorialSteps.length}
+                </p>
+
+                {/* Title */}
+                <motion.h2
+                  key={`title-${step.id}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 }}
+                  className="mb-3 font-semibold text-2xl text-neutral-900 tracking-tight"
+                >
+                  {step.title}
+                </motion.h2>
+
+                {/* Description */}
                 <motion.p
-                  key={step.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  key={`desc-${step.id}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-base leading-relaxed text-neutral-600"
+                  className="text-base leading-relaxed text-neutral-500"
                 >
                   {step.description}
                 </motion.p>
-
-                {/* Visual hint for highlighted element */}
-                {step.highlight && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="mt-4 flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"
-                  >
-                    <ArrowRight className="size-4" />
-                    <span>Look for this feature in your interface</span>
-                  </motion.div>
-                )}
               </div>
 
-              {/* Footer with navigation */}
-              <div className="flex items-center justify-between border-t border-neutral-100 bg-neutral-50 p-4">
-                <Button
-                  variant="ghost"
-                  onClick={handleSkip}
-                  className="text-sm text-neutral-500 hover:text-neutral-700"
-                >
-                  Skip Tour
-                </Button>
-
+              {/* Footer */}
+              <div className="flex items-center justify-between border-neutral-100 border-t px-6 py-4">
+                {/* Step dots */}
                 <div className="flex items-center gap-2">
-                  {/* Step indicators */}
-                  <div className="mr-4 flex items-center gap-1.5">
-                    {tutorialSteps.map((_, index) => (
-                      <motion.button
-                        key={index}
-                        onClick={() => setCurrentStep(index)}
-                        className={`h-1.5 rounded-full transition-all ${
-                          index === currentStep
-                            ? "w-6 bg-red-500"
-                            : index < currentStep
-                              ? "w-1.5 bg-red-300"
-                              : "w-1.5 bg-neutral-200"
-                        }`}
-                        whileHover={{ scale: 1.2 }}
-                        whileTap={{ scale: 0.9 }}
-                      />
-                    ))}
-                  </div>
+                  {tutorialSteps.map((_, index) => (
+                    <button
+                      type="button"
+                      key={`dot-${index}`}
+                      onClick={() => handleStepClick(index)}
+                      className={`
+                        h-2 rounded-full transition-all duration-300 cursor-pointer
+                        ${index === currentStep
+                          ? "w-6 bg-neutral-900"
+                          : index < currentStep
+                            ? "w-2 bg-neutral-400 hover:bg-neutral-500"
+                            : "w-2 bg-neutral-200 hover:bg-neutral-300"
+                        }
+                      `}
+                      aria-label={`Go to step ${index + 1}`}
+                    />
+                  ))}
+                </div>
 
+                {/* Navigation buttons */}
+                <div className="flex items-center gap-2">
                   {currentStep > 0 && (
                     <Button
-                      variant="outline"
+                      type="button"
+                      variant="ghost"
                       size="sm"
                       onClick={handlePrevious}
-                      className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
+                      className="h-9 px-4 text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                     >
-                      <ChevronLeft className="mr-1 size-4" />
                       Back
                     </Button>
                   )}
 
+                  {currentStep === 0 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleSkip}
+                      className="h-9 px-4 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+                    >
+                      Skip
+                    </Button>
+                  )}
+
                   <Button
+                    type="button"
                     size="sm"
                     onClick={handleNext}
-                    className="bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-400 hover:to-red-500"
+                    className="h-9 bg-neutral-900 px-5 font-medium text-white hover:bg-neutral-800"
                   >
-                    {currentStep === tutorialSteps.length - 1 ? (
-                      <>
-                        Get Started
-                        <Sparkles className="ml-1 size-4" />
-                      </>
-                    ) : (
-                      <>
-                        Next
-                        <ChevronRight className="ml-1 size-4" />
-                      </>
-                    )}
+                    {isLastStep ? "Get Started" : "Continue"}
                   </Button>
                 </div>
               </div>
@@ -349,77 +284,15 @@ export function WelcomeTutorial() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="mt-4 text-center text-xs text-neutral-500"
+              transition={{ delay: 0.4 }}
+              className="mt-6 text-center text-neutral-400 text-xs"
             >
-              Use arrow keys to navigate • Press Esc to skip
+              Arrow keys to navigate · Esc to skip
             </motion.p>
           </motion.div>
-
-          {/* Spotlight effect for highlighted elements */}
-          {step.highlight && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="pointer-events-none absolute inset-0"
-            >
-              <SpotlightOverlay position={step.position} />
-            </motion.div>
-          )}
         </motion.div>
       )}
     </AnimatePresence>
-  );
-}
-
-// Spotlight component to highlight specific UI elements
-function SpotlightOverlay({ position }: { position: string }) {
-  const getSpotlightPosition = () => {
-    switch (position) {
-      case "top-left":
-        return "top-4 left-4";
-      case "top-right":
-        return "top-4 right-4";
-      case "bottom-center":
-        return "bottom-20 left-1/2 -translate-x-1/2";
-      default:
-        return "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2";
-    }
-  };
-
-  return (
-    <motion.div
-      className={`absolute ${getSpotlightPosition()}`}
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      {/* Pulsing ring indicator */}
-      <motion.div
-        className="relative size-16"
-        animate={{
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-        }}
-      >
-        <div className="absolute inset-0 rounded-full border-2 border-red-500/50 bg-red-500/10" />
-        <motion.div
-          className="absolute inset-0 rounded-full border-2 border-red-500"
-          animate={{
-            scale: [1, 1.5, 1.5],
-            opacity: [0.8, 0, 0],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-          }}
-        />
-      </motion.div>
-    </motion.div>
   );
 }
 
