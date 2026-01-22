@@ -222,12 +222,18 @@ export async function POST(request: Request) {
 }
 
 // Precompiled regex patterns for better performance
+// Flexible patterns to handle various AI-generated formats
 const MARKDOWN_PATTERNS = {
-  executiveAlexandria: /\*\*Alexandria\s*\(CMO\):\*\*/gi,
-  executiveKim: /\*\*Kim\s*\(CSO\):\*\*/gi,
-  jointStrategy: /\*\*Joint Strategy:\*\*/gi,
-  standaloneAlexandria: /^Alexandria:\s*/gim,
-  standaloneKim: /^Kim:\s*/gim,
+  // Match **Alexandria (CMO):** or **Alexandria (CMO)**: or **Alexandria:** etc.
+  executiveAlexandria: /\*\*Alexandria\s*(?:\(CMO\))?\s*:?\*\*\s*:?\s*/gi,
+  // Match **Kim (CSO):** or **Kim (CSO)**: or **Kim:** etc.
+  executiveKim: /\*\*Kim\s*(?:\(CSO\))?\s*:?\*\*\s*:?\s*/gi,
+  // Match **Joint Strategy:** or **Joint Strategy**: etc.
+  jointStrategy: /\*\*Joint\s+Strategy\s*:?\*\*\s*:?\s*/gi,
+  // Match standalone Alexandria: or Alexandria (CMO):
+  standaloneAlexandria: /^Alexandria\s*(?:\(CMO\))?\s*:\s*/gim,
+  // Match standalone Kim: or Kim (CSO):
+  standaloneKim: /^Kim\s*(?:\(CSO\))?\s*:\s*/gim,
   headers: /^#{1,6}\s+/gm,
   bold: /\*\*([^*]+)\*\*/g,
   italic: /\*([^*]+)\*/g,
@@ -253,15 +259,33 @@ interface SpeakerSegment {
 
 /**
  * Parse collaborative mode text into speaker segments.
- * Identifies sections by **Alexandria (CMO):**, **Kim (CSO):**, **Joint Strategy:**
+ * Identifies sections by various formats of executive markers.
  * Joint Strategy sections alternate between voices for variety.
+ *
+ * Supported formats:
+ * - **Alexandria (CMO):** (colon inside bold)
+ * - **Alexandria (CMO)**: (colon outside bold)
+ * - **Alexandria:** (without role)
+ * - Alexandria (CMO): (without bold)
+ * - Same variations for Kim and Joint Strategy
  */
 function parseCollaborativeSegments(text: string): SpeakerSegment[] {
   const segments: SpeakerSegment[] = [];
 
-  // Patterns to match speaker markers
-  const speakerPattern =
-    /\*\*(?:Alexandria\s*\(CMO\)|Kim\s*\(CSO\)|Joint Strategy)\s*:\*\*/gi;
+  // More flexible patterns to match speaker markers in various formats
+  // Handles: **Name (Role):** OR **Name (Role)**: OR **Name:** OR Name (Role): OR Name:
+  const speakerPatterns = [
+    // **Alexandria (CMO):** or **Alexandria (CMO)**: (with or without colon inside bold)
+    /\*\*Alexandria\s*(?:\(CMO\))?\s*:?\*\*\s*:?/gi,
+    // **Kim (CSO):** or **Kim (CSO)**: (with or without colon inside bold)
+    /\*\*Kim\s*(?:\(CSO\))?\s*:?\*\*\s*:?/gi,
+    // **Joint Strategy:** or **Joint Strategy**:
+    /\*\*Joint\s+Strategy\s*:?\*\*\s*:?/gi,
+    // Non-bold versions: Alexandria (CMO): or Alexandria:
+    /(?:^|\n)Alexandria\s*(?:\(CMO\))?\s*:/gim,
+    // Non-bold versions: Kim (CSO): or Kim:
+    /(?:^|\n)Kim\s*(?:\(CSO\))?\s*:/gim,
+  ];
 
   // Find all speaker markers and their positions
   const markers: {
@@ -269,29 +293,40 @@ function parseCollaborativeSegments(text: string): SpeakerSegment[] {
     speaker: "alexandria" | "kim" | "joint";
     length: number;
   }[] = [];
-  let match: RegExpExecArray | null;
 
-  // Reset lastIndex to ensure we start from the beginning
-  speakerPattern.lastIndex = 0;
+  // Search with each pattern
+  for (const pattern of speakerPatterns) {
+    pattern.lastIndex = 0;
+    let match: RegExpExecArray | null;
 
-  while ((match = speakerPattern.exec(text)) !== null) {
-    const markerText = match[0].toLowerCase();
-    let speaker: "alexandria" | "kim" | "joint";
+    while ((match = pattern.exec(text)) !== null) {
+      const markerText = match[0].toLowerCase();
+      let speaker: "alexandria" | "kim" | "joint";
 
-    if (markerText.includes("alexandria")) {
-      speaker = "alexandria";
-    } else if (markerText.includes("kim")) {
-      speaker = "kim";
-    } else {
-      speaker = "joint";
+      if (markerText.includes("alexandria")) {
+        speaker = "alexandria";
+      } else if (markerText.includes("kim")) {
+        speaker = "kim";
+      } else {
+        speaker = "joint";
+      }
+
+      // Avoid duplicates at the same position
+      const existsAtPosition = markers.some(
+        (m) => Math.abs(m.index - match!.index) < 5,
+      );
+      if (!existsAtPosition) {
+        markers.push({
+          index: match.index,
+          speaker,
+          length: match[0].length,
+        });
+      }
     }
-
-    markers.push({
-      index: match.index,
-      speaker,
-      length: match[0].length,
-    });
   }
+
+  // Sort markers by position
+  markers.sort((a, b) => a.index - b.index);
 
   // If no markers found, return the whole text as alexandria (default)
   if (markers.length === 0) {
