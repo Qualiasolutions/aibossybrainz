@@ -421,7 +421,8 @@ export function UsersTable({
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
             <DialogDescription>
-              Create a new user account. They will be able to login via email.
+              Create a new user account. They will receive an invite email to
+              set their password and login.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">

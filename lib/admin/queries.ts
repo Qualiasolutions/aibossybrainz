@@ -178,12 +178,43 @@ export async function createUserByAdmin({
 }) {
   const supabase = createServiceClient();
 
+  // First, create the user in Supabase Auth and send invite email
+  const { data: authData, error: authError } =
+    await supabase.auth.admin.inviteUserByEmail(email, {
+      data: {
+        display_name: displayName,
+        company_name: companyName,
+      },
+    });
+
+  if (authError) {
+    // If user already exists in auth, try to get their ID
+    if (authError.message.includes("already been registered")) {
+      const { data: existingUsers } = await supabase.auth.admin.listUsers();
+      const existingUser = existingUsers?.users?.find(
+        (u) => u.email === email,
+      );
+      if (existingUser) {
+        throw new Error(
+          `User with email ${email} already exists. You can update their profile instead.`,
+        );
+      }
+    }
+    throw authError;
+  }
+
+  if (!authData.user) {
+    throw new Error("Failed to create auth user");
+  }
+
   const startDate = new Date();
   const endDate = calculateSubscriptionEndDate(startDate, subscriptionType);
 
+  // Create the user record in our User table with the auth user's ID
   const { data, error } = await supabase
     .from("User")
     .insert({
+      id: authData.user.id,
       email,
       displayName,
       companyName,
@@ -197,7 +228,12 @@ export async function createUserByAdmin({
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    // If User table insert fails, clean up the auth user
+    await supabase.auth.admin.deleteUser(authData.user.id);
+    throw error;
+  }
+
   return data;
 }
 
