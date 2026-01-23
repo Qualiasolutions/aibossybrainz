@@ -28,10 +28,40 @@ async function createUser(data: {
   displayName?: string;
   companyName?: string;
   subscriptionType?: SubscriptionType;
-}) {
+}): Promise<{ success: boolean; error?: string }> {
   "use server";
-  await createUserByAdmin(data);
-  revalidatePath("/admin/users");
+  try {
+    await createUserByAdmin(data);
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Failed to create user";
+
+    // Handle specific Supabase Auth errors
+    if (message.includes("rate limit") || message.includes("over_email_send")) {
+      return {
+        success: false,
+        error:
+          "Email rate limit exceeded. Please wait a few minutes before inviting this user again.",
+      };
+    }
+    if (message.includes("invalid format") || message.includes("validate email")) {
+      return {
+        success: false,
+        error: "Invalid email address format. Please check the email and try again.",
+      };
+    }
+    if (message.includes("already") || message.includes("exists")) {
+      return {
+        success: false,
+        error: "A user with this email already exists.",
+      };
+    }
+
+    console.error("Create user error:", message);
+    return { success: false, error: message };
+  }
 }
 
 async function changeSubscription(

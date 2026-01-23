@@ -50,7 +50,7 @@ interface UsersTableProps {
     displayName?: string;
     companyName?: string;
     subscriptionType?: SubscriptionType;
-  }) => Promise<void>;
+  }) => Promise<{ success: boolean; error?: string }>;
   onChangeSubscription: (
     userId: string,
     subscriptionType: SubscriptionType,
@@ -105,6 +105,7 @@ export function UsersTable({
   const [isPending, startTransition] = useTransition();
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [subscriptionUserId, setSubscriptionUserId] = useState<string | null>(
     null,
   );
@@ -140,15 +141,20 @@ export function UsersTable({
 
   const handleCreateUser = () => {
     if (!newUser.email) return;
+    setCreateError(null);
     startTransition(async () => {
-      await onCreateUser(newUser);
-      setShowCreateDialog(false);
-      setNewUser({
-        email: "",
-        displayName: "",
-        companyName: "",
-        subscriptionType: "trial",
-      });
+      const result = await onCreateUser(newUser);
+      if (result.success) {
+        setShowCreateDialog(false);
+        setNewUser({
+          email: "",
+          displayName: "",
+          companyName: "",
+          subscriptionType: "trial",
+        });
+      } else {
+        setCreateError(result.error || "Failed to create user");
+      }
     });
   };
 
@@ -416,7 +422,13 @@ export function UsersTable({
       </Dialog>
 
       {/* Create User Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+      <Dialog
+        open={showCreateDialog}
+        onOpenChange={(open) => {
+          setShowCreateDialog(open);
+          if (!open) setCreateError(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
@@ -480,6 +492,11 @@ export function UsersTable({
               </Select>
             </div>
           </div>
+          {createError && (
+            <div className="rounded-lg bg-rose-50 border border-rose-200 p-3 text-sm text-rose-700">
+              {createError}
+            </div>
+          )}
           <DialogFooter>
             <Button variant="ghost" onClick={() => setShowCreateDialog(false)}>
               Cancel
