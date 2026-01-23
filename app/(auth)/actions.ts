@@ -74,10 +74,21 @@ export const signup = async (
       password: formData.get("password"),
     });
 
+    const plan = formData.get("plan") as string | null;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+    // Build redirect URL with plan if present
+    const redirectUrl = plan
+      ? `${baseUrl}/auth/callback?plan=${plan}`
+      : `${baseUrl}/auth/callback`;
+
     const supabase = await createClient();
     const { error } = await supabase.auth.signUp({
       email: validatedData.email,
       password: validatedData.password,
+      options: {
+        emailRedirectTo: redirectUrl,
+      },
     });
 
     if (error) {
