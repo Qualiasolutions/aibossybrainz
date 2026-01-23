@@ -2,6 +2,7 @@ import type { UseChatHelpers } from "@ai-sdk/react";
 import { formatDistance } from "date-fns";
 import equal from "fast-deep-equal";
 import { AnimatePresence, motion } from "framer-motion";
+import { Maximize2, Minimize2 } from "lucide-react";
 import {
   type Dispatch,
   memo,
@@ -28,7 +29,9 @@ import { ArtifactCloseButton } from "./artifact-close-button";
 import { ArtifactMessages } from "./artifact-messages";
 import { MultimodalInput } from "./multimodal-input";
 import { Toolbar } from "./toolbar";
+import { Button } from "./ui/button";
 import { useSidebar } from "./ui/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { VersionFooter } from "./version-footer";
 import type { VisibilityType } from "./visibility-selector";
 
@@ -234,6 +237,7 @@ function PureArtifact({
   };
 
   const [isToolbarVisible, setIsToolbarVisible] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   /*
    * NOTE: if there are no documents, or if
@@ -291,7 +295,7 @@ function PureArtifact({
             />
           )}
 
-          {!isMobile && (
+          {!isMobile && !isFullscreen && (
             <motion.div
               animate={{
                 opacity: 1,
@@ -304,7 +308,7 @@ function PureArtifact({
                   damping: 30,
                 },
               }}
-              className="relative h-dvh w-[55%] min-w-[400px] max-w-[700px] shrink-0 bg-muted dark:bg-background"
+              className="relative h-dvh w-[40%] min-w-[320px] max-w-[500px] shrink-0 bg-muted dark:bg-background"
               exit={{
                 opacity: 0,
                 x: 0,
@@ -360,7 +364,7 @@ function PureArtifact({
 
           <motion.div
             animate={
-              isMobile
+              isMobile || isFullscreen
                 ? {
                     opacity: 1,
                     x: 0,
@@ -378,10 +382,10 @@ function PureArtifact({
                   }
                 : {
                     opacity: 1,
-                    x: "55%",
+                    x: "40%",
                     y: 0,
                     height: windowHeight,
-                    width: "45%",
+                    width: "60%",
                     borderRadius: 0,
                     transition: {
                       delay: 0,
@@ -392,7 +396,7 @@ function PureArtifact({
                     },
                   }
             }
-            className="fixed flex h-dvh flex-col overflow-y-scroll border border-border/70 bg-background/95 shadow-2xl shadow-primary/10 backdrop-blur-xl dark:bg-background/95 dark:border-border/50 md:border-l md:min-w-[400px] md:max-w-[55%]"
+            className="fixed flex h-dvh flex-col overflow-y-scroll border border-border/70 bg-background/95 shadow-2xl shadow-primary/10 backdrop-blur-xl dark:bg-background/95 dark:border-border/50 md:border-l md:min-w-[500px] md:max-w-none"
             exit={{
               opacity: 0,
               scale: 0.5,
@@ -426,6 +430,27 @@ function PureArtifact({
             <div className="flex flex-row items-start justify-between border-border/60 border-b px-5 py-4">
               <div className="flex flex-row items-start gap-4">
                 <ArtifactCloseButton />
+
+                {!isMobile && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className="h-fit p-2 dark:hover:bg-zinc-700"
+                        onClick={() => setIsFullscreen(!isFullscreen)}
+                        variant="outline"
+                      >
+                        {isFullscreen ? (
+                          <Minimize2 size={18} />
+                        ) : (
+                          <Maximize2 size={18} />
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                    </TooltipContent>
+                  </Tooltip>
+                )}
 
                 <div className="flex flex-col">
                   <div className="font-semibold text-base text-foreground">
@@ -463,8 +488,8 @@ function PureArtifact({
               />
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto bg-background/90 dark:bg-background/90">
-              <div className="h-full w-full">
+            <div className="flex-1 min-h-0 overflow-auto bg-background/90 dark:bg-background/90">
+              <div className="h-full w-full min-w-fit">
                 <artifactDefinition.content
                   content={
                     isCurrentVersion
