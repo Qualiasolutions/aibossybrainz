@@ -393,7 +393,7 @@ export type Database = {
           subscriptionType: "trial" | "monthly" | "annual" | "lifetime" | null;
           subscriptionStartDate: string | null;
           subscriptionEndDate: string | null;
-          subscriptionStatus: "active" | "expired" | "cancelled" | null;
+          subscriptionStatus: "active" | "trialing" | "expired" | "cancelled" | null;
           stripeCustomerId: string | null;
           stripeSubscriptionId: string | null;
         };
@@ -415,7 +415,7 @@ export type Database = {
           subscriptionType?: "trial" | "monthly" | "annual" | "lifetime" | null;
           subscriptionStartDate?: string | null;
           subscriptionEndDate?: string | null;
-          subscriptionStatus?: "active" | "expired" | "cancelled" | null;
+          subscriptionStatus?: "active" | "trialing" | "expired" | "cancelled" | null;
           stripeCustomerId?: string | null;
           stripeSubscriptionId?: string | null;
         };
@@ -437,7 +437,7 @@ export type Database = {
           subscriptionType?: "trial" | "monthly" | "annual" | "lifetime" | null;
           subscriptionStartDate?: string | null;
           subscriptionEndDate?: string | null;
-          subscriptionStatus?: "active" | "expired" | "cancelled" | null;
+          subscriptionStatus?: "active" | "trialing" | "expired" | "cancelled" | null;
           stripeCustomerId?: string | null;
           stripeSubscriptionId?: string | null;
         };

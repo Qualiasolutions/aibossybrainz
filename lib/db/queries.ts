@@ -252,8 +252,8 @@ export async function checkUserSubscription(userId: string): Promise<{
       };
     }
 
-    // Check if subscription is active
-    if (user.subscriptionStatus !== "active") {
+    // Check if subscription is active (including trialing)
+    if (user.subscriptionStatus !== "active" && user.subscriptionStatus !== "trialing") {
       return {
         isActive: false,
         subscriptionType: user.subscriptionType,

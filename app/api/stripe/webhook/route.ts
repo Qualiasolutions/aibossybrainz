@@ -6,6 +6,7 @@ import {
   activateSubscription,
   renewSubscription,
   expireSubscription,
+  startTrial,
 } from "@/lib/stripe/actions";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -46,33 +47,7 @@ export async function POST(request: Request) {
 
   try {
     switch (event.type) {
-      // Handle successful checkout (one-time payment for annual/lifetime)
-      case "checkout.session.completed": {
-        const session = event.data.object as Stripe.Checkout.Session;
-
-        // For subscription mode, the subscription.created event handles activation
-        if (session.mode === "payment") {
-          const userId = session.metadata?.userId;
-          const subscriptionType = session.metadata?.subscriptionType as
-            | "monthly"
-            | "annual"
-            | "lifetime"
-            | undefined;
-
-          if (userId && subscriptionType) {
-            await activateSubscription({
-              userId,
-              subscriptionType,
-            });
-            console.log(
-              `[Stripe Webhook] Activated ${subscriptionType} subscription for user ${userId}`
-            );
-          }
-        }
-        break;
-      }
-
-      // Handle new subscription created
+      // Handle new subscription created (with trial)
       case "customer.subscription.created": {
         const subscription = event.data.object as Stripe.Subscription;
         const userId = subscription.metadata?.userId;
@@ -83,45 +58,89 @@ export async function POST(request: Request) {
           | undefined;
 
         if (userId && subscriptionType) {
-          await activateSubscription({
-            userId,
-            subscriptionType,
-            stripeSubscriptionId: subscription.id,
-          });
-          console.log(
-            `[Stripe Webhook] Created ${subscriptionType} subscription for user ${userId}`
-          );
+          // Check if subscription is in trial
+          if (subscription.status === "trialing" && subscription.trial_end) {
+            await startTrial({
+              userId,
+              subscriptionType,
+              stripeSubscriptionId: subscription.id,
+              trialEndDate: new Date(subscription.trial_end * 1000),
+            });
+            console.log(
+              `[Stripe Webhook] Started 7-day trial for ${subscriptionType} subscription for user ${userId}`
+            );
+          } else {
+            await activateSubscription({
+              userId,
+              subscriptionType,
+              stripeSubscriptionId: subscription.id,
+            });
+            console.log(
+              `[Stripe Webhook] Activated ${subscriptionType} subscription for user ${userId}`
+            );
+          }
         }
         break;
       }
 
-      // Handle subscription renewal
+      // Handle subscription renewal / first payment after trial
       case "invoice.paid": {
         const invoice = event.data.object as Stripe.Invoice;
 
-        // Only process subscription invoices (not one-time payments)
+        // Get subscription ID from invoice - handle various Stripe API versions
+        const invoiceAny = invoice as unknown as Record<string, unknown>;
         const subscriptionId =
-          typeof invoice.parent?.subscription_details?.subscription === "string"
-            ? invoice.parent.subscription_details.subscription
-            : null;
+          typeof invoiceAny.subscription === "string"
+            ? invoiceAny.subscription
+            : (invoiceAny.subscription as { id?: string })?.id ||
+              (typeof invoice.parent?.subscription_details?.subscription === "string"
+                ? invoice.parent.subscription_details.subscription
+                : null);
 
         if (subscriptionId) {
-          const subscriptionResponse = await getStripe().subscriptions.retrieve(
-            subscriptionId
-          );
-          // Cast to access the raw data
-          const subscriptionData = subscriptionResponse as unknown as {
+          const subscriptionResponse = await getStripe().subscriptions.retrieve(subscriptionId);
+          // Cast to access properties
+          const subscription = subscriptionResponse as unknown as {
             id: string;
+            metadata: Record<string, string>;
             current_period_end: number;
           };
+          const subscriptionType = subscription.metadata?.subscriptionType as
+            | "monthly"
+            | "annual"
+            | "lifetime"
+            | undefined;
+          const userId = subscription.metadata?.userId;
 
-          await renewSubscription({
-            stripeSubscriptionId: subscriptionData.id,
-            periodEnd: new Date(subscriptionData.current_period_end * 1000),
-          });
-          console.log(
-            `[Stripe Webhook] Renewed subscription ${subscriptionData.id}`
-          );
+          if (userId && subscriptionType) {
+            // Activate subscription (trial ended, payment successful)
+            await activateSubscription({
+              userId,
+              subscriptionType,
+              stripeSubscriptionId: subscription.id,
+            });
+            console.log(
+              `[Stripe Webhook] Payment received, activated ${subscriptionType} subscription for user ${userId}`
+            );
+
+            // For annual and lifetime plans, cancel after first payment
+            // so they don't get charged again
+            if (subscriptionType === "annual" || subscriptionType === "lifetime") {
+              await getStripe().subscriptions.update(subscription.id, {
+                cancel_at_period_end: true,
+              });
+              console.log(
+                `[Stripe Webhook] Set ${subscriptionType} subscription to cancel at period end`
+              );
+            }
+          } else {
+            // Fallback: just renew based on subscription data
+            await renewSubscription({
+              stripeSubscriptionId: subscription.id,
+              periodEnd: new Date(subscription.current_period_end * 1000),
+            });
+            console.log(`[Stripe Webhook] Renewed subscription ${subscription.id}`);
+          }
         }
         break;
       }
@@ -129,9 +148,17 @@ export async function POST(request: Request) {
       // Handle subscription cancellation or expiration
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
+        const subscriptionType = subscription.metadata?.subscriptionType;
 
-        await expireSubscription(subscription.id);
-        console.log(`[Stripe Webhook] Expired subscription ${subscription.id}`);
+        // Don't expire lifetime/annual subscriptions when they "end" - they're still valid
+        if (subscriptionType === "lifetime" || subscriptionType === "annual") {
+          console.log(
+            `[Stripe Webhook] ${subscriptionType} subscription ${subscription.id} ended (user retains access)`
+          );
+        } else {
+          await expireSubscription(subscription.id);
+          console.log(`[Stripe Webhook] Expired subscription ${subscription.id}`);
+        }
         break;
       }
 

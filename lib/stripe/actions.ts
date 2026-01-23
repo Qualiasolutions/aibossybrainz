@@ -41,7 +41,7 @@ export async function getOrCreateStripeCustomer(
 }
 
 /**
- * Create a Stripe Checkout session for subscription
+ * Create a Stripe Checkout session for subscription with 7-day trial
  */
 export async function createCheckoutSession({
   userId,
@@ -60,9 +60,8 @@ export async function createCheckoutSession({
   const priceId = STRIPE_PRICES[planId];
   const planDetails = PLAN_DETAILS[planId];
 
-  // Annual and Lifetime are one-time payments, monthly is a subscription
-  const isOneTime = planId === "annual" || planId === "lifetime";
-
+  // All plans use subscription mode with 7-day trial
+  // Annual and Lifetime are set to cancel after first payment via webhook
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
     customer: customerId,
     line_items: [
@@ -71,7 +70,7 @@ export async function createCheckoutSession({
         quantity: 1,
       },
     ],
-    mode: isOneTime ? "payment" : "subscription",
+    mode: "subscription",
     success_url: successUrl,
     cancel_url: cancelUrl,
     metadata: {
@@ -79,26 +78,15 @@ export async function createCheckoutSession({
       planId,
       subscriptionType: planDetails.subscriptionType,
     },
+    subscription_data: {
+      trial_period_days: 7,
+      metadata: {
+        userId,
+        planId,
+        subscriptionType: planDetails.subscriptionType,
+      },
+    },
   };
-
-  // Add metadata to payment intent or subscription
-  if (isOneTime) {
-    sessionParams.payment_intent_data = {
-      metadata: {
-        userId,
-        planId,
-        subscriptionType: planDetails.subscriptionType,
-      },
-    };
-  } else {
-    sessionParams.subscription_data = {
-      metadata: {
-        userId,
-        planId,
-        subscriptionType: planDetails.subscriptionType,
-      },
-    };
-  }
 
   const session = await getStripe().checkout.sessions.create(sessionParams);
 
@@ -140,7 +128,35 @@ export async function createPortalSession({
 }
 
 /**
- * Activate subscription after successful payment
+ * Start trial for a subscription
+ */
+export async function startTrial({
+  userId,
+  subscriptionType,
+  stripeSubscriptionId,
+  trialEndDate,
+}: {
+  userId: string;
+  subscriptionType: "monthly" | "annual" | "lifetime";
+  stripeSubscriptionId: string;
+  trialEndDate: Date;
+}): Promise<void> {
+  const supabase = createServiceClient();
+
+  await supabase
+    .from("User")
+    .update({
+      subscriptionType,
+      subscriptionStatus: "trialing",
+      subscriptionStartDate: new Date().toISOString(),
+      subscriptionEndDate: trialEndDate.toISOString(),
+      stripeSubscriptionId,
+    })
+    .eq("id", userId);
+}
+
+/**
+ * Activate subscription after successful payment (trial ended)
  */
 export async function activateSubscription({
   userId,
