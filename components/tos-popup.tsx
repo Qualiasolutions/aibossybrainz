@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useCsrf } from "@/hooks/use-csrf";
 
 const TOS_ACCEPTED_KEY = "alecci_tos_accepted";
 
@@ -27,6 +28,7 @@ export function TosPopup({ onAccept }: TosPopupProps) {
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const { csrfFetch } = useCsrf();
 
   useEffect(() => {
     setMounted(true);
@@ -63,8 +65,8 @@ export function TosPopup({ onAccept }: TosPopupProps) {
 
     setIsLoading(true);
     try {
-      // Try to save to database first
-      const response = await fetch("/api/accept-tos", { method: "POST" });
+      // Try to save to database first (with CSRF token)
+      const response = await csrfFetch("/api/accept-tos", { method: "POST" });
       if (response.ok) {
         setIsOpen(false);
         onAccept?.();
