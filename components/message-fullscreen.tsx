@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { useCopyToClipboard } from "usehooks-ts";
 import type { BotType } from "@/lib/bot-personalities";
 import { BOT_PERSONALITIES } from "@/lib/bot-personalities";
-import { exportToPDF } from "@/lib/pdf-export";
 import { Response } from "./elements/response";
 import { CopyIcon } from "./icons";
 import { Button } from "./ui/button";
@@ -51,6 +50,9 @@ export function MessageFullscreen({
 
     setIsExporting(true);
     try {
+      // Dynamic import to reduce initial bundle size (~700KB savings)
+      const { exportToPDF } = await import("@/lib/pdf-export");
+
       const timestamp = new Date().toISOString().split("T")[0];
       const filename = `${personality.name.replace(/\s+/g, "-")}-message-${timestamp}`;
       await exportToPDF(contentRef.current, filename);

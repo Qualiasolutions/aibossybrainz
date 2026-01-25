@@ -22,119 +22,77 @@ export type AdminUser = User & {
 export async function getAllUsers(): Promise<AdminUser[]> {
   const supabase = createServiceClient();
 
-  const { data: users, error } = await supabase
-    .from("User")
-    .select("*")
-    .is("deletedAt", null)
-    .order("onboardedAt", { ascending: false, nullsFirst: false });
+  // Use RPC function to get all users with stats in a single query
+  // This eliminates N+1 query pattern (previously 4 queries per user)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.rpc as any)("get_admin_users_with_stats");
 
   if (error) throw error;
 
-  // Get chat and message counts for each user
-  const enrichedUsers = await Promise.all(
-    (users || []).map(async (user) => {
-      const { count: chatCount } = await supabase
-        .from("Chat")
-        .select("*", { count: "exact", head: true })
-        .eq("userId", user.id)
-        .is("deletedAt", null);
-
-      const { data: userChats } = await supabase
-        .from("Chat")
-        .select("id")
-        .eq("userId", user.id)
-        .is("deletedAt", null);
-
-      let messageCount = 0;
-      let lastActiveAt: string | null = null;
-
-      if (userChats && userChats.length > 0) {
-        const chatIds = userChats.map((c) => c.id);
-
-        const { count } = await supabase
-          .from("Message_v2")
-          .select("*", { count: "exact", head: true })
-          .in("chatId", chatIds)
-          .is("deletedAt", null);
-
-        messageCount = count || 0;
-
-        // Get last message date
-        const { data: lastMessage } = await supabase
-          .from("Message_v2")
-          .select("createdAt")
-          .in("chatId", chatIds)
-          .is("deletedAt", null)
-          .order("createdAt", { ascending: false })
-          .limit(1);
-
-        lastActiveAt = lastMessage?.[0]?.createdAt || null;
-      }
-
-      return {
-        ...user,
-        chatCount: chatCount || 0,
-        messageCount,
-        lastActiveAt,
-      };
-    }),
-  );
-
-  return enrichedUsers;
+  // Map RPC result to AdminUser type
+  return (data || []).map((row: Record<string, unknown>) => ({
+    id: row.id as string,
+    email: row.email as string,
+    password: null,
+    userType: row.userType as string | null,
+    tosAcceptedAt: row.tosAcceptedAt as string | null,
+    displayName: row.displayName as string | null,
+    companyName: row.companyName as string | null,
+    industry: row.industry as string | null,
+    businessGoals: row.businessGoals as string | null,
+    preferredBotType: row.preferredBotType as string | null,
+    onboardedAt: row.onboardedAt as string | null,
+    profileUpdatedAt: row.profileUpdatedAt as string | null,
+    deletedAt: row.deletedAt as string | null,
+    isAdmin: row.isAdmin as boolean | null,
+    subscriptionType: row.subscriptionType as SubscriptionType | null,
+    subscriptionStartDate: row.subscriptionStartDate as string | null,
+    subscriptionEndDate: row.subscriptionEndDate as string | null,
+    subscriptionStatus: row.subscriptionStatus as SubscriptionStatus | null,
+    stripeCustomerId: row.stripeCustomerId as string | null,
+    stripeSubscriptionId: row.stripeSubscriptionId as string | null,
+    chatCount: Number(row.chatCount) || 0,
+    messageCount: Number(row.messageCount) || 0,
+    lastActiveAt: row.lastActiveAt as string | null,
+  }));
 }
 
 export async function getUserById(userId: string): Promise<AdminUser | null> {
   const supabase = createServiceClient();
 
-  const { data: user, error } = await supabase
-    .from("User")
-    .select("*")
-    .eq("id", userId)
-    .single();
+  // Use RPC function to get user with stats in a single query
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.rpc as any)("get_admin_user_by_id", {
+    p_user_id: userId,
+  });
 
-  if (error || !user) return null;
+  if (error || !data || data.length === 0) return null;
 
-  const { count: chatCount } = await supabase
-    .from("Chat")
-    .select("*", { count: "exact", head: true })
-    .eq("userId", userId)
-    .is("deletedAt", null);
-
-  const { data: userChats } = await supabase
-    .from("Chat")
-    .select("id")
-    .eq("userId", userId)
-    .is("deletedAt", null);
-
-  let messageCount = 0;
-  let lastActiveAt: string | null = null;
-
-  if (userChats && userChats.length > 0) {
-    const chatIds = userChats.map((c) => c.id);
-    const { count } = await supabase
-      .from("Message_v2")
-      .select("*", { count: "exact", head: true })
-      .in("chatId", chatIds)
-      .is("deletedAt", null);
-
-    messageCount = count || 0;
-
-    const { data: lastMessage } = await supabase
-      .from("Message_v2")
-      .select("createdAt")
-      .in("chatId", chatIds)
-      .is("deletedAt", null)
-      .order("createdAt", { ascending: false })
-      .limit(1);
-
-    lastActiveAt = lastMessage?.[0]?.createdAt || null;
-  }
-
+  const row = data[0];
   return {
-    ...user,
-    chatCount: chatCount || 0,
-    messageCount,
-    lastActiveAt,
+    id: row.id as string,
+    email: row.email as string,
+    password: null,
+    userType: row.userType as string | null,
+    tosAcceptedAt: row.tosAcceptedAt as string | null,
+    displayName: row.displayName as string | null,
+    companyName: row.companyName as string | null,
+    industry: row.industry as string | null,
+    businessGoals: row.businessGoals as string | null,
+    preferredBotType: row.preferredBotType as string | null,
+    onboardedAt: row.onboardedAt as string | null,
+    profileUpdatedAt: row.profileUpdatedAt as string | null,
+    deletedAt: row.deletedAt as string | null,
+    isAdmin: row.isAdmin as boolean | null,
+    subscriptionType: row.subscriptionType as SubscriptionType | null,
+    subscriptionStartDate: row.subscriptionStartDate as string | null,
+    subscriptionEndDate: row.subscriptionEndDate as string | null,
+    subscriptionStatus: row.subscriptionStatus as SubscriptionStatus | null,
+    stripeCustomerId: row.stripeCustomerId as string | null,
+    stripeSubscriptionId: row.stripeSubscriptionId as string | null,
+    chatCount: Number(row.chatCount) || 0,
+    messageCount: Number(row.messageCount) || 0,
+    lastActiveAt: row.lastActiveAt as string | null,
   };
 }
 
@@ -493,39 +451,28 @@ export type AdminChat = Chat & {
 export async function getAllChats(limit = 50): Promise<AdminChat[]> {
   const supabase = createServiceClient();
 
-  const { data: chats, error } = await supabase
-    .from("Chat")
-    .select("*")
-    .is("deletedAt", null)
-    .order("createdAt", { ascending: false })
-    .limit(limit);
+  // Use RPC function to get all chats with stats in a single query
+  // This eliminates N+1 query pattern (previously 2 queries per chat)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.rpc as any)("get_admin_chats_with_stats");
 
   if (error) throw error;
 
-  // Enrich with user email and message count
-  const enrichedChats = await Promise.all(
-    (chats || []).map(async (chat) => {
-      const { data: user } = await supabase
-        .from("User")
-        .select("email")
-        .eq("id", chat.userId)
-        .single();
-
-      const { count } = await supabase
-        .from("Message_v2")
-        .select("*", { count: "exact", head: true })
-        .eq("chatId", chat.id)
-        .is("deletedAt", null);
-
-      return {
-        ...chat,
-        userEmail: user?.email || "Unknown",
-        messageCount: count || 0,
-      };
-    }),
-  );
-
-  return enrichedChats;
+  // Map RPC result to AdminChat type (apply limit client-side for now)
+  return ((data || []) as Record<string, unknown>[]).slice(0, limit).map((row) => ({
+    id: row.id as string,
+    userId: row.userId as string,
+    title: row.title as string,
+    topic: row.topic as string | null,
+    topicColor: row.topicColor as string | null,
+    visibility: row.visibility as string,
+    isPinned: row.isPinned as boolean,
+    createdAt: row.createdAt as string,
+    deletedAt: row.deletedAt as string | null,
+    lastContext: row.lastContext ?? null,
+    userEmail: (row.userEmail as string) || "Unknown",
+    messageCount: Number(row.messageCount) || 0,
+  })) as AdminChat[];
 }
 
 export async function getChatWithMessages(chatId: string): Promise<{
@@ -754,40 +701,25 @@ export async function getRecentConversations(
 ): Promise<ConversationPreview[]> {
   const supabase = createServiceClient();
 
-  const { data: chats, error } = await supabase
-    .from("Chat")
-    .select("id, title, userId, topic, topicColor, createdAt")
-    .is("deletedAt", null)
-    .order("createdAt", { ascending: false })
-    .limit(limit);
+  // Use RPC function to get recent conversations with stats in a single query
+  // This eliminates N+1 query pattern (previously 2 queries per chat)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.rpc as any)("get_recent_conversations", {
+    p_limit: limit,
+  });
 
   if (error) throw error;
 
-  // Enrich with user email and message count
-  const enriched = await Promise.all(
-    (chats || []).map(async (chat) => {
-      const [{ data: user }, { count }] = await Promise.all([
-        supabase.from("User").select("email").eq("id", chat.userId).single(),
-        supabase
-          .from("Message_v2")
-          .select("*", { count: "exact", head: true })
-          .eq("chatId", chat.id)
-          .is("deletedAt", null),
-      ]);
-
-      return {
-        id: chat.id,
-        title: chat.title,
-        userEmail: user?.email || "Unknown",
-        messageCount: count || 0,
-        topic: chat.topic,
-        topicColor: chat.topicColor,
-        createdAt: chat.createdAt,
-      };
-    }),
-  );
-
-  return enriched;
+  // Map RPC result to ConversationPreview type
+  return ((data || []) as Record<string, unknown>[]).map((row) => ({
+    id: row.id as string,
+    title: row.title as string,
+    userEmail: (row.userEmail as string) || "Unknown",
+    messageCount: Number(row.messageCount) || 0,
+    topic: row.topic as string | null,
+    topicColor: row.topicColor as string | null,
+    createdAt: row.createdAt as string,
+  }));
 }
 
 export interface SupportTicketPreview {

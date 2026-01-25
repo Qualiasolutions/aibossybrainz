@@ -6,8 +6,6 @@ import { useSWRConfig } from "swr";
 import { useCopyToClipboard } from "usehooks-ts";
 import { BOT_PERSONALITIES, type BotType } from "@/lib/bot-personalities";
 import { escapeHtml } from "@/lib/conversation-export";
-import { exportToExcel } from "@/lib/excel-export";
-import { exportToPDF } from "@/lib/pdf-export";
 import type { Vote } from "@/lib/supabase/types";
 import type { ChatMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -77,6 +75,9 @@ export function PureMessageActions({
 
     setIsExportingPdf(true);
     try {
+      // Dynamic import to reduce initial bundle size (~700KB savings)
+      const { exportToPDF } = await import("@/lib/pdf-export");
+
       const personality = botType ? BOT_PERSONALITIES[botType] : null;
       const name = personality?.name?.split(" ")[0] || "Assistant";
       const date = new Date().toISOString().split("T")[0];
@@ -120,11 +121,14 @@ export function PureMessageActions({
     }
   };
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     if (!textFromParts || isExportingExcel) return;
 
     setIsExportingExcel(true);
     try {
+      // Dynamic import to reduce initial bundle size (~3.5MB savings)
+      const { exportToExcel } = await import("@/lib/excel-export");
+
       const personality = botType ? BOT_PERSONALITIES[botType] : null;
       const name = personality?.name?.split(" ")[0] || "Assistant";
       const date = new Date().toISOString().split("T")[0];

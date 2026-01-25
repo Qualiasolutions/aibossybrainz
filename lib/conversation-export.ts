@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { BOT_PERSONALITIES, type BotType } from "@/lib/bot-personalities";
 import type { ChatMessage } from "@/lib/types";
 
@@ -74,7 +75,27 @@ export async function exportConversationToPDF(
     </div>
   `;
 
-  container.innerHTML = html;
+  // Sanitize HTML with DOMPurify to prevent XSS from user-generated content
+  container.innerHTML = DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      "div",
+      "span",
+      "p",
+      "h1",
+      "h2",
+      "h3",
+      "strong",
+      "em",
+      "code",
+      "del",
+      "a",
+      "li",
+      "blockquote",
+      "hr",
+      "img",
+    ],
+    ALLOWED_ATTR: ["style", "src", "href", "crossorigin"],
+  });
   document.body.appendChild(container);
 
   // Wait for images to load

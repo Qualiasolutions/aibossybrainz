@@ -21,6 +21,22 @@ const nextConfig: NextConfig = {
 
   // Security headers
   async headers() {
+    // CSP directives - allow necessary resources while blocking XSS
+    const cspDirectives = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://va.vercel-scripts.com https://*.sentry.io",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https: http:",
+      "font-src 'self' data:",
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://openrouter.ai https://*.sentry.io https://api.elevenlabs.io https://api.tavily.com https://vercel.live https://va.vercel-scripts.com",
+      "media-src 'self' blob:",
+      "frame-src 'self' https://vercel.live https://js.stripe.com",
+      "frame-ancestors 'none'",
+      "form-action 'self'",
+      "base-uri 'self'",
+      "object-src 'none'",
+    ].join("; ");
+
     return [
       {
         source: "/:path*",
@@ -36,6 +52,10 @@ const nextConfig: NextConfig = {
             key: "X-XSS-Protection",
             value: "1; mode=block",
           },
+          {
+            key: "Content-Security-Policy",
+            value: cspDirectives,
+          },
         ],
       },
     ];
@@ -48,6 +68,12 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         has: [{ type: "host", value: "www.aleccimedia.vercel.app" }],
         destination: "https://aleccimedia.vercel.app/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.bossbrainz.aleccimedia.com" }],
+        destination: "https://bossbrainz.aleccimedia.com/:path*",
         permanent: true,
       },
     ];
