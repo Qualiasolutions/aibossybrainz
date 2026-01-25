@@ -29,6 +29,7 @@ RETURNS TABLE (
 )
 LANGUAGE SQL
 SECURITY DEFINER
+SET search_path = public
 AS $$
   SELECT
     u.id,
@@ -80,6 +81,7 @@ RETURNS TABLE (
 )
 LANGUAGE SQL
 SECURITY DEFINER
+SET search_path = public
 AS $$
   SELECT
     c.id,
@@ -118,6 +120,7 @@ RETURNS TABLE (
 )
 LANGUAGE SQL
 SECURITY DEFINER
+SET search_path = public
 AS $$
   SELECT
     c.id,
@@ -166,6 +169,7 @@ RETURNS TABLE (
 )
 LANGUAGE SQL
 SECURITY DEFINER
+SET search_path = public
 AS $$
   SELECT
     u.id,
