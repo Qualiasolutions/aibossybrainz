@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://va.vercel-scripts.com https://*.sentry.io",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https: http:",
-      "font-src 'self' data:",
+      "font-src 'self' data: https://fonts.gstatic.com",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://openrouter.ai https://*.sentry.io https://api.elevenlabs.io https://api.tavily.com https://vercel.live https://va.vercel-scripts.com",
       "media-src 'self' blob:",
       "frame-src 'self' https://vercel.live https://js.stripe.com",
