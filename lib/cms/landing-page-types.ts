@@ -120,7 +120,7 @@ export const defaultLandingPageContent: LandingPageCMSContent = {
   },
   footer: {
     tagline: "Executive consulting for sales and marketing strategy. Available 24/7.",
-    email: "hello@bossybrainz.ai",
+    email: "ai.bossbrainz@aleccimedia.com",
     copyright: "AI Boss Brainz. All rights reserved.",
   },
 };

@@ -7,7 +7,6 @@ import {
   Mail,
   MapPin,
   MessageSquare,
-  Phone,
   Send,
 } from "lucide-react";
 import { useState } from "react";
@@ -17,14 +16,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email",
-    value: "hello@bossybrainz.ai",
-    href: "mailto:hello@bossybrainz.ai",
-  },
-  {
-    icon: Phone,
-    title: "Phone",
-    value: "+1 (555) 123-4567",
-    href: "tel:+15551234567",
+    value: "ai.bossbrainz@aleccimedia.com",
+    href: "mailto:ai.bossbrainz@aleccimedia.com",
   },
   {
     icon: MapPin,
