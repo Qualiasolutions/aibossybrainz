@@ -93,6 +93,12 @@ export async function exportConversationToPDF(
       "blockquote",
       "hr",
       "img",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "th",
+      "td",
     ],
     ALLOWED_ATTR: ["style", "src", "href", "crossorigin"],
   });
@@ -265,11 +271,14 @@ export function escapeHtml(text: string): string {
 
 /**
  * Convert markdown formatting to HTML for PDF rendering.
- * Handles bold, italic, inline code, strikethrough, links, and headers.
+ * Handles tables, bold, italic, inline code, strikethrough, links, and headers.
  */
 export function markdownToHtml(text: string): string {
-  // First escape HTML entities
-  let result = escapeHtml(text);
+  // Process tables BEFORE escaping HTML (tables use | characters)
+  let result = processMarkdownTables(text);
+
+  // Escape HTML entities for non-table content
+  result = escapeHtmlPreservingTables(result);
 
   // Convert markdown to HTML (order matters - process more specific patterns first)
 
@@ -299,7 +308,7 @@ export function markdownToHtml(text: string): string {
   // Links [text](url) - URL is already HTML-escaped
   result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #2563eb; text-decoration: underline;">$1</a>');
 
-  // Bullet lists (- item or * item)
+  // Bullet lists (- item or * item) - only match if not part of a table separator
   result = result.replace(/^[\-\*] (.+)$/gm, '<li style="margin-left: 20px;">$1</li>');
 
   // Numbered lists (1. item)
@@ -308,8 +317,131 @@ export function markdownToHtml(text: string): string {
   // Blockquotes (> text)
   result = result.replace(/^&gt; (.+)$/gm, '<blockquote style="border-left: 3px solid #d1d5db; padding-left: 12px; color: #6b7280; margin: 8px 0;">$1</blockquote>');
 
-  // Horizontal rules (--- or ***)
-  result = result.replace(/^(---|\*\*\*)$/gm, '<hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">');
+  // Horizontal rules (--- or ***) - only standalone lines with just dashes/asterisks
+  // This regex ensures we don't match table separators or content with dashes
+  result = result.replace(/^-{3,}$/gm, '<hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">');
+  result = result.replace(/^\*{3,}$/gm, '<hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">');
 
   return result;
+}
+
+/**
+ * Process markdown tables into HTML tables with styling
+ */
+function processMarkdownTables(text: string): string {
+  const lines = text.split("\n");
+  const result: string[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // Check if this could be a table header row (contains |)
+    if (line.includes("|") && i + 1 < lines.length) {
+      const nextLine = lines[i + 1];
+
+      // Check if next line is a separator row (contains | and -)
+      if (nextLine && /^\|?[\s\-:|]+\|?$/.test(nextLine) && nextLine.includes("-")) {
+        // This is likely a table, collect all table rows
+        const tableLines: string[] = [line];
+        let j = i + 1;
+
+        // Skip separator line
+        j++;
+
+        // Collect data rows
+        while (j < lines.length && lines[j].includes("|")) {
+          tableLines.push(lines[j]);
+          j++;
+        }
+
+        // Convert to HTML table
+        const tableHtml = convertTableToHtml(tableLines);
+        result.push(tableHtml);
+        i = j;
+        continue;
+      }
+    }
+
+    result.push(line);
+    i++;
+  }
+
+  return result.join("\n");
+}
+
+/**
+ * Convert table lines to HTML table
+ */
+function convertTableToHtml(lines: string[]): string {
+  if (lines.length === 0) return "";
+
+  const tableStyle = `
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 14px;
+  `.replace(/\s+/g, " ").trim();
+
+  const headerCellStyle = `
+    border: 1px solid #d1d5db;
+    padding: 10px 12px;
+    background: #f3f4f6;
+    font-weight: 600;
+    text-align: left;
+  `.replace(/\s+/g, " ").trim();
+
+  const cellStyle = `
+    border: 1px solid #d1d5db;
+    padding: 10px 12px;
+    text-align: left;
+  `.replace(/\s+/g, " ").trim();
+
+  // Parse header row
+  const headerCells = parseTableRow(lines[0]);
+  const headerHtml = headerCells
+    .map((cell) => `<th style="${headerCellStyle}">${escapeHtml(cell)}</th>`)
+    .join("");
+
+  // Parse data rows (skip the first row which is header)
+  const dataRows = lines.slice(1);
+  const bodyHtml = dataRows
+    .map((row) => {
+      const cells = parseTableRow(row);
+      const cellsHtml = cells
+        .map((cell) => `<td style="${cellStyle}">${escapeHtml(cell)}</td>`)
+        .join("");
+      return `<tr>${cellsHtml}</tr>`;
+    })
+    .join("");
+
+  return `<table style="${tableStyle}"><thead><tr>${headerHtml}</tr></thead><tbody>${bodyHtml}</tbody></table>`;
+}
+
+/**
+ * Parse a markdown table row into cells
+ */
+function parseTableRow(row: string): string[] {
+  // Remove leading/trailing pipes and split by |
+  return row
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim());
+}
+
+/**
+ * Escape HTML but preserve already-processed table HTML
+ */
+function escapeHtmlPreservingTables(text: string): string {
+  // Split by table tags, escape non-table parts, rejoin
+  const parts = text.split(/(<table[\s\S]*?<\/table>)/g);
+  return parts
+    .map((part) => {
+      if (part.startsWith("<table")) {
+        return part; // Already processed table HTML
+      }
+      return escapeHtml(part);
+    })
+    .join("");
 }
