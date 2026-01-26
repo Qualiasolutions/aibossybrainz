@@ -8,6 +8,7 @@ import {
   LogIn,
   LogOut,
   Mail,
+  Settings,
   Shield,
 } from "lucide-react";
 import Image from "next/image";
@@ -83,6 +84,15 @@ export function SidebarUserNav({
               <Link href="/">
                 <Home className="mr-2.5 h-4 w-4 text-rose-500" />
                 <span className="text-sm font-medium">Homepage</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              asChild
+              className="rounded-lg px-3 py-2.5 cursor-pointer focus:bg-rose-50 focus:text-rose-600"
+            >
+              <Link href="/account">
+                <Settings className="mr-2.5 h-4 w-4 text-rose-500" />
+                <span className="text-sm font-medium">Account</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem

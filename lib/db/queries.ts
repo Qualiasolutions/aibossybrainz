@@ -1568,6 +1568,28 @@ export async function updateUserProfile({
   }
 }
 
+export async function getUserFullProfile({ userId }: { userId: string }) {
+  try {
+    // Use service client to bypass RLS for subscription data
+    const supabase = createServiceClient();
+    const { data, error } = await supabase
+      .from("User")
+      .select(
+        "id, email, displayName, companyName, industry, businessGoals, preferredBotType, onboardedAt, subscriptionType, subscriptionStatus, subscriptionStartDate, subscriptionEndDate, stripeCustomerId",
+      )
+      .eq("id", userId)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error;
+    return data || null;
+  } catch (_error) {
+    throw new ChatSDKError(
+      "bad_request:database",
+      "Failed to get user full profile",
+    );
+  }
+}
+
 // ============================================
 // STRATEGY CANVAS QUERIES
 // ============================================

@@ -1,7 +1,9 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { getStripe } from "@/lib/stripe/config";
+import { getUserFullProfile } from "@/lib/db/queries";
+import { sendTrialStartedEmail } from "@/lib/email/subscription-emails";
+import { getStripe, PLAN_DETAILS } from "@/lib/stripe/config";
 import {
   activateSubscription,
   renewSubscription,
@@ -60,15 +62,32 @@ export async function POST(request: Request) {
         if (userId && subscriptionType) {
           // Check if subscription is in trial
           if (subscription.status === "trialing" && subscription.trial_end) {
+            const trialEndDate = new Date(subscription.trial_end * 1000);
             await startTrial({
               userId,
               subscriptionType,
               stripeSubscriptionId: subscription.id,
-              trialEndDate: new Date(subscription.trial_end * 1000),
+              trialEndDate,
             });
             console.log(
               `[Stripe Webhook] Started 7-day trial for ${subscriptionType} subscription for user ${userId}`
             );
+
+            // Send trial started email
+            try {
+              const profile = await getUserFullProfile({ userId });
+              if (profile?.email) {
+                const planDetails = PLAN_DETAILS[subscriptionType];
+                await sendTrialStartedEmail({
+                  email: profile.email,
+                  displayName: profile.displayName,
+                  trialEndDate,
+                  planName: planDetails?.name || subscriptionType,
+                });
+              }
+            } catch (emailError) {
+              console.error("[Stripe Webhook] Failed to send trial email:", emailError);
+            }
           } else {
             await activateSubscription({
               userId,
