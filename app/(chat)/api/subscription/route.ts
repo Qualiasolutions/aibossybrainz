@@ -32,7 +32,13 @@ export async function GET() {
 
     const profile = await getUserFullProfile({ userId: user.id });
 
+    // Check if subscription is active (includes trialing)
+    const isActive =
+      profile?.subscriptionStatus === "active" ||
+      profile?.subscriptionStatus === "trialing";
+
     return Response.json({
+      isActive,
       subscriptionType: profile?.subscriptionType ?? null,
       subscriptionStatus: profile?.subscriptionStatus ?? null,
       subscriptionStartDate: profile?.subscriptionStartDate ?? null,
@@ -43,6 +49,7 @@ export async function GET() {
     console.error("[Subscription API] GET error:", error);
     // Return a graceful fallback instead of error for GET requests
     return Response.json({
+      isActive: false,
       subscriptionType: null,
       subscriptionStatus: null,
       subscriptionStartDate: null,

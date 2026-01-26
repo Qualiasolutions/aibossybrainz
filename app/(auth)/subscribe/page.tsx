@@ -189,6 +189,10 @@ function SubscribeContent() {
   const selectedPlan = plan && planDetails[plan] ? planDetails[plan] : null;
 
   useEffect(() => {
+    let pollInterval: NodeJS.Timeout | null = null;
+    let pollCount = 0;
+    const maxPolls = 15; // 30 seconds max (15 * 2s)
+
     async function checkSubscription() {
       try {
         const res = await fetch("/api/subscription");
@@ -196,11 +200,15 @@ function SubscribeContent() {
           const data = await res.json();
           if (data.isActive) {
             setHasActiveSubscription(true);
+            if (pollInterval) clearInterval(pollInterval);
             // If payment=success, show success page, otherwise redirect
             if (payment !== "success") {
               router.push(redirectPath);
               return;
             }
+          } else if (payment === "success" && pollCount < maxPolls) {
+            // Keep polling - webhook might not have processed yet
+            return;
           }
         }
       } catch (error) {
@@ -208,7 +216,25 @@ function SubscribeContent() {
       }
       setCheckingSubscription(false);
     }
+
     checkSubscription();
+
+    // If payment=success, poll for subscription activation
+    if (payment === "success") {
+      pollInterval = setInterval(() => {
+        pollCount++;
+        if (pollCount >= maxPolls) {
+          if (pollInterval) clearInterval(pollInterval);
+          setCheckingSubscription(false);
+          return;
+        }
+        checkSubscription();
+      }, 2000);
+    }
+
+    return () => {
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [router, redirectPath, payment]);
 
   const handleSaveAndCheckout = async () => {
