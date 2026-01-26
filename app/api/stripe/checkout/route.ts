@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       userId: user.id,
       email: user.email,
       planId: planId as StripePlanId,
-      successUrl: `${origin}/new?payment=success`,
+      successUrl: `${origin}/subscribe?payment=success&redirect=/new`,
       cancelUrl: `${origin}/pricing?payment=cancelled`,
     });
 
