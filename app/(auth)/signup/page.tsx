@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -13,19 +14,19 @@ import { type SignupActionState, signup } from "../actions";
 
 const signupHighlights = [
   {
-    title: "You're Here to Build",
+    title: "Strategic Intelligence",
     description:
-      "This isn't a content vault for 'someday.' Every tool, every prompt, every checklist is built to help your business grow.",
+      "Access AI executives trained on proven sales and marketing frameworks, ready to elevate your business decisions.",
   },
   {
-    title: "Your Prompt Matters",
+    title: "Precision Guidance",
     description:
-      "The more detailed your prompts, the more detailed your responses. The more specific your ask, the better the strategy.",
+      "The more context you provide, the more tailored and actionable your strategic recommendations become.",
   },
   {
-    title: "Implement, Don't Hoard",
+    title: "Results-Focused",
     description:
-      "Clarity without action is just procrastination. Pick one thing and implement it to achieve better business outcomes.",
+      "Every conversation is designed to drive measurable outcomes. Think strategy, then execute.",
   },
 ];
 
@@ -96,41 +97,43 @@ function SignupContent() {
         title="Check Your Email"
       >
         <div className="space-y-6 text-center">
-          <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-rose-100">
-            <Mail className="size-8 text-rose-600" />
-          </div>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+            className="mx-auto flex size-16 items-center justify-center rounded-full bg-stone-100"
+          >
+            <Mail className="size-7 text-stone-600" />
+          </motion.div>
           <div className="space-y-2">
-            <h2 className="font-semibold text-2xl text-slate-900">
+            <h2 className="font-light text-2xl text-stone-900 tracking-tight">
               Check your inbox
             </h2>
-            <p className="text-slate-500">
+            <p className="text-stone-500">
               We've sent a confirmation email to{" "}
-              <span className="font-medium text-slate-700">{email}</span>
+              <span className="font-medium text-stone-700">{email}</span>
             </p>
           </div>
-          <div className="rounded-xl bg-slate-50 p-4">
-            <p className="text-sm text-slate-600">
+          <div className="rounded-xl border border-stone-100 bg-stone-50/50 p-4">
+            <p className="text-sm text-stone-600">
               Click the link in the email to confirm your account and{" "}
               {plan ? (
-                <>
-                  start your{" "}
-                  <span className="font-medium text-rose-600">
-                    7-day free trial
-                  </span>
-                </>
+                <span className="font-medium text-stone-900">
+                  start your 7-day free trial
+                </span>
               ) : (
                 "get started"
               )}
             </p>
           </div>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-stone-400">
             Didn't receive it? Check your spam folder or{" "}
             <button
               onClick={() => {
                 setShowCheckEmail(false);
                 hasHandledSuccess.current = false;
               }}
-              className="font-medium text-rose-600 hover:text-rose-700"
+              className="font-medium text-stone-600 hover:text-stone-900 transition-colors"
             >
               try again
             </button>
@@ -142,29 +145,29 @@ function SignupContent() {
 
   return (
     <AuthShell
-      description="Join thousands of founders using AI-powered sales and marketing executives to grow their business."
+      description="Join business leaders using AI-powered executive intelligence to transform their sales and marketing strategy."
       highlights={signupHighlights}
-      title="Start Your Sales & Marketing Transformation"
+      title="Begin Your Journey"
     >
       <div className="space-y-2 text-center">
-        <h2 className="font-semibold text-2xl text-slate-900">
+        <h2 className="font-light text-2xl text-stone-900 tracking-tight">
           Create Account
         </h2>
-        <p className="text-slate-500 text-sm">
+        <p className="text-stone-500 text-sm">
           {plan ? (
             <>
               Get started with the{" "}
-              <span className="font-medium text-rose-600">
+              <span className="font-medium text-stone-900">
                 {plan === "monthly"
-                  ? "Most Flexible"
+                  ? "Monthly"
                   : plan === "annual"
-                    ? "Best Value"
-                    : "Exclusive Lifetime"}
+                    ? "Annual"
+                    : "Lifetime"}
               </span>{" "}
               plan
             </>
           ) : (
-            "The AI Boss Brainz Workspace — Powered by Alecci Media"
+            "Access your AI executive workspace"
           )}
         </p>
       </div>
@@ -175,11 +178,11 @@ function SignupContent() {
       >
         <SubmitButton isSuccessful={isSuccessful}>Create Account</SubmitButton>
       </AuthForm>
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-sm text-stone-500">
         Already have an account?{" "}
         <Link
           href={`/login${plan ? `?plan=${plan}` : ""}`}
-          className="font-medium text-rose-600 hover:text-rose-700"
+          className="font-medium text-stone-900 hover:text-stone-700 transition-colors"
         >
           Sign in
         </Link>
@@ -192,8 +195,8 @@ export default function SignupPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center">
-          Loading...
+        <div className="flex min-h-screen items-center justify-center bg-stone-50">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-stone-900" />
         </div>
       }
     >

@@ -1,10 +1,13 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { AlertTriangle, Check } from "lucide-react";
 import Form from "next/form";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useActionState, useEffect, useState } from "react";
 import { AuthShell } from "@/components/auth-shell";
+import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/components/submit-button";
 import { toast } from "@/components/toast";
 import { Input } from "@/components/ui/input";
@@ -13,19 +16,19 @@ import { type ResetPasswordActionState, resetPassword } from "../actions";
 
 const resetPasswordHighlights = [
   {
-    title: "Strong Password Tips",
+    title: "Strong Password",
     description:
       "Use at least 8 characters with a mix of letters, numbers, and symbols for better security.",
   },
   {
-    title: "Keep It Secure",
+    title: "Unique Credentials",
     description:
-      "Don't reuse passwords from other accounts. Your AI executives deserve unique protection!",
+      "Don't reuse passwords from other accounts. Your AI executives deserve unique protection.",
   },
   {
     title: "Almost There",
     description:
-      "Once you reset your password, you'll be automatically logged in and ready to go!",
+      "Once you reset your password, you'll be automatically logged in and ready to go.",
   },
 ];
 
@@ -93,34 +96,29 @@ function ResetPasswordContent() {
         title="Link Expired"
       >
         <div className="space-y-6 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-100">
-            <svg
-              className="h-8 w-8 text-rose-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-          </div>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+            className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-stone-100"
+          >
+            <AlertTriangle className="h-8 w-8 text-stone-600" />
+          </motion.div>
           <div className="space-y-2">
-            <h2 className="font-semibold text-2xl text-slate-900">
+            <h2 className="font-light text-2xl text-stone-900 tracking-tight">
               Reset Link Invalid
             </h2>
-            <p className="text-slate-500 text-sm">
+            <p className="text-stone-500 text-sm">
               This password reset link has expired or is invalid.
             </p>
           </div>
-          <Link
-            href="/forgot-password"
-            className="inline-block rounded-2xl bg-gradient-to-r from-rose-500 to-red-500 px-6 py-3 font-medium text-white shadow-lg hover:from-rose-600 hover:to-red-600"
-          >
-            Request New Link
+          <Link href="/forgot-password">
+            <Button
+              size="lg"
+              className="h-12 w-full bg-stone-900 text-white shadow-lg shadow-stone-900/10 hover:bg-stone-800"
+            >
+              Request New Link
+            </Button>
           </Link>
         </div>
       </AuthShell>
@@ -135,29 +133,22 @@ function ResetPasswordContent() {
         title="Password Reset"
       >
         <div className="space-y-6 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-            <svg
-              className="h-8 w-8 text-emerald-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+            className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-stone-900"
+          >
+            <Check className="h-8 w-8 text-white" strokeWidth={3} />
+          </motion.div>
           <div className="space-y-2">
-            <h2 className="font-semibold text-2xl text-slate-900">
-              Welcome Back!
+            <h2 className="font-light text-2xl text-stone-900 tracking-tight">
+              Welcome Back
             </h2>
-            <p className="text-slate-500 text-sm">
+            <p className="text-stone-500 text-sm">
               Your password has been successfully updated.
             </p>
-            <p className="text-slate-500 text-sm">
+            <p className="text-stone-400 text-sm">
               Taking you to your AI executives...
             </p>
           </div>
@@ -173,13 +164,13 @@ function ResetPasswordContent() {
       title="Create New Password"
     >
       <div className="space-y-2 text-center">
-        <h2 className="font-semibold text-2xl text-slate-900">New Password</h2>
-        <p className="text-slate-500 text-sm">Enter your new password below</p>
+        <h2 className="font-light text-2xl text-stone-900 tracking-tight">New Password</h2>
+        <p className="text-stone-500 text-sm">Enter your new password below</p>
       </div>
       <Form action={formAction} className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <Label
-            className="font-medium text-slate-600 text-sm"
+            className="font-medium text-stone-700 text-sm"
             htmlFor="password"
           >
             New Password
@@ -187,7 +178,7 @@ function ResetPasswordContent() {
           <Input
             autoComplete="new-password"
             autoFocus
-            className="h-12 rounded-2xl border-transparent bg-white/80 px-4 text-base text-slate-700 shadow-[inset_0_2px_12px_rgba(244,114,182,0.12)] shadow-inner transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-rose-400/60 md:text-sm"
+            className="h-11 border-stone-200 bg-white focus:border-stone-400 focus:ring-stone-400"
             id="password"
             name="password"
             placeholder="Min 6 characters"
@@ -198,14 +189,14 @@ function ResetPasswordContent() {
         </div>
         <div className="flex flex-col gap-2">
           <Label
-            className="font-medium text-slate-600 text-sm"
+            className="font-medium text-stone-700 text-sm"
             htmlFor="confirmPassword"
           >
             Confirm Password
           </Label>
           <Input
             autoComplete="new-password"
-            className="h-12 rounded-2xl border-transparent bg-white/80 px-4 text-base text-slate-700 shadow-[inset_0_2px_12px_rgba(244,114,182,0.12)] shadow-inner transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-rose-400/60 md:text-sm"
+            className="h-11 border-stone-200 bg-white focus:border-stone-400 focus:ring-stone-400"
             id="confirmPassword"
             name="confirmPassword"
             placeholder="Re-enter your password"
@@ -216,10 +207,10 @@ function ResetPasswordContent() {
         </div>
         <SubmitButton isSuccessful={isSuccessful}>Reset Password</SubmitButton>
       </Form>
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-sm text-stone-500">
         <Link
           href="/login"
-          className="font-medium text-rose-600 hover:text-rose-700"
+          className="font-medium text-stone-900 hover:text-stone-700 transition-colors"
         >
           Back to Sign In
         </Link>
@@ -232,8 +223,8 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center">
-          Loading...
+        <div className="flex min-h-screen items-center justify-center bg-stone-50">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-stone-900" />
         </div>
       }
     >

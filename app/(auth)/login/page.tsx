@@ -12,19 +12,19 @@ import { type LoginActionState, login } from "../actions";
 
 const loginHighlights = [
   {
-    title: "You're Here to Build",
+    title: "Strategic Intelligence",
     description:
-      "This isn't a content vault for 'someday.' Every tool, every prompt, every checklist is built to help your business grow.",
+      "Access AI executives trained on proven sales and marketing frameworks, ready to elevate your business decisions.",
   },
   {
-    title: "Your Prompt Matters",
+    title: "Precision Guidance",
     description:
-      "The more detailed your prompts, the more detailed your responses. The more specific your ask, the better the strategy.",
+      "The more context you provide, the more tailored and actionable your strategic recommendations become.",
   },
   {
-    title: "Implement, Don't Hoard",
+    title: "Results-Focused",
     description:
-      "Clarity without action is just procrastination. Pick one thing and implement it to achieve better business outcomes.",
+      "Every conversation is designed to drive measurable outcomes. Think strategy, then execute.",
   },
 ];
 
@@ -94,27 +94,27 @@ function LoginContent() {
 
   return (
     <AuthShell
-      description="We're excited to talk to you. Don't forget, you can hear our voices too. Ask Alexandria and Kim anything when it comes to sales and marketing."
+      description="Your AI executive team awaits. Alexandria and Kim are ready to provide strategic guidance for your sales and marketing challenges."
       highlights={loginHighlights}
-      title="Welcome Back to Your Sales & Marketing Superheroes"
+      title="Welcome Back"
     >
       <div className="space-y-2 text-center">
-        <h2 className="font-semibold text-2xl text-slate-900">Sign in</h2>
-        <p className="text-slate-500 text-sm">
+        <h2 className="font-light text-2xl text-stone-900 tracking-tight">Sign in</h2>
+        <p className="text-stone-500 text-sm">
           {plan ? (
             <>
               Continue with the{" "}
-              <span className="font-medium text-rose-600">
+              <span className="font-medium text-stone-900">
                 {plan === "monthly"
-                  ? "Most Flexible"
+                  ? "Monthly"
                   : plan === "annual"
-                    ? "Best Value"
-                    : "Exclusive Lifetime"}
+                    ? "Annual"
+                    : "Lifetime"}
               </span>{" "}
               plan
             </>
           ) : (
-            "The AI Boss Brainz Workspace — Powered by Alecci Media"
+            "Access your AI executive workspace"
           )}
         </p>
       </div>
@@ -126,20 +126,20 @@ function LoginContent() {
         <div className="flex justify-end -mt-2">
           <Link
             href="/forgot-password"
-            className="text-sm font-medium text-rose-600 hover:text-rose-700"
+            className="text-sm text-stone-500 hover:text-stone-900 transition-colors"
           >
             Forgot password?
           </Link>
         </div>
         <SubmitButton isSuccessful={isSuccessful || isRedirecting}>
-          {isRedirecting ? "Redirecting to checkout..." : "Sign in"}
+          {isRedirecting ? "Redirecting..." : "Sign in"}
         </SubmitButton>
       </AuthForm>
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-sm text-stone-500">
         Don't have an account?{" "}
         <Link
           href={`/signup${plan ? `?plan=${plan}` : ""}`}
-          className="font-medium text-rose-600 hover:text-rose-700"
+          className="font-medium text-stone-900 hover:text-stone-700 transition-colors"
         >
           Create one
         </Link>
@@ -152,8 +152,8 @@ export default function Page() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center">
-          Loading...
+        <div className="flex min-h-screen items-center justify-center bg-stone-50">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-stone-900" />
         </div>
       }
     >

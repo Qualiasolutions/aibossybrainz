@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { Check } from "lucide-react";
 import Form from "next/form";
 import Link from "next/link";
 import { Suspense, useActionState, useEffect, useState } from "react";
@@ -15,7 +17,7 @@ import {
 
 const forgotPasswordHighlights = [
   {
-    title: "Secure Reset Process",
+    title: "Secure Process",
     description:
       "We'll send a secure link to your email to reset your password. The link expires in 1 hour.",
   },
@@ -25,9 +27,9 @@ const forgotPasswordHighlights = [
       "If you don't see the email, check your spam folder. The email comes from noreply@aleccimedia.com.",
   },
   {
-    title: "Need Help?",
+    title: "Need Assistance?",
     description:
-      "If you're still having trouble, contact our support team for assistance.",
+      "Contact our support team if you continue to have trouble accessing your account.",
   },
 ];
 
@@ -73,46 +75,39 @@ function ForgotPasswordContent() {
         title="Check Your Email"
       >
         <div className="space-y-6 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-            <svg
-              className="h-8 w-8 text-emerald-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+            className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-stone-900"
+          >
+            <Check className="h-8 w-8 text-white" strokeWidth={3} />
+          </motion.div>
           <div className="space-y-2">
-            <h2 className="font-semibold text-2xl text-slate-900">
-              Email Sent!
+            <h2 className="font-light text-2xl text-stone-900 tracking-tight">
+              Email Sent
             </h2>
-            <p className="text-slate-500 text-sm">
+            <p className="text-stone-500 text-sm">
               We sent a password reset link to{" "}
-              <span className="font-medium text-slate-700">{email}</span>
+              <span className="font-medium text-stone-700">{email}</span>
             </p>
-            <p className="text-slate-500 text-sm">
+            <p className="text-stone-400 text-sm">
               The link will expire in 1 hour.
             </p>
           </div>
-          <div className="space-y-3 pt-4">
-            <p className="text-slate-500 text-sm">
+          <div className="space-y-3 pt-2">
+            <p className="text-stone-500 text-sm">
               Didn't receive the email?{" "}
               <button
                 onClick={() => setIsSuccessful(false)}
-                className="font-medium text-rose-600 hover:text-rose-700"
+                className="font-medium text-stone-900 hover:text-stone-700 transition-colors"
               >
                 Try again
               </button>
             </p>
             <Link
               href="/login"
-              className="block font-medium text-rose-600 hover:text-rose-700"
+              className="block font-medium text-stone-500 hover:text-stone-900 transition-colors"
             >
               Back to Sign In
             </Link>
@@ -129,22 +124,22 @@ function ForgotPasswordContent() {
       title="Reset Your Password"
     >
       <div className="space-y-2 text-center">
-        <h2 className="font-semibold text-2xl text-slate-900">
+        <h2 className="font-light text-2xl text-stone-900 tracking-tight">
           Forgot Password?
         </h2>
-        <p className="text-slate-500 text-sm">
+        <p className="text-stone-500 text-sm">
           Enter your email and we'll send you a reset link
         </p>
       </div>
       <Form action={handleSubmit} className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
-          <Label className="font-medium text-slate-600 text-sm" htmlFor="email">
+          <Label className="font-medium text-stone-700 text-sm" htmlFor="email">
             Email Address
           </Label>
           <Input
             autoComplete="email"
             autoFocus
-            className="h-12 rounded-2xl border-transparent bg-white/80 px-4 text-base text-slate-700 shadow-[inset_0_2px_12px_rgba(244,114,182,0.12)] shadow-inner transition-all placeholder:text-slate-400 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-rose-400/60 md:text-sm"
+            className="h-11 border-stone-200 bg-white focus:border-stone-400 focus:ring-stone-400"
             defaultValue={email}
             id="email"
             name="email"
@@ -155,11 +150,11 @@ function ForgotPasswordContent() {
         </div>
         <SubmitButton isSuccessful={isSuccessful}>Send Reset Link</SubmitButton>
       </Form>
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-sm text-stone-500">
         Remember your password?{" "}
         <Link
           href="/login"
-          className="font-medium text-rose-600 hover:text-rose-700"
+          className="font-medium text-stone-900 hover:text-stone-700 transition-colors"
         >
           Sign in
         </Link>
@@ -172,8 +167,8 @@ export default function ForgotPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center">
-          Loading...
+        <div className="flex min-h-screen items-center justify-center bg-stone-50">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-stone-900" />
         </div>
       }
     >

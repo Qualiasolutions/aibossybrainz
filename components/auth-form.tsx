@@ -20,14 +20,14 @@ export function AuthForm({
   return (
     <Form action={action} className={cn("flex flex-col gap-5", className)}>
       <div className="flex flex-col gap-2">
-        <Label className="font-medium text-slate-600 text-sm" htmlFor="email">
-          Work Email
+        <Label className="font-medium text-stone-700 text-sm" htmlFor="email">
+          Email
         </Label>
 
         <Input
           autoComplete="email"
           autoFocus
-          className="h-12 rounded-2xl border-transparent bg-white/80 px-4 text-base text-slate-700 shadow-[inset_0_2px_12px_rgba(244,114,182,0.12)] shadow-inner transition-all placeholder:text-slate-400 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-rose-400/60 md:text-sm"
+          className="h-11 border-stone-200 bg-white focus:border-stone-400 focus:ring-stone-400"
           defaultValue={defaultEmail}
           id="email"
           name="email"
@@ -39,7 +39,7 @@ export function AuthForm({
 
       <div className="flex flex-col gap-2">
         <Label
-          className="font-medium text-slate-600 text-sm"
+          className="font-medium text-stone-700 text-sm"
           htmlFor="password"
         >
           Password
@@ -47,10 +47,10 @@ export function AuthForm({
 
         <Input
           autoComplete="current-password"
-          className="h-12 rounded-2xl border-transparent bg-white/80 px-4 text-base text-slate-700 shadow-[inset_0_2px_12px_rgba(244,114,182,0.12)] shadow-inner transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-rose-400/60 md:text-sm"
+          className="h-11 border-stone-200 bg-white focus:border-stone-400 focus:ring-stone-400"
           id="password"
           name="password"
-          placeholder="********"
+          placeholder="Enter your password"
           required
           type="password"
         />
