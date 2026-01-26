@@ -5,7 +5,7 @@ import { withCsrf } from "@/lib/security/with-csrf";
 import { cancelSubscription, createPortalSession } from "@/lib/stripe/actions";
 import { createClient } from "@/lib/supabase/server";
 
-// GET - Fetch user subscription info
+// GET - Fetch user subscription info (accessible without auth for polling after payment)
 export async function GET() {
   try {
     const supabase = await createClient();
@@ -14,13 +14,16 @@ export async function GET() {
       error: authError,
     } = await supabase.auth.getUser();
 
-    if (authError) {
-      console.error("[Subscription API] Auth error:", authError);
-      return new ChatSDKError("unauthorized:chat").toResponse();
-    }
-
-    if (!user || !user.email) {
-      return new ChatSDKError("unauthorized:chat").toResponse();
+    // Return gracefully for unauthenticated users (needed for subscribe page polling)
+    if (authError || !user || !user.email) {
+      return Response.json({
+        isActive: false,
+        subscriptionType: null,
+        subscriptionStatus: null,
+        subscriptionStartDate: null,
+        subscriptionEndDate: null,
+        hasStripeSubscription: false,
+      });
     }
 
     try {

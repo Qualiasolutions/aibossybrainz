@@ -63,7 +63,6 @@ const industries = [
 
 // Success component shown after payment
 function PaymentSuccess({ redirectPath }: { redirectPath: string }) {
-  const router = useRouter();
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
@@ -71,7 +70,8 @@ function PaymentSuccess({ redirectPath }: { redirectPath: string }) {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          router.push(redirectPath);
+          // Use window.location for a clean redirect
+          window.location.href = redirectPath;
           return 0;
         }
         return prev - 1;
@@ -79,7 +79,11 @@ function PaymentSuccess({ redirectPath }: { redirectPath: string }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [router, redirectPath]);
+  }, [redirectPath]);
+
+  const handleStartNow = () => {
+    window.location.href = redirectPath;
+  };
 
   return (
     <div className="relative min-h-screen bg-stone-50">
@@ -102,6 +106,7 @@ function PaymentSuccess({ redirectPath }: { redirectPath: string }) {
             height={40}
             className="h-9 w-auto object-contain"
             priority
+            unoptimized
           />
         </motion.div>
 
@@ -118,7 +123,7 @@ function PaymentSuccess({ redirectPath }: { redirectPath: string }) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.4, delay: 0.2, type: "spring", stiffness: 200 }}
-              className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-stone-900"
+              className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-600"
             >
               <Check className="h-8 w-8 text-white" strokeWidth={3} />
             </motion.div>
@@ -129,7 +134,7 @@ function PaymentSuccess({ redirectPath }: { redirectPath: string }) {
               transition={{ delay: 0.3 }}
               className="text-2xl font-light text-stone-900 tracking-tight sm:text-3xl"
             >
-              Welcome to Boss Brainz
+              Welcome to Boss Brainz!
             </motion.h1>
 
             <motion.p
@@ -138,7 +143,7 @@ function PaymentSuccess({ redirectPath }: { redirectPath: string }) {
               transition={{ delay: 0.35 }}
               className="mt-3 text-stone-500"
             >
-              Your 7-day free trial has started. You now have full access to your AI executive team.
+              Thank you for subscribing! Your 7-day free trial has started. You now have full access to your AI executive team.
             </motion.p>
 
             <motion.div
@@ -147,14 +152,13 @@ function PaymentSuccess({ redirectPath }: { redirectPath: string }) {
               transition={{ delay: 0.4 }}
               className="mt-8"
             >
-              <Link href={redirectPath}>
-                <Button
-                  size="lg"
-                  className="h-12 w-full bg-stone-900 text-white shadow-lg shadow-stone-900/10 transition-all hover:bg-stone-800"
-                >
-                  Start Your First Conversation
-                </Button>
-              </Link>
+              <Button
+                size="lg"
+                onClick={handleStartNow}
+                className="h-12 w-full bg-stone-900 text-white shadow-lg shadow-stone-900/10 transition-all hover:bg-stone-800"
+              >
+                Start Your First Conversation
+              </Button>
             </motion.div>
 
             <motion.p
@@ -192,29 +196,39 @@ function SubscribeContent() {
     let pollInterval: NodeJS.Timeout | null = null;
     let pollCount = 0;
     const maxPolls = 15; // 30 seconds max (15 * 2s)
+    let isMounted = true;
 
     async function checkSubscription() {
       try {
         const res = await fetch("/api/subscription");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.isActive) {
-            setHasActiveSubscription(true);
-            if (pollInterval) clearInterval(pollInterval);
-            // If payment=success, show success page, otherwise redirect
-            if (payment !== "success") {
-              router.push(redirectPath);
-              return;
-            }
-          } else if (payment === "success" && pollCount < maxPolls) {
-            // Keep polling - webhook might not have processed yet
+        const data = await res.json();
+
+        if (!isMounted) return;
+
+        if (data.isActive) {
+          setHasActiveSubscription(true);
+          if (pollInterval) clearInterval(pollInterval);
+          // If payment=success, show success page, otherwise redirect
+          if (payment !== "success") {
+            router.push(redirectPath);
             return;
           }
+          setCheckingSubscription(false);
+        } else if (payment === "success" && pollCount < maxPolls) {
+          // Keep polling - webhook might not have processed yet
+          return;
+        } else {
+          setCheckingSubscription(false);
         }
       } catch (error) {
         console.error("Failed to check subscription:", error);
+        if (!isMounted) return;
+        // On error during payment success, keep polling unless we hit max
+        if (payment === "success" && pollCount < maxPolls) {
+          return;
+        }
+        setCheckingSubscription(false);
       }
-      setCheckingSubscription(false);
     }
 
     checkSubscription();
@@ -225,6 +239,8 @@ function SubscribeContent() {
         pollCount++;
         if (pollCount >= maxPolls) {
           if (pollInterval) clearInterval(pollInterval);
+          // After max polls, show success anyway - webhook may be slow
+          setHasActiveSubscription(true);
           setCheckingSubscription(false);
           return;
         }
@@ -233,6 +249,7 @@ function SubscribeContent() {
     }
 
     return () => {
+      isMounted = false;
       if (pollInterval) clearInterval(pollInterval);
     };
   }, [router, redirectPath, payment]);
