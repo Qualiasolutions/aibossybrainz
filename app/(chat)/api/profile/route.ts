@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { safeParseJson } from "@/lib/api-utils";
 import {
   ensureUserExists,
@@ -8,7 +9,6 @@ import { ChatSDKError } from "@/lib/errors";
 import { withCsrf } from "@/lib/security/with-csrf";
 import { createClient } from "@/lib/supabase/server";
 import type { BotType } from "@/lib/supabase/types";
-import { z } from "zod";
 
 // Validation schema for profile updates
 const profileUpdateSchema = z.object({
@@ -82,8 +82,13 @@ export const POST = withCsrf(async (request: Request) => {
       );
     }
 
-    const { displayName, companyName, industry, businessGoals, preferredBotType } =
-      parseResult.data;
+    const {
+      displayName,
+      companyName,
+      industry,
+      businessGoals,
+      preferredBotType,
+    } = parseResult.data;
 
     await updateUserProfile({
       userId: user.id,

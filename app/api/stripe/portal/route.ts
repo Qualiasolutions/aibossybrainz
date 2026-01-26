@@ -10,13 +10,11 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
 
     if (!user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "";
+    const origin =
+      request.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "";
 
     const portalUrl = await createPortalSession({
       userId: user.id,
@@ -29,7 +27,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { error: "Failed to create portal session" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

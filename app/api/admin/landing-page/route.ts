@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { isUserAdmin } from "@/lib/admin/queries";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import type { LandingPageContent, LandingPageSection } from "@/lib/supabase/types";
+import type {
+  LandingPageContent,
+  LandingPageSection,
+} from "@/lib/supabase/types";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +22,7 @@ export async function GET() {
     console.error("[Landing Page CMS] Error fetching content:", error);
     return NextResponse.json(
       { error: "Failed to fetch content" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -64,7 +67,7 @@ export async function PATCH(request: Request) {
   if (!section || !key || value === undefined) {
     return NextResponse.json(
       { error: "Missing required fields: section, key, value" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -85,7 +88,7 @@ export async function PATCH(request: Request) {
     console.error("[Landing Page CMS] Error updating content:", error);
     return NextResponse.json(
       { error: "Failed to update content" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -116,7 +119,7 @@ export async function PUT(request: Request) {
   if (!updates || !Array.isArray(updates)) {
     return NextResponse.json(
       { error: "Missing required field: updates (array)" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -147,7 +150,7 @@ export async function PUT(request: Request) {
   if (errors.length > 0) {
     return NextResponse.json(
       { success: false, results, errors },
-      { status: 207 } // Multi-status
+      { status: 207 }, // Multi-status
     );
   }
 

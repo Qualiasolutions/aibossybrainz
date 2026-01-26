@@ -1,15 +1,15 @@
 "use client";
 
+import Form from "next/form";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useActionState, useEffect, useState, Suspense } from "react";
+import { Suspense, useActionState, useEffect, useState } from "react";
 import { AuthShell } from "@/components/auth-shell";
 import { SubmitButton } from "@/components/submit-button";
 import { toast } from "@/components/toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Form from "next/form";
-import { resetPassword, type ResetPasswordActionState } from "../actions";
+import { type ResetPasswordActionState, resetPassword } from "../actions";
 
 const resetPasswordHighlights = [
   {
@@ -44,15 +44,16 @@ function ResetPasswordContent() {
       setIsInvalidLink(true);
       toast({
         type: "error",
-        description: errorDescription || "This reset link is invalid or has expired.",
+        description:
+          errorDescription || "This reset link is invalid or has expired.",
       });
     }
   }, [searchParams]);
 
-  const [state, formAction] = useActionState<ResetPasswordActionState, FormData>(
-    resetPassword,
-    { status: "idle" },
-  );
+  const [state, formAction] = useActionState<
+    ResetPasswordActionState,
+    FormData
+  >(resetPassword, { status: "idle" });
 
   useEffect(() => {
     if (state.status === "success") {
@@ -68,7 +69,8 @@ function ResetPasswordContent() {
     } else if (state.status === "failed") {
       toast({
         type: "error",
-        description: state.message || "Failed to reset password. Please try again.",
+        description:
+          state.message || "Failed to reset password. Please try again.",
       });
     } else if (state.status === "invalid_data") {
       toast({
@@ -172,9 +174,7 @@ function ResetPasswordContent() {
     >
       <div className="space-y-2 text-center">
         <h2 className="font-semibold text-2xl text-slate-900">New Password</h2>
-        <p className="text-slate-500 text-sm">
-          Enter your new password below
-        </p>
+        <p className="text-slate-500 text-sm">Enter your new password below</p>
       </div>
       <Form action={formAction} className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
@@ -214,9 +214,7 @@ function ResetPasswordContent() {
             minLength={6}
           />
         </div>
-        <SubmitButton isSuccessful={isSuccessful}>
-          Reset Password
-        </SubmitButton>
+        <SubmitButton isSuccessful={isSuccessful}>Reset Password</SubmitButton>
       </Form>
       <p className="text-center text-sm text-slate-500">
         <Link
@@ -232,7 +230,13 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
       <ResetPasswordContent />
     </Suspense>
   );

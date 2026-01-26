@@ -1,14 +1,17 @@
 "use client";
 
+import Form from "next/form";
 import Link from "next/link";
-import { useActionState, useEffect, useState, Suspense } from "react";
+import { Suspense, useActionState, useEffect, useState } from "react";
 import { AuthShell } from "@/components/auth-shell";
 import { SubmitButton } from "@/components/submit-button";
 import { toast } from "@/components/toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Form from "next/form";
-import { requestPasswordReset, type ForgotPasswordActionState } from "../actions";
+import {
+  type ForgotPasswordActionState,
+  requestPasswordReset,
+} from "../actions";
 
 const forgotPasswordHighlights = [
   {
@@ -32,10 +35,10 @@ function ForgotPasswordContent() {
   const [email, setEmail] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
 
-  const [state, formAction] = useActionState<ForgotPasswordActionState, FormData>(
-    requestPasswordReset,
-    { status: "idle" },
-  );
+  const [state, formAction] = useActionState<
+    ForgotPasswordActionState,
+    FormData
+  >(requestPasswordReset, { status: "idle" });
 
   useEffect(() => {
     if (state.status === "success") {
@@ -86,7 +89,9 @@ function ForgotPasswordContent() {
             </svg>
           </div>
           <div className="space-y-2">
-            <h2 className="font-semibold text-2xl text-slate-900">Email Sent!</h2>
+            <h2 className="font-semibold text-2xl text-slate-900">
+              Email Sent!
+            </h2>
             <p className="text-slate-500 text-sm">
               We sent a password reset link to{" "}
               <span className="font-medium text-slate-700">{email}</span>
@@ -124,7 +129,9 @@ function ForgotPasswordContent() {
       title="Reset Your Password"
     >
       <div className="space-y-2 text-center">
-        <h2 className="font-semibold text-2xl text-slate-900">Forgot Password?</h2>
+        <h2 className="font-semibold text-2xl text-slate-900">
+          Forgot Password?
+        </h2>
         <p className="text-slate-500 text-sm">
           Enter your email and we'll send you a reset link
         </p>
@@ -146,9 +153,7 @@ function ForgotPasswordContent() {
             type="email"
           />
         </div>
-        <SubmitButton isSuccessful={isSuccessful}>
-          Send Reset Link
-        </SubmitButton>
+        <SubmitButton isSuccessful={isSuccessful}>Send Reset Link</SubmitButton>
       </Form>
       <p className="text-center text-sm text-slate-500">
         Remember your password?{" "}
@@ -165,7 +170,13 @@ function ForgotPasswordContent() {
 
 export default function ForgotPasswordPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
       <ForgotPasswordContent />
     </Suspense>
   );

@@ -51,7 +51,7 @@ interface SpeakerSegment {
 }
 
 function stripMarkdown(text: string): string {
-  let result = text
+  const result = text
     .replace(MARKDOWN_PATTERNS.suggestions, "")
     .replace(MARKDOWN_PATTERNS.executiveAlexandria, "")
     .replace(MARKDOWN_PATTERNS.executiveKim, "")
@@ -302,7 +302,11 @@ Remember: This is a voice call, not a text chat. Be direct and conversational.`;
             const audioBuffers = await Promise.all(
               validSegments.map(async (segment) => {
                 const voiceConfig = getVoiceConfig(segment.speaker);
-                return generateAudioForSegment(segment.text, voiceConfig, apiKey);
+                return generateAudioForSegment(
+                  segment.text,
+                  voiceConfig,
+                  apiKey,
+                );
               }),
             );
 

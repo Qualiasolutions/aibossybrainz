@@ -102,7 +102,17 @@ function LoginContent() {
         <h2 className="font-semibold text-2xl text-slate-900">Sign in</h2>
         <p className="text-slate-500 text-sm">
           {plan ? (
-            <>Continue with the <span className="font-medium text-rose-600">{plan === "monthly" ? "Most Flexible" : plan === "annual" ? "Best Value" : "Exclusive Lifetime"}</span> plan</>
+            <>
+              Continue with the{" "}
+              <span className="font-medium text-rose-600">
+                {plan === "monthly"
+                  ? "Most Flexible"
+                  : plan === "annual"
+                    ? "Best Value"
+                    : "Exclusive Lifetime"}
+              </span>{" "}
+              plan
+            </>
           ) : (
             "The AI Boss Brainz Workspace — Powered by Alecci Media"
           )}
@@ -140,7 +150,13 @@ function LoginContent() {
 
 export default function Page() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
       <LoginContent />
     </Suspense>
   );

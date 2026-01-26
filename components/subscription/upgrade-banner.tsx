@@ -24,7 +24,8 @@ export function UpgradeBanner() {
 
   // Determine message
   let title = "Upgrade to Premium";
-  let message = "Get unlimited access to Alexandria & Kim with a paid subscription.";
+  let message =
+    "Get unlimited access to Alexandria & Kim with a paid subscription.";
 
   if (isTrial && status.daysRemaining !== null) {
     title = `${status.daysRemaining} days left in trial`;
@@ -39,10 +40,16 @@ export function UpgradeBanner() {
       {/* Left content */}
       <div className="flex items-center gap-3">
         <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white">
-          {isTrial ? <Sparkles className="size-4" /> : <Crown className="size-4" />}
+          {isTrial ? (
+            <Sparkles className="size-4" />
+          ) : (
+            <Crown className="size-4" />
+          )}
         </div>
         <div className="min-w-0">
-          <p className="truncate font-semibold text-sm text-stone-900">{title}</p>
+          <p className="truncate font-semibold text-sm text-stone-900">
+            {title}
+          </p>
           <p className="hidden text-xs text-stone-600 sm:block">{message}</p>
         </div>
       </div>

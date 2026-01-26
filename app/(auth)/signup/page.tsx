@@ -55,12 +55,14 @@ function SignupContent() {
     } else if (state.status === "invalid_data") {
       toast({
         type: "error",
-        description: "Please enter a valid email and password (min 6 characters).",
+        description:
+          "Please enter a valid email and password (min 6 characters).",
       });
     } else if (state.status === "user_exists") {
       toast({
         type: "error",
-        description: "An account with this email already exists. Please sign in instead.",
+        description:
+          "An account with this email already exists. Please sign in instead.",
       });
       router.push(`/login${plan ? `?plan=${plan}` : ""}`);
     } else if (state.status === "success" && !hasHandledSuccess.current) {
@@ -98,7 +100,9 @@ function SignupContent() {
             <Mail className="size-8 text-rose-600" />
           </div>
           <div className="space-y-2">
-            <h2 className="font-semibold text-2xl text-slate-900">Check your inbox</h2>
+            <h2 className="font-semibold text-2xl text-slate-900">
+              Check your inbox
+            </h2>
             <p className="text-slate-500">
               We've sent a confirmation email to{" "}
               <span className="font-medium text-slate-700">{email}</span>
@@ -108,7 +112,12 @@ function SignupContent() {
             <p className="text-sm text-slate-600">
               Click the link in the email to confirm your account and{" "}
               {plan ? (
-                <>start your <span className="font-medium text-rose-600">7-day free trial</span></>
+                <>
+                  start your{" "}
+                  <span className="font-medium text-rose-600">
+                    7-day free trial
+                  </span>
+                </>
               ) : (
                 "get started"
               )}
@@ -138,10 +147,22 @@ function SignupContent() {
       title="Start Your Sales & Marketing Transformation"
     >
       <div className="space-y-2 text-center">
-        <h2 className="font-semibold text-2xl text-slate-900">Create Account</h2>
+        <h2 className="font-semibold text-2xl text-slate-900">
+          Create Account
+        </h2>
         <p className="text-slate-500 text-sm">
           {plan ? (
-            <>Get started with the <span className="font-medium text-rose-600">{plan === "monthly" ? "Most Flexible" : plan === "annual" ? "Best Value" : "Exclusive Lifetime"}</span> plan</>
+            <>
+              Get started with the{" "}
+              <span className="font-medium text-rose-600">
+                {plan === "monthly"
+                  ? "Most Flexible"
+                  : plan === "annual"
+                    ? "Best Value"
+                    : "Exclusive Lifetime"}
+              </span>{" "}
+              plan
+            </>
           ) : (
             "The AI Boss Brainz Workspace — Powered by Alecci Media"
           )}
@@ -152,9 +173,7 @@ function SignupContent() {
         className="px-0 sm:px-0"
         defaultEmail={email}
       >
-        <SubmitButton isSuccessful={isSuccessful}>
-          Create Account
-        </SubmitButton>
+        <SubmitButton isSuccessful={isSuccessful}>Create Account</SubmitButton>
       </AuthForm>
       <p className="text-center text-sm text-slate-500">
         Already have an account?{" "}
@@ -171,7 +190,13 @@ function SignupContent() {
 
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
       <SignupContent />
     </Suspense>
   );

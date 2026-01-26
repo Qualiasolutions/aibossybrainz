@@ -230,11 +230,12 @@ export function WelcomeTutorial() {
                       onClick={() => handleStepClick(index)}
                       className={`
                         h-2 rounded-full transition-all duration-300 cursor-pointer
-                        ${index === currentStep
-                          ? "w-6 bg-neutral-900"
-                          : index < currentStep
-                            ? "w-2 bg-neutral-400 hover:bg-neutral-500"
-                            : "w-2 bg-neutral-200 hover:bg-neutral-300"
+                        ${
+                          index === currentStep
+                            ? "w-6 bg-neutral-900"
+                            : index < currentStep
+                              ? "w-2 bg-neutral-400 hover:bg-neutral-500"
+                              : "w-2 bg-neutral-200 hover:bg-neutral-300"
                         }
                       `}
                       aria-label={`Go to step ${index + 1}`}

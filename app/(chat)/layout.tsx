@@ -2,7 +2,10 @@ import Script from "next/script";
 import { AppSidebar } from "@/components/app-sidebar";
 import { DataStreamProvider } from "@/components/data-stream-provider";
 import { MobileSidebarProvider } from "@/components/mobile-sidebar-context";
-import { SubscriptionLayout, SubscriptionProvider } from "@/components/subscription";
+import {
+  SubscriptionLayout,
+  SubscriptionProvider,
+} from "@/components/subscription";
 import { TosPopup } from "@/components/tos-popup";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { WelcomeTutorial } from "@/components/welcome-tutorial";

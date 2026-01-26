@@ -5,9 +5,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Briefcase, Loader2, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from "@/components/toast";
 import { useCsrf } from "@/hooks/use-csrf";
 import { BOT_PERSONALITIES } from "@/lib/bot-personalities";
-import { toast } from "@/components/toast";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -85,7 +85,10 @@ export function OnboardingModal() {
     if (!displayName.trim()) return;
 
     if (csrfLoading) {
-      toast({ type: "error", description: "Please wait a moment and try again." });
+      toast({
+        type: "error",
+        description: "Please wait a moment and try again.",
+      });
       return;
     }
 
@@ -103,18 +106,27 @@ export function OnboardingModal() {
 
       if (res.ok) {
         setStep("success");
-        toast({ type: "success", description: `Welcome aboard, ${displayName.trim()}!` });
+        toast({
+          type: "success",
+          description: `Welcome aboard, ${displayName.trim()}!`,
+        });
         setTimeout(() => {
           setIsOpen(false);
         }, 2500);
       } else {
         const errorData = await res.json().catch(() => ({}));
         console.error("Failed to save profile:", errorData);
-        toast({ type: "error", description: "Failed to save your profile. Please try again." });
+        toast({
+          type: "error",
+          description: "Failed to save your profile. Please try again.",
+        });
       }
     } catch (error) {
       console.error("Failed to save profile:", error);
-      toast({ type: "error", description: "Something went wrong. Please try again." });
+      toast({
+        type: "error",
+        description: "Something went wrong. Please try again.",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -169,7 +181,9 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
     >
       <VisuallyHidden.Root>
         <DialogTitle>Welcome to AI Boss Brainz</DialogTitle>
-        <DialogDescription>Your executive AI consulting team awaits</DialogDescription>
+        <DialogDescription>
+          Your executive AI consulting team awaits
+        </DialogDescription>
       </VisuallyHidden.Root>
 
       {/* Logo/Icon */}
@@ -201,7 +215,8 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
         transition={{ delay: 0.3 }}
         className="mb-8 max-w-sm text-center text-stone-500"
       >
-        Your personal executive consulting team is ready to help you grow your business.
+        Your personal executive consulting team is ready to help you grow your
+        business.
       </motion.p>
 
       {/* Executive preview */}
@@ -257,7 +272,9 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
 }
 
 function MeetTeamStep({ onNext }: { onNext: () => void }) {
-  const [activeExec, setActiveExec] = useState<"alexandria" | "kim">("alexandria");
+  const [activeExec, setActiveExec] = useState<"alexandria" | "kim">(
+    "alexandria",
+  );
 
   const executives = [
     { key: "alexandria" as const, data: alexandria },
@@ -276,7 +293,9 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
     >
       <VisuallyHidden.Root>
         <DialogTitle>Meet Your Executive Team</DialogTitle>
-        <DialogDescription>Alexandria and Kim are ready to help</DialogDescription>
+        <DialogDescription>
+          Alexandria and Kim are ready to help
+        </DialogDescription>
       </VisuallyHidden.Root>
 
       {/* Header */}
@@ -285,8 +304,12 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6 text-center"
       >
-        <h2 className="mb-1 font-semibold text-lg text-stone-900">Meet Your Executive Team</h2>
-        <p className="text-sm text-stone-500">Two experts, one mission: your success</p>
+        <h2 className="mb-1 font-semibold text-lg text-stone-900">
+          Meet Your Executive Team
+        </h2>
+        <p className="text-sm text-stone-500">
+          Two experts, one mission: your success
+        </p>
       </motion.div>
 
       {/* Executive tabs */}
@@ -314,10 +337,14 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
               </div>
             )}
             <div className="text-left">
-              <p className={`font-medium text-sm ${activeExec === key ? "text-rose-700" : "text-stone-700"}`}>
+              <p
+                className={`font-medium text-sm ${activeExec === key ? "text-rose-700" : "text-stone-700"}`}
+              >
                 {data.name.split(" ")[0]}
               </p>
-              <p className="text-stone-400 text-xs">{data.role.split(" ")[0]}</p>
+              <p className="text-stone-400 text-xs">
+                {data.role.split(" ")[0]}
+              </p>
             </div>
           </button>
         ))}
@@ -348,7 +375,9 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
                 </div>
               )}
               <div>
-                <h3 className="font-bold text-lg text-white">{currentExec.name}</h3>
+                <h3 className="font-bold text-lg text-white">
+                  {currentExec.name}
+                </h3>
                 <p className="text-white/80 text-sm">{currentExec.role}</p>
               </div>
             </div>
@@ -356,7 +385,9 @@ function MeetTeamStep({ onNext }: { onNext: () => void }) {
 
           {/* Executive info */}
           <div className="p-4">
-            <p className="mb-4 text-sm text-stone-600">{currentExec.personality}</p>
+            <p className="mb-4 text-sm text-stone-600">
+              {currentExec.personality}
+            </p>
             <div className="flex flex-wrap gap-2">
               {currentExec.expertise.slice(0, 3).map((skill) => (
                 <span
@@ -412,7 +443,9 @@ function ProfileStep({
     >
       <VisuallyHidden.Root>
         <DialogTitle>Tell Us About Yourself</DialogTitle>
-        <DialogDescription>Help us personalize your experience</DialogDescription>
+        <DialogDescription>
+          Help us personalize your experience
+        </DialogDescription>
       </VisuallyHidden.Root>
 
       {/* Header with icon */}
@@ -425,8 +458,12 @@ function ProfileStep({
           <Briefcase className="size-6 text-rose-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-lg text-stone-900">Tell us about yourself</h2>
-          <p className="text-sm text-stone-500">So we can personalize your experience</p>
+          <h2 className="font-semibold text-lg text-stone-900">
+            Tell us about yourself
+          </h2>
+          <p className="text-sm text-stone-500">
+            So we can personalize your experience
+          </p>
         </div>
       </motion.div>
 
@@ -438,7 +475,10 @@ function ProfileStep({
           transition={{ delay: 0.1 }}
           className="space-y-2"
         >
-          <Label htmlFor="displayName" className="font-medium text-sm text-stone-700">
+          <Label
+            htmlFor="displayName"
+            className="font-medium text-sm text-stone-700"
+          >
             Your Name <span className="text-rose-500">*</span>
           </Label>
           <Input
@@ -459,8 +499,12 @@ function ProfileStep({
           transition={{ delay: 0.2 }}
           className="space-y-2"
         >
-          <Label htmlFor="companyName" className="font-medium text-sm text-stone-700">
-            Company Name <span className="text-stone-400 text-xs">(optional)</span>
+          <Label
+            htmlFor="companyName"
+            className="font-medium text-sm text-stone-700"
+          >
+            Company Name{" "}
+            <span className="text-stone-400 text-xs">(optional)</span>
           </Label>
           <Input
             id="companyName"
@@ -478,7 +522,10 @@ function ProfileStep({
           transition={{ delay: 0.3 }}
           className="space-y-2"
         >
-          <Label htmlFor="industry" className="font-medium text-sm text-stone-700">
+          <Label
+            htmlFor="industry"
+            className="font-medium text-sm text-stone-700"
+          >
             Industry <span className="text-stone-400 text-xs">(optional)</span>
           </Label>
           <Select value={industry} onValueChange={setIndustry}>
@@ -556,7 +603,11 @@ function SuccessStep({ displayName }: { displayName: string }) {
             strokeWidth={2.5}
             stroke="currentColor"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4.5 12.75l6 6 9-13.5"
+            />
           </svg>
         </div>
         <div className="absolute -inset-2 -z-10 rounded-full bg-gradient-to-br from-emerald-500/10 to-green-600/10 blur-xl" />
@@ -605,8 +656,16 @@ function SuccessStep({ displayName }: { displayName: string }) {
               transition={{ delay: 0.6 }}
               className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-emerald-500 shadow-sm"
             >
-              <svg className="size-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              <svg
+                className="size-3 text-white"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
             </motion.div>
           </div>
@@ -628,8 +687,16 @@ function SuccessStep({ displayName }: { displayName: string }) {
               transition={{ delay: 0.7 }}
               className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-emerald-500 shadow-sm"
             >
-              <svg className="size-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              <svg
+                className="size-3 text-white"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
             </motion.div>
           </div>

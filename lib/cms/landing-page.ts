@@ -1,7 +1,10 @@
 import "server-only";
-import { createServiceClient } from "@/lib/supabase/server";
 import { unstable_cache } from "next/cache";
-import { defaultLandingPageContent, type LandingPageCMSContent } from "./landing-page-types";
+import { createServiceClient } from "@/lib/supabase/server";
+import {
+  defaultLandingPageContent,
+  type LandingPageCMSContent,
+} from "./landing-page-types";
 
 // Re-export types for convenience
 export type { LandingPageCMSContent } from "./landing-page-types";
@@ -32,7 +35,10 @@ async function fetchLandingPageContentUncached(): Promise<LandingPageCMSContent>
     // Merge with defaults to ensure all fields exist
     return {
       hero: { ...defaultLandingPageContent.hero, ...content.hero },
-      executives: { ...defaultLandingPageContent.executives, ...content.executives },
+      executives: {
+        ...defaultLandingPageContent.executives,
+        ...content.executives,
+      },
       benefits: { ...defaultLandingPageContent.benefits, ...content.benefits },
       cta: { ...defaultLandingPageContent.cta, ...content.cta },
       theme: { ...defaultLandingPageContent.theme, ...content.theme },
@@ -52,5 +58,5 @@ export const getLandingPageContent = unstable_cache(
   {
     revalidate: 60, // Revalidate every 60 seconds
     tags: ["landing-page"],
-  }
+  },
 );

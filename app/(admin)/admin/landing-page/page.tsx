@@ -18,6 +18,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "@/components/toast";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -35,14 +36,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/toast";
 import type { LandingPageSection } from "@/lib/supabase/types";
 
 type ContentMap = Record<string, Record<string, string>>;
@@ -82,7 +77,10 @@ export default function LandingPageCMSPage() {
       setPendingChanges(new Map());
       setHasChanges(false);
     } catch {
-      toast({ type: "error", description: "Failed to load landing page content" });
+      toast({
+        type: "error",
+        description: "Failed to load landing page content",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +90,11 @@ export default function LandingPageCMSPage() {
     fetchContent();
   }, [fetchContent]);
 
-  const updateField = (section: LandingPageSection, key: string, value: string) => {
+  const updateField = (
+    section: LandingPageSection,
+    key: string,
+    value: string,
+  ) => {
     setContent((prev) => ({
       ...prev,
       [section]: {
@@ -125,11 +127,17 @@ export default function LandingPageCMSPage() {
         throw new Error(err.error || "Failed to save");
       }
 
-      toast({ type: "success", description: `Saved ${updates.length} changes successfully` });
+      toast({
+        type: "success",
+        description: `Saved ${updates.length} changes successfully`,
+      });
       setPendingChanges(new Map());
       setHasChanges(false);
     } catch (e) {
-      toast({ type: "error", description: e instanceof Error ? e.message : "Failed to save changes" });
+      toast({
+        type: "error",
+        description: e instanceof Error ? e.message : "Failed to save changes",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -152,7 +160,9 @@ export default function LandingPageCMSPage() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-neutral-200 bg-white p-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">Landing Page CMS</h1>
+          <h1 className="text-2xl font-bold text-neutral-900">
+            Landing Page CMS
+          </h1>
           <p className="text-sm text-neutral-500">
             Edit landing page content. Changes apply immediately after saving.
           </p>
@@ -172,7 +182,9 @@ export default function LandingPageCMSPage() {
             disabled={isLoading}
             className="gap-2"
           >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
             Refresh
           </Button>
           <Button
@@ -237,7 +249,9 @@ export default function LandingPageCMSPage() {
                     <Label>Main Title</Label>
                     <Input
                       value={getFieldValue("hero", "title_main")}
-                      onChange={(e) => updateField("hero", "title_main", e.target.value)}
+                      onChange={(e) =>
+                        updateField("hero", "title_main", e.target.value)
+                      }
                       placeholder="AI Boss Brainz"
                     />
                   </div>
@@ -245,7 +259,9 @@ export default function LandingPageCMSPage() {
                     <Label>Highlighted Title</Label>
                     <Input
                       value={getFieldValue("hero", "title_highlight")}
-                      onChange={(e) => updateField("hero", "title_highlight", e.target.value)}
+                      onChange={(e) =>
+                        updateField("hero", "title_highlight", e.target.value)
+                      }
                       placeholder="Your Sales & Marketing Experts 24/7"
                     />
                   </div>
@@ -253,7 +269,9 @@ export default function LandingPageCMSPage() {
                     <Label>Subtitle</Label>
                     <Textarea
                       value={getFieldValue("hero", "subtitle")}
-                      onChange={(e) => updateField("hero", "subtitle", e.target.value)}
+                      onChange={(e) =>
+                        updateField("hero", "subtitle", e.target.value)
+                      }
                       rows={3}
                     />
                   </div>
@@ -262,28 +280,52 @@ export default function LandingPageCMSPage() {
                       <Label>Primary CTA Text</Label>
                       <Input
                         value={getFieldValue("hero", "cta_primary_text")}
-                        onChange={(e) => updateField("hero", "cta_primary_text", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "hero",
+                            "cta_primary_text",
+                            e.target.value,
+                          )
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Primary CTA Link</Label>
                       <Input
                         value={getFieldValue("hero", "cta_primary_link")}
-                        onChange={(e) => updateField("hero", "cta_primary_link", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "hero",
+                            "cta_primary_link",
+                            e.target.value,
+                          )
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Secondary CTA Text</Label>
                       <Input
                         value={getFieldValue("hero", "cta_secondary_text")}
-                        onChange={(e) => updateField("hero", "cta_secondary_text", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "hero",
+                            "cta_secondary_text",
+                            e.target.value,
+                          )
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Secondary CTA Link</Label>
                       <Input
                         value={getFieldValue("hero", "cta_secondary_link")}
-                        onChange={(e) => updateField("hero", "cta_secondary_link", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "hero",
+                            "cta_secondary_link",
+                            e.target.value,
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -303,19 +345,25 @@ export default function LandingPageCMSPage() {
                     <h1 className="text-2xl font-bold tracking-tight text-stone-900">
                       {getFieldValue("hero", "title_main") || "AI Boss Brainz"}
                       <span className="mt-1 block bg-gradient-to-r from-red-500 to-rose-500 bg-clip-text text-transparent">
-                        {getFieldValue("hero", "title_highlight") || "Your Sales & Marketing Experts 24/7"}
+                        {getFieldValue("hero", "title_highlight") ||
+                          "Your Sales & Marketing Experts 24/7"}
                       </span>
                     </h1>
                     <p className="mt-3 text-sm text-stone-600">
-                      {getFieldValue("hero", "subtitle") || "AI-powered. Expert-led."}
+                      {getFieldValue("hero", "subtitle") ||
+                        "AI-powered. Expert-led."}
                     </p>
                     <div className="mt-4 flex gap-2">
-                      <Button size="sm" className="bg-gradient-to-r from-red-500 to-red-600 gap-1">
+                      <Button
+                        size="sm"
+                        className="bg-gradient-to-r from-red-500 to-red-600 gap-1"
+                      >
                         {getFieldValue("hero", "cta_primary_text") || "Sign In"}
                         <ArrowRight className="h-3 w-3" />
                       </Button>
                       <Button size="sm" variant="outline">
-                        {getFieldValue("hero", "cta_secondary_text") || "View Pricing"}
+                        {getFieldValue("hero", "cta_secondary_text") ||
+                          "View Pricing"}
                       </Button>
                     </div>
                   </div>
@@ -337,14 +385,29 @@ export default function LandingPageCMSPage() {
                       <Label>Section Title</Label>
                       <Input
                         value={getFieldValue("executives", "section_title")}
-                        onChange={(e) => updateField("executives", "section_title", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "executives",
+                            "section_title",
+                            e.target.value,
+                          )
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Highlighted Part</Label>
                       <Input
-                        value={getFieldValue("executives", "section_title_highlight")}
-                        onChange={(e) => updateField("executives", "section_title_highlight", e.target.value)}
+                        value={getFieldValue(
+                          "executives",
+                          "section_title_highlight",
+                        )}
+                        onChange={(e) =>
+                          updateField(
+                            "executives",
+                            "section_title_highlight",
+                            e.target.value,
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -352,7 +415,13 @@ export default function LandingPageCMSPage() {
                     <Label>Section Subtitle</Label>
                     <Textarea
                       value={getFieldValue("executives", "section_subtitle")}
-                      onChange={(e) => updateField("executives", "section_subtitle", e.target.value)}
+                      onChange={(e) =>
+                        updateField(
+                          "executives",
+                          "section_subtitle",
+                          e.target.value,
+                        )
+                      }
                       rows={2}
                     />
                   </div>
@@ -365,7 +434,10 @@ export default function LandingPageCMSPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Image
-                        src={getFieldValue("executives", "alex_image") || "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"}
+                        src={
+                          getFieldValue("executives", "alex_image") ||
+                          "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png"
+                        }
                         alt="Alexandria"
                         width={32}
                         height={32}
@@ -379,28 +451,44 @@ export default function LandingPageCMSPage() {
                       <Label>Name</Label>
                       <Input
                         value={getFieldValue("executives", "alex_name")}
-                        onChange={(e) => updateField("executives", "alex_name", e.target.value)}
+                        onChange={(e) =>
+                          updateField("executives", "alex_name", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Role</Label>
                       <Input
                         value={getFieldValue("executives", "alex_role")}
-                        onChange={(e) => updateField("executives", "alex_role", e.target.value)}
+                        onChange={(e) =>
+                          updateField("executives", "alex_role", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Image URL</Label>
                       <Input
                         value={getFieldValue("executives", "alex_image")}
-                        onChange={(e) => updateField("executives", "alex_image", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "executives",
+                            "alex_image",
+                            e.target.value,
+                          )
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Expertise (comma-separated)</Label>
                       <Input
                         value={getFieldValue("executives", "alex_expertise")}
-                        onChange={(e) => updateField("executives", "alex_expertise", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "executives",
+                            "alex_expertise",
+                            e.target.value,
+                          )
+                        }
                         placeholder="Brand Strategy,Go-to-Market,Digital Campaigns"
                       />
                     </div>
@@ -412,7 +500,10 @@ export default function LandingPageCMSPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Image
-                        src={getFieldValue("executives", "kim_image") || "https://i.ibb.co/m7vk4JF/KIM-3.png"}
+                        src={
+                          getFieldValue("executives", "kim_image") ||
+                          "https://i.ibb.co/m7vk4JF/KIM-3.png"
+                        }
                         alt="Kim"
                         width={32}
                         height={32}
@@ -426,28 +517,40 @@ export default function LandingPageCMSPage() {
                       <Label>Name</Label>
                       <Input
                         value={getFieldValue("executives", "kim_name")}
-                        onChange={(e) => updateField("executives", "kim_name", e.target.value)}
+                        onChange={(e) =>
+                          updateField("executives", "kim_name", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Role</Label>
                       <Input
                         value={getFieldValue("executives", "kim_role")}
-                        onChange={(e) => updateField("executives", "kim_role", e.target.value)}
+                        onChange={(e) =>
+                          updateField("executives", "kim_role", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Image URL</Label>
                       <Input
                         value={getFieldValue("executives", "kim_image")}
-                        onChange={(e) => updateField("executives", "kim_image", e.target.value)}
+                        onChange={(e) =>
+                          updateField("executives", "kim_image", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Expertise (comma-separated)</Label>
                       <Input
                         value={getFieldValue("executives", "kim_expertise")}
-                        onChange={(e) => updateField("executives", "kim_expertise", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "executives",
+                            "kim_expertise",
+                            e.target.value,
+                          )
+                        }
                         placeholder="Enterprise Sales,Pipeline Growth,Deal Closing"
                       />
                     </div>
@@ -469,14 +572,22 @@ export default function LandingPageCMSPage() {
                     <Label>Section Title</Label>
                     <Input
                       value={getFieldValue("benefits", "section_title")}
-                      onChange={(e) => updateField("benefits", "section_title", e.target.value)}
+                      onChange={(e) =>
+                        updateField("benefits", "section_title", e.target.value)
+                      }
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Section Subtitle</Label>
                     <Textarea
                       value={getFieldValue("benefits", "section_subtitle")}
-                      onChange={(e) => updateField("benefits", "section_subtitle", e.target.value)}
+                      onChange={(e) =>
+                        updateField(
+                          "benefits",
+                          "section_subtitle",
+                          e.target.value,
+                        )
+                      }
                       rows={2}
                     />
                   </div>
@@ -490,8 +601,12 @@ export default function LandingPageCMSPage() {
                       <CardTitle className="flex items-center gap-2 text-base">
                         {num === 1 && <Zap className="h-4 w-4 text-rose-500" />}
                         {num === 2 && <Mic className="h-4 w-4 text-rose-500" />}
-                        {num === 3 && <Target className="h-4 w-4 text-rose-500" />}
-                        {num === 4 && <TrendingUp className="h-4 w-4 text-rose-500" />}
+                        {num === 3 && (
+                          <Target className="h-4 w-4 text-rose-500" />
+                        )}
+                        {num === 4 && (
+                          <TrendingUp className="h-4 w-4 text-rose-500" />
+                        )}
                         Benefit {num}
                       </CardTitle>
                     </CardHeader>
@@ -499,23 +614,50 @@ export default function LandingPageCMSPage() {
                       <div className="space-y-2">
                         <Label>Title</Label>
                         <Input
-                          value={getFieldValue("benefits", `benefit_${num}_title`)}
-                          onChange={(e) => updateField("benefits", `benefit_${num}_title`, e.target.value)}
+                          value={getFieldValue(
+                            "benefits",
+                            `benefit_${num}_title`,
+                          )}
+                          onChange={(e) =>
+                            updateField(
+                              "benefits",
+                              `benefit_${num}_title`,
+                              e.target.value,
+                            )
+                          }
                         />
                       </div>
                       <div className="space-y-2">
                         <Label>Description</Label>
                         <Textarea
-                          value={getFieldValue("benefits", `benefit_${num}_desc`)}
-                          onChange={(e) => updateField("benefits", `benefit_${num}_desc`, e.target.value)}
+                          value={getFieldValue(
+                            "benefits",
+                            `benefit_${num}_desc`,
+                          )}
+                          onChange={(e) =>
+                            updateField(
+                              "benefits",
+                              `benefit_${num}_desc`,
+                              e.target.value,
+                            )
+                          }
                           rows={2}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label>Icon</Label>
                         <Select
-                          value={getFieldValue("benefits", `benefit_${num}_icon`) || ICON_OPTIONS[num - 1]}
-                          onValueChange={(value) => updateField("benefits", `benefit_${num}_icon`, value)}
+                          value={
+                            getFieldValue("benefits", `benefit_${num}_icon`) ||
+                            ICON_OPTIONS[num - 1]
+                          }
+                          onValueChange={(value) =>
+                            updateField(
+                              "benefits",
+                              `benefit_${num}_icon`,
+                              value,
+                            )
+                          }
                         >
                           <SelectTrigger>
                             <SelectValue />
@@ -524,10 +666,18 @@ export default function LandingPageCMSPage() {
                             {ICON_OPTIONS.map((icon) => (
                               <SelectItem key={icon} value={icon}>
                                 <span className="flex items-center gap-2">
-                                  {icon === "Zap" && <Zap className="h-4 w-4" />}
-                                  {icon === "Mic" && <Mic className="h-4 w-4" />}
-                                  {icon === "Target" && <Target className="h-4 w-4" />}
-                                  {icon === "TrendingUp" && <TrendingUp className="h-4 w-4" />}
+                                  {icon === "Zap" && (
+                                    <Zap className="h-4 w-4" />
+                                  )}
+                                  {icon === "Mic" && (
+                                    <Mic className="h-4 w-4" />
+                                  )}
+                                  {icon === "Target" && (
+                                    <Target className="h-4 w-4" />
+                                  )}
+                                  {icon === "TrendingUp" && (
+                                    <TrendingUp className="h-4 w-4" />
+                                  )}
                                   {icon}
                                 </span>
                               </SelectItem>
@@ -557,14 +707,18 @@ export default function LandingPageCMSPage() {
                     <Label>Title</Label>
                     <Input
                       value={getFieldValue("cta", "title")}
-                      onChange={(e) => updateField("cta", "title", e.target.value)}
+                      onChange={(e) =>
+                        updateField("cta", "title", e.target.value)
+                      }
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Subtitle</Label>
                     <Textarea
                       value={getFieldValue("cta", "subtitle")}
-                      onChange={(e) => updateField("cta", "subtitle", e.target.value)}
+                      onChange={(e) =>
+                        updateField("cta", "subtitle", e.target.value)
+                      }
                       rows={4}
                     />
                   </div>
@@ -573,28 +727,44 @@ export default function LandingPageCMSPage() {
                       <Label>Primary CTA Text</Label>
                       <Input
                         value={getFieldValue("cta", "cta_primary_text")}
-                        onChange={(e) => updateField("cta", "cta_primary_text", e.target.value)}
+                        onChange={(e) =>
+                          updateField("cta", "cta_primary_text", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Primary CTA Link</Label>
                       <Input
                         value={getFieldValue("cta", "cta_primary_link")}
-                        onChange={(e) => updateField("cta", "cta_primary_link", e.target.value)}
+                        onChange={(e) =>
+                          updateField("cta", "cta_primary_link", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Secondary CTA Text</Label>
                       <Input
                         value={getFieldValue("cta", "cta_secondary_text")}
-                        onChange={(e) => updateField("cta", "cta_secondary_text", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "cta",
+                            "cta_secondary_text",
+                            e.target.value,
+                          )
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Secondary CTA Link</Label>
                       <Input
                         value={getFieldValue("cta", "cta_secondary_link")}
-                        onChange={(e) => updateField("cta", "cta_secondary_link", e.target.value)}
+                        onChange={(e) =>
+                          updateField(
+                            "cta",
+                            "cta_secondary_link",
+                            e.target.value,
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -615,15 +785,24 @@ export default function LandingPageCMSPage() {
                       {getFieldValue("cta", "title") || "This Is How You Grow"}
                     </h2>
                     <p className="mt-3 text-sm text-stone-300">
-                      {getFieldValue("cta", "subtitle") || "You don't need to be a sales expert..."}
+                      {getFieldValue("cta", "subtitle") ||
+                        "You don't need to be a sales expert..."}
                     </p>
                     <div className="mt-4 flex justify-center gap-2">
-                      <Button size="sm" className="bg-white text-stone-900 hover:bg-stone-100 gap-1">
+                      <Button
+                        size="sm"
+                        className="bg-white text-stone-900 hover:bg-stone-100 gap-1"
+                      >
                         {getFieldValue("cta", "cta_primary_text") || "Sign In"}
                         <ArrowRight className="h-3 w-3" />
                       </Button>
-                      <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10">
-                        {getFieldValue("cta", "cta_secondary_text") || "View Pricing"}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-white/20 text-white hover:bg-white/10"
+                      >
+                        {getFieldValue("cta", "cta_secondary_text") ||
+                          "View Pricing"}
                       </Button>
                     </div>
                   </div>
@@ -647,8 +826,13 @@ export default function LandingPageCMSPage() {
                     <div className="space-y-2">
                       <Label>Primary Gradient Start</Label>
                       <Select
-                        value={getFieldValue("theme", "primary_gradient_from") || "red-500"}
-                        onValueChange={(value) => updateField("theme", "primary_gradient_from", value)}
+                        value={
+                          getFieldValue("theme", "primary_gradient_from") ||
+                          "red-500"
+                        }
+                        onValueChange={(value) =>
+                          updateField("theme", "primary_gradient_from", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -657,7 +841,10 @@ export default function LandingPageCMSPage() {
                           {TAILWIND_COLORS.map((color) => (
                             <SelectItem key={color} value={color}>
                               <span className="flex items-center gap-2">
-                                <span className={`h-4 w-4 rounded bg-${color}`} style={{ backgroundColor: colorToHex(color) }} />
+                                <span
+                                  className={`h-4 w-4 rounded bg-${color}`}
+                                  style={{ backgroundColor: colorToHex(color) }}
+                                />
                                 {color}
                               </span>
                             </SelectItem>
@@ -668,8 +855,13 @@ export default function LandingPageCMSPage() {
                     <div className="space-y-2">
                       <Label>Primary Gradient End</Label>
                       <Select
-                        value={getFieldValue("theme", "primary_gradient_to") || "red-600"}
-                        onValueChange={(value) => updateField("theme", "primary_gradient_to", value)}
+                        value={
+                          getFieldValue("theme", "primary_gradient_to") ||
+                          "red-600"
+                        }
+                        onValueChange={(value) =>
+                          updateField("theme", "primary_gradient_to", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -678,7 +870,10 @@ export default function LandingPageCMSPage() {
                           {TAILWIND_COLORS.map((color) => (
                             <SelectItem key={color} value={color}>
                               <span className="flex items-center gap-2">
-                                <span className={`h-4 w-4 rounded`} style={{ backgroundColor: colorToHex(color) }} />
+                                <span
+                                  className={`h-4 w-4 rounded`}
+                                  style={{ backgroundColor: colorToHex(color) }}
+                                />
                                 {color}
                               </span>
                             </SelectItem>
@@ -689,8 +884,12 @@ export default function LandingPageCMSPage() {
                     <div className="space-y-2">
                       <Label>Accent Color</Label>
                       <Select
-                        value={getFieldValue("theme", "accent_color") || "rose-500"}
-                        onValueChange={(value) => updateField("theme", "accent_color", value)}
+                        value={
+                          getFieldValue("theme", "accent_color") || "rose-500"
+                        }
+                        onValueChange={(value) =>
+                          updateField("theme", "accent_color", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -699,7 +898,10 @@ export default function LandingPageCMSPage() {
                           {TAILWIND_COLORS.map((color) => (
                             <SelectItem key={color} value={color}>
                               <span className="flex items-center gap-2">
-                                <span className={`h-4 w-4 rounded`} style={{ backgroundColor: colorToHex(color) }} />
+                                <span
+                                  className={`h-4 w-4 rounded`}
+                                  style={{ backgroundColor: colorToHex(color) }}
+                                />
                                 {color}
                               </span>
                             </SelectItem>
@@ -750,7 +952,9 @@ export default function LandingPageCMSPage() {
                     <Label>Logo URL</Label>
                     <Input
                       value={getFieldValue("header", "logo_url")}
-                      onChange={(e) => updateField("header", "logo_url", e.target.value)}
+                      onChange={(e) =>
+                        updateField("header", "logo_url", e.target.value)
+                      }
                     />
                   </div>
                   {getFieldValue("header", "logo_url") && (
@@ -776,7 +980,9 @@ export default function LandingPageCMSPage() {
                     <Label>Tagline</Label>
                     <Textarea
                       value={getFieldValue("footer", "tagline")}
-                      onChange={(e) => updateField("footer", "tagline", e.target.value)}
+                      onChange={(e) =>
+                        updateField("footer", "tagline", e.target.value)
+                      }
                       rows={2}
                     />
                   </div>
@@ -785,14 +991,18 @@ export default function LandingPageCMSPage() {
                     <Input
                       type="email"
                       value={getFieldValue("footer", "email")}
-                      onChange={(e) => updateField("footer", "email", e.target.value)}
+                      onChange={(e) =>
+                        updateField("footer", "email", e.target.value)
+                      }
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Copyright Text</Label>
                     <Input
                       value={getFieldValue("footer", "copyright")}
-                      onChange={(e) => updateField("footer", "copyright", e.target.value)}
+                      onChange={(e) =>
+                        updateField("footer", "copyright", e.target.value)
+                      }
                     />
                   </div>
                 </CardContent>
@@ -837,7 +1047,7 @@ function colorToHex(color: string): string {
     "blue-500": "#3b82f6",
     "emerald-500": "#10b981",
     "stone-900": "#1c1917",
-    "white": "#ffffff",
+    white: "#ffffff",
   };
   return colorMap[color] || "#ef4444";
 }

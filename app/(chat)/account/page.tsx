@@ -79,7 +79,9 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(
+    null,
+  );
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -197,7 +199,9 @@ export default function AccountPage() {
       });
 
       if (res.ok) {
-        toast.success("Subscription cancelled. You'll receive a confirmation email.");
+        toast.success(
+          "Subscription cancelled. You'll receive a confirmation email.",
+        );
         setShowCancelDialog(false);
         loadData();
       } else {
@@ -232,7 +236,9 @@ export default function AccountPage() {
       label: status || "None",
     };
     return (
-      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.color}`}>
+      <span
+        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.color}`}
+      >
         {config.label}
       </span>
     );
@@ -260,7 +266,9 @@ export default function AccountPage() {
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-stone-900">Account Settings</h1>
-        <p className="mt-1 text-stone-500">Manage your profile and subscription</p>
+        <p className="mt-1 text-stone-500">
+          Manage your profile and subscription
+        </p>
       </div>
 
       <div className="space-y-6">
@@ -271,35 +279,49 @@ export default function AccountPage() {
               <Crown className="size-5 text-rose-600" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-stone-900">Subscription</h2>
-              <p className="text-sm text-stone-500">Your current plan and billing</p>
+              <h2 className="text-lg font-semibold text-stone-900">
+                Subscription
+              </h2>
+              <p className="text-sm text-stone-500">
+                Your current plan and billing
+              </p>
             </div>
           </div>
 
           <div className="rounded-xl bg-stone-50 p-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-sm font-medium text-stone-500">Current Plan</p>
+                <p className="text-sm font-medium text-stone-500">
+                  Current Plan
+                </p>
                 <p className="mt-1 text-lg font-semibold text-stone-900">
                   {getPlanName(subscription?.subscriptionType)}
                 </p>
               </div>
               <div>
                 <p className="text-sm font-medium text-stone-500">Status</p>
-                <div className="mt-1">{getStatusBadge(subscription?.subscriptionStatus)}</div>
+                <div className="mt-1">
+                  {getStatusBadge(subscription?.subscriptionStatus)}
+                </div>
               </div>
               {subscription?.subscriptionStartDate && (
                 <div>
                   <p className="text-sm font-medium text-stone-500">Started</p>
-                  <p className="mt-1 text-stone-900">{formatDate(subscription.subscriptionStartDate)}</p>
+                  <p className="mt-1 text-stone-900">
+                    {formatDate(subscription.subscriptionStartDate)}
+                  </p>
                 </div>
               )}
               {subscription?.subscriptionEndDate && (
                 <div>
                   <p className="text-sm font-medium text-stone-500">
-                    {subscription.subscriptionStatus === "cancelled" ? "Access Until" : "Renews"}
+                    {subscription.subscriptionStatus === "cancelled"
+                      ? "Access Until"
+                      : "Renews"}
                   </p>
-                  <p className="mt-1 text-stone-900">{formatDate(subscription.subscriptionEndDate)}</p>
+                  <p className="mt-1 text-stone-900">
+                    {formatDate(subscription.subscriptionEndDate)}
+                  </p>
                 </div>
               )}
             </div>
@@ -309,10 +331,13 @@ export default function AccountPage() {
             <div className="mt-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
               <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
               <div>
-                <p className="font-medium text-amber-800">Subscription Cancelled</p>
+                <p className="font-medium text-amber-800">
+                  Subscription Cancelled
+                </p>
                 <p className="text-sm text-amber-700">
-                  You'll continue to have access until {formatDate(subscription.subscriptionEndDate)}.
-                  After that, you can resubscribe anytime.
+                  You'll continue to have access until{" "}
+                  {formatDate(subscription.subscriptionEndDate)}. After that,
+                  you can resubscribe anytime.
                 </p>
               </div>
             </div>
@@ -364,7 +389,9 @@ export default function AccountPage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-stone-900">Profile</h2>
-              <p className="text-sm text-stone-500">Your personal information</p>
+              <p className="text-sm text-stone-500">
+                Your personal information
+              </p>
             </div>
           </div>
 
@@ -380,12 +407,17 @@ export default function AccountPage() {
                 disabled
                 className="mt-1.5 bg-stone-50 text-stone-500"
               />
-              <p className="mt-1 text-xs text-stone-400">Contact support to change your email</p>
+              <p className="mt-1 text-xs text-stone-400">
+                Contact support to change your email
+              </p>
             </div>
 
             {/* Display Name */}
             <div>
-              <Label htmlFor="displayName" className="text-sm font-medium text-stone-700">
+              <Label
+                htmlFor="displayName"
+                className="text-sm font-medium text-stone-700"
+              >
                 <User className="mr-1.5 inline size-4" />
                 Display Name
               </Label>
@@ -400,7 +432,10 @@ export default function AccountPage() {
 
             {/* Company Name */}
             <div>
-              <Label htmlFor="companyName" className="text-sm font-medium text-stone-700">
+              <Label
+                htmlFor="companyName"
+                className="text-sm font-medium text-stone-700"
+              >
                 <Building2 className="mr-1.5 inline size-4" />
                 Company Name
               </Label>
@@ -415,7 +450,10 @@ export default function AccountPage() {
 
             {/* Industry */}
             <div>
-              <Label htmlFor="industry" className="text-sm font-medium text-stone-700">
+              <Label
+                htmlFor="industry"
+                className="text-sm font-medium text-stone-700"
+              >
                 Industry
               </Label>
               <Select value={industry} onValueChange={setIndustry}>
@@ -434,7 +472,10 @@ export default function AccountPage() {
 
             {/* Business Goals */}
             <div>
-              <Label htmlFor="businessGoals" className="text-sm font-medium text-stone-700">
+              <Label
+                htmlFor="businessGoals"
+                className="text-sm font-medium text-stone-700"
+              >
                 <Target className="mr-1.5 inline size-4" />
                 Business Goals
               </Label>
@@ -473,8 +514,8 @@ export default function AccountPage() {
               Cancel Subscription?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-stone-600">
-              Are you sure you want to cancel your subscription? You'll continue to have access until
-              the end of your current billing period.
+              Are you sure you want to cancel your subscription? You'll continue
+              to have access until the end of your current billing period.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0">

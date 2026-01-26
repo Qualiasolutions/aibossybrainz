@@ -216,7 +216,10 @@ export function AppSidebar({
 
                 {/* Mobile Voice Call Button */}
                 {user && (
-                  <Link href="/call" onClick={() => setIsMobileSidebarOpen(false)}>
+                  <Link
+                    href="/call"
+                    onClick={() => setIsMobileSidebarOpen(false)}
+                  >
                     <Button
                       className="h-9 w-full rounded-lg border border-emerald-200/50 bg-emerald-50/50 text-emerald-700 shadow-none hover:border-emerald-300 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 dark:hover:bg-emerald-900/50"
                       variant="ghost"

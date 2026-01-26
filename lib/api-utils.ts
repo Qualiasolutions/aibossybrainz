@@ -6,9 +6,7 @@ import { ChatSDKError } from "./errors";
  * Safely parse JSON from a Request body.
  * Returns the parsed data or throws a ChatSDKError with proper 400 response.
  */
-export async function safeParseJson<T = unknown>(
-  request: Request,
-): Promise<T> {
+export async function safeParseJson<T = unknown>(request: Request): Promise<T> {
   try {
     return await request.json();
   } catch {
@@ -22,10 +20,7 @@ export async function safeParseJson<T = unknown>(
  */
 export async function safeParseJsonResult<T = unknown>(
   request: Request,
-): Promise<
-  | { success: true; data: T }
-  | { success: false; error: Response }
-> {
+): Promise<{ success: true; data: T } | { success: false; error: Response }> {
   try {
     const data = await request.json();
     return { success: true, data };

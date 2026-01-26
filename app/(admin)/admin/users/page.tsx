@@ -46,10 +46,14 @@ async function createUser(data: {
           "Email rate limit exceeded. Please wait a few minutes before inviting this user again.",
       };
     }
-    if (message.includes("invalid format") || message.includes("validate email")) {
+    if (
+      message.includes("invalid format") ||
+      message.includes("validate email")
+    ) {
       return {
         success: false,
-        error: "Invalid email address format. Please check the email and try again.",
+        error:
+          "Invalid email address format. Please check the email and try again.",
       };
     }
     if (message.includes("already") || message.includes("exists")) {

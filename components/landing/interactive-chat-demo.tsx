@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { Mic, Paperclip, Send, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Loader2, Mic, Paperclip, Send } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
@@ -243,7 +243,10 @@ export function InteractiveChatDemo({ content }: InteractiveChatDemoProps) {
             {/* Executive Selector - Interactive */}
             <div className="flex items-center gap-1 rounded-full bg-stone-100 p-1">
               {[
-                { id: "alexandria" as const, img: content.executives.alex_image },
+                {
+                  id: "alexandria" as const,
+                  img: content.executives.alex_image,
+                },
                 { id: "kim" as const, img: content.executives.kim_image },
                 { id: "collaborative" as const, icon: true },
               ].map((exec) => (
@@ -373,8 +376,9 @@ export function InteractiveChatDemo({ content }: InteractiveChatDemoProps) {
                           <div className="relative">
                             <Image
                               src={
-                                getExecutiveInfo(message.botType || "collaborative")
-                                  .image
+                                getExecutiveInfo(
+                                  message.botType || "collaborative",
+                                ).image
                               }
                               alt=""
                               className="size-8 rounded-full border-2 border-rose-100 shadow-sm"
@@ -385,10 +389,18 @@ export function InteractiveChatDemo({ content }: InteractiveChatDemoProps) {
                           </div>
                           <div>
                             <div className="text-sm font-semibold text-stone-800">
-                              {getExecutiveInfo(message.botType || "collaborative").name}
+                              {
+                                getExecutiveInfo(
+                                  message.botType || "collaborative",
+                                ).name
+                              }
                             </div>
                             <div className="text-[11px] text-stone-500">
-                              {getExecutiveInfo(message.botType || "collaborative").title}
+                              {
+                                getExecutiveInfo(
+                                  message.botType || "collaborative",
+                                ).title
+                              }
                             </div>
                           </div>
                         </div>

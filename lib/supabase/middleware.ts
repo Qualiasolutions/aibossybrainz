@@ -66,7 +66,6 @@ export async function updateSession(request: NextRequest) {
   const publicRoutes = [
     "/login",
     "/signup",
-    "/signup-success",
     "/register",
     "/forgot-password",
     "/reset-password",
@@ -93,6 +92,85 @@ export async function updateSession(request: NextRequest) {
     const redirectResponse = NextResponse.redirect(url);
     redirectResponse.headers.set("x-request-id", requestId);
     return redirectResponse;
+  }
+
+  // Routes that require an active subscription (not pending)
+  const subscriptionRequiredRoutes = [
+    "/new",
+    "/chat",
+    "/analytics",
+    "/history",
+    "/reports",
+    "/saved",
+    "/swot",
+    "/strategy-canvas",
+    "/actionable",
+    "/clarifications",
+    "/call",
+    "/executives",
+  ];
+
+  const pathname = request.nextUrl.pathname;
+  const requiresSubscription = subscriptionRequiredRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+
+  // Check subscription for protected routes
+  if (requiresSubscription) {
+    // Query user's subscription status directly
+    const { data: userData } = await supabase
+      .from("User")
+      .select(
+        "subscriptionStatus, subscriptionType, subscriptionEndDate, isAdmin",
+      )
+      .eq("id", user.id)
+      .single();
+
+    // Determine if subscription is active
+    let isActive = false;
+    let reason = "signup";
+
+    if (userData) {
+      // Admins always have access
+      if (userData.isAdmin) {
+        isActive = true;
+      } else if (
+        userData.subscriptionStatus === "active" ||
+        userData.subscriptionStatus === "trialing"
+      ) {
+        // Check if subscription has expired
+        if (userData.subscriptionEndDate) {
+          const endDate = new Date(userData.subscriptionEndDate);
+          const now = new Date();
+          isActive = endDate > now;
+          if (!isActive) {
+            reason = "expired";
+          }
+        } else {
+          // No end date = lifetime or active subscription
+          isActive = true;
+        }
+      } else if (userData.subscriptionStatus === "pending") {
+        reason = "signup";
+      } else if (
+        userData.subscriptionStatus === "expired" ||
+        userData.subscriptionStatus === "cancelled"
+      ) {
+        reason = "expired";
+      }
+    }
+
+    // Redirect to subscribe page if not active
+    if (!isActive) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/subscribe";
+      url.searchParams.set("reason", reason);
+      // Preserve the intended destination for after payment
+      url.searchParams.set("redirect", pathname);
+      const redirectResponse = NextResponse.redirect(url);
+      redirectResponse.headers.set("x-request-id", requestId);
+      return redirectResponse;
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

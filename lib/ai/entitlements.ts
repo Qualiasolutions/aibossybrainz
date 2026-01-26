@@ -1,8 +1,14 @@
-import type { ChatModel } from "./models";
 import type { SubscriptionType } from "@/lib/supabase/types";
+import type { ChatModel } from "./models";
 
 // User types for entitlements
-export type UserType = "guest" | "trial" | "monthly" | "annual" | "lifetime";
+export type UserType =
+  | "guest"
+  | "pending"
+  | "trial"
+  | "monthly"
+  | "annual"
+  | "lifetime";
 
 type Entitlements = {
   maxMessagesPerDay: number;
@@ -16,6 +22,15 @@ export const entitlementsByUserType: Record<UserType, Entitlements> = {
   guest: {
     maxMessagesPerDay: 50,
     availableChatModelIds: ["chat-model", "chat-model-reasoning"],
+  },
+
+  /*
+   * For users who signed up but haven't completed payment
+   * They must complete Stripe checkout to get trial access
+   */
+  pending: {
+    maxMessagesPerDay: 0,
+    availableChatModelIds: [],
   },
 
   /*
@@ -62,5 +77,7 @@ export function getEntitlementsForSubscription(
     return entitlementsByUserType.guest;
   }
 
-  return entitlementsByUserType[subscriptionType] || entitlementsByUserType.trial;
+  return (
+    entitlementsByUserType[subscriptionType] || entitlementsByUserType.trial
+  );
 }

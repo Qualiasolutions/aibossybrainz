@@ -1,7 +1,12 @@
 import "server-only";
-import Stripe from "stripe";
+import type Stripe from "stripe";
 import { createServiceClient } from "@/lib/supabase/server";
-import { getStripe, STRIPE_PRICES, PLAN_DETAILS, type StripePlanId } from "./config";
+import {
+  getStripe,
+  PLAN_DETAILS,
+  STRIPE_PRICES,
+  type StripePlanId,
+} from "./config";
 
 /**
  * Get or create a Stripe customer for a user
@@ -170,7 +175,12 @@ export async function activateSubscription({
   const supabase = createServiceClient();
 
   // Calculate duration: monthly=1, annual=12, lifetime=9999
-  const durationMonths = subscriptionType === "monthly" ? 1 : subscriptionType === "annual" ? 12 : 9999;
+  const durationMonths =
+    subscriptionType === "monthly"
+      ? 1
+      : subscriptionType === "annual"
+        ? 12
+        : 9999;
   const endDate = new Date();
   endDate.setMonth(endDate.getMonth() + durationMonths);
 
@@ -236,7 +246,9 @@ export async function renewSubscription({
 /**
  * Expire subscription (called by webhook when subscription ends)
  */
-export async function expireSubscription(stripeSubscriptionId: string): Promise<void> {
+export async function expireSubscription(
+  stripeSubscriptionId: string,
+): Promise<void> {
   const supabase = createServiceClient();
 
   await supabase

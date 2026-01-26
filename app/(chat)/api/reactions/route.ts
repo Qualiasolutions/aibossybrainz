@@ -86,8 +86,10 @@ export const POST = withCsrf(async (request: Request) => {
   }
 
   try {
-    const { messageId, reactionType } =
-      await safeParseJson<{ messageId: string; reactionType: string }>(request);
+    const { messageId, reactionType } = await safeParseJson<{
+      messageId: string;
+      reactionType: string;
+    }>(request);
 
     if (!messageId || !reactionType) {
       return new ChatSDKError(
@@ -106,7 +108,10 @@ export const POST = withCsrf(async (request: Request) => {
       "helpful",
     ];
     if (!validTypes.includes(reactionType)) {
-      return new ChatSDKError("bad_request:api", "Invalid reaction type").toResponse();
+      return new ChatSDKError(
+        "bad_request:api",
+        "Invalid reaction type",
+      ).toResponse();
     }
 
     // Remove existing reaction first (if any)
@@ -128,7 +133,10 @@ export const POST = withCsrf(async (request: Request) => {
       return error.toResponse();
     }
     console.error("Failed to add reaction:", error);
-    return new ChatSDKError("bad_request:api", "Failed to add reaction").toResponse();
+    return new ChatSDKError(
+      "bad_request:api",
+      "Failed to add reaction",
+    ).toResponse();
   }
 });
 
@@ -146,7 +154,10 @@ export const DELETE = withCsrf(async (request: Request) => {
     const { messageId } = await safeParseJson<{ messageId: string }>(request);
 
     if (!messageId) {
-      return new ChatSDKError("bad_request:api", "Missing messageId").toResponse();
+      return new ChatSDKError(
+        "bad_request:api",
+        "Missing messageId",
+      ).toResponse();
     }
 
     await removeMessageReaction({
@@ -160,6 +171,9 @@ export const DELETE = withCsrf(async (request: Request) => {
       return error.toResponse();
     }
     console.error("Failed to remove reaction:", error);
-    return new ChatSDKError("bad_request:api", "Failed to remove reaction").toResponse();
+    return new ChatSDKError(
+      "bad_request:api",
+      "Failed to remove reaction",
+    ).toResponse();
   }
 });

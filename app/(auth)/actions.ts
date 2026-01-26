@@ -22,7 +22,13 @@ export type LoginActionState = {
 };
 
 export type SignupActionState = {
-  status: "idle" | "in_progress" | "success" | "failed" | "invalid_data" | "user_exists";
+  status:
+    | "idle"
+    | "in_progress"
+    | "success"
+    | "failed"
+    | "invalid_data"
+    | "user_exists";
 };
 
 export type ForgotPasswordActionState = {
@@ -30,7 +36,13 @@ export type ForgotPasswordActionState = {
 };
 
 export type ResetPasswordActionState = {
-  status: "idle" | "in_progress" | "success" | "failed" | "invalid_data" | "mismatch";
+  status:
+    | "idle"
+    | "in_progress"
+    | "success"
+    | "failed"
+    | "invalid_data"
+    | "mismatch";
   message?: string;
 };
 

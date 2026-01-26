@@ -369,7 +369,8 @@ export async function updateTicketAdmin({
   }
   if (priority) updates.priority = priority;
   if (assignedAdminId !== undefined) updates.assignedAdminId = assignedAdminId;
-  if (timeSpentMinutes !== undefined) updates.timeSpentMinutes = timeSpentMinutes;
+  if (timeSpentMinutes !== undefined)
+    updates.timeSpentMinutes = timeSpentMinutes;
 
   const { data, error } = await supabase
     .from("SupportTicket")

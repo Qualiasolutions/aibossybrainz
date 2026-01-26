@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       console.error("[Stripe Checkout] STRIPE_SECRET_KEY is not configured");
       return NextResponse.json(
         { error: "Payment system is not configured. Please contact support." },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -25,10 +25,7 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
 
     if (!user?.id || !user?.email) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -37,14 +34,17 @@ export async function POST(request: Request) {
     // Check if price ID is configured for this plan
     const priceId = STRIPE_PRICES[planId as StripePlanId];
     if (!priceId || priceId.includes("placeholder")) {
-      console.error(`[Stripe Checkout] Price ID not configured for plan: ${planId}. Current value: ${priceId}`);
+      console.error(
+        `[Stripe Checkout] Price ID not configured for plan: ${planId}. Current value: ${priceId}`,
+      );
       return NextResponse.json(
         { error: "This plan is not yet available. Please contact support." },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
-    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "";
+    const origin =
+      request.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "";
 
     const checkoutUrl = await createCheckoutSession({
       userId: user.id,
@@ -59,31 +59,33 @@ export async function POST(request: Request) {
     console.error("[Stripe Checkout] Error:", error);
 
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Invalid plan ID" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid plan ID" }, { status: 400 });
     }
 
     // Check for specific Stripe errors
     if (error instanceof Error) {
       if (error.message.includes("STRIPE_SECRET_KEY")) {
         return NextResponse.json(
-          { error: "Payment system is not configured. Please contact support." },
-          { status: 503 }
+          {
+            error: "Payment system is not configured. Please contact support.",
+          },
+          { status: 503 },
         );
       }
       if (error.message.includes("No such price")) {
         return NextResponse.json(
-          { error: "This pricing plan is not available. Please contact support." },
-          { status: 503 }
+          {
+            error:
+              "This pricing plan is not available. Please contact support.",
+          },
+          { status: 503 },
         );
       }
     }
 
     return NextResponse.json(
       { error: "Failed to create checkout session. Please try again." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

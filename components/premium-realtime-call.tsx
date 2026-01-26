@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Mic,
-  MicOff,
-  PhoneOff,
-  Settings,
-  Volume2,
-} from "lucide-react";
+import { Mic, MicOff, PhoneOff, Settings, Volume2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { BOT_PERSONALITIES, type BotType } from "@/lib/bot-personalities";
@@ -337,10 +331,17 @@ export function PremiumRealtimeCall({
 
   // Update call duration
   useEffect(() => {
-    if (callState !== "active" && callState !== "processing" && callState !== "speaking") return;
+    if (
+      callState !== "active" &&
+      callState !== "processing" &&
+      callState !== "speaking"
+    )
+      return;
 
     const interval = setInterval(() => {
-      setCallDuration(Math.floor((Date.now() - callStartTimeRef.current) / 1000));
+      setCallDuration(
+        Math.floor((Date.now() - callStartTimeRef.current) / 1000),
+      );
     }, 1000);
 
     return () => clearInterval(interval);
@@ -358,7 +359,8 @@ export function PremiumRealtimeCall({
       }
       if (abortControllerRef.current) abortControllerRef.current.abort();
       if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      if (animationFrameRef.current)
+        cancelAnimationFrame(animationFrameRef.current);
       if (audioContextRef.current) audioContextRef.current.close();
     };
   }, []);
@@ -403,20 +405,29 @@ export function PremiumRealtimeCall({
           <div
             className={cn(
               "size-3 rounded-full",
-              callState === "active" || callState === "processing" || callState === "speaking"
+              callState === "active" ||
+                callState === "processing" ||
+                callState === "speaking"
                 ? "animate-pulse bg-emerald-500"
-                : callState === "connecting" || callState === "requesting-permissions"
+                : callState === "connecting" ||
+                    callState === "requesting-permissions"
                   ? "animate-pulse bg-yellow-500"
                   : "bg-stone-600",
             )}
           />
           <span className="text-sm text-stone-400">
-            {callState === "active" || callState === "processing" || callState === "speaking"
+            {callState === "active" ||
+            callState === "processing" ||
+            callState === "speaking"
               ? formatDuration(callDuration)
               : getStatusText()}
           </span>
         </div>
-        <Button className="text-stone-400 hover:text-white" size="icon" variant="ghost">
+        <Button
+          className="text-stone-400 hover:text-white"
+          size="icon"
+          variant="ghost"
+        >
           <Settings className="size-5" />
         </Button>
       </div>
@@ -429,11 +440,14 @@ export function PremiumRealtimeCall({
           <div
             className={cn(
               "absolute inset-0 rounded-full transition-all duration-150",
-              isAiSpeaking ? "bg-gradient-to-br from-rose-500/30 to-pink-500/30" : "bg-white/5",
+              isAiSpeaking
+                ? "bg-gradient-to-br from-rose-500/30 to-pink-500/30"
+                : "bg-white/5",
             )}
             style={{
               transform: `scale(${1 + (isAiSpeaking ? 0.15 : audioLevel * 0.3)})`,
-              opacity: callState === "active" || callState === "speaking" ? 1 : 0.5,
+              opacity:
+                callState === "active" || callState === "speaking" ? 1 : 0.5,
             }}
           />
 
@@ -522,11 +536,18 @@ export function PremiumRealtimeCall({
                 ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
                 : "bg-white/10 text-white hover:bg-white/20",
             )}
-            disabled={callState === "connecting" || callState === "requesting-permissions"}
+            disabled={
+              callState === "connecting" ||
+              callState === "requesting-permissions"
+            }
             onClick={toggleMute}
             size="icon"
           >
-            {isMuted ? <MicOff className="size-6" /> : <Mic className="size-6" />}
+            {isMuted ? (
+              <MicOff className="size-6" />
+            ) : (
+              <Mic className="size-6" />
+            )}
           </Button>
 
           {/* End call button */}
@@ -555,7 +576,9 @@ export function PremiumRealtimeCall({
           {callState === "active" && !isMuted && (
             <>Speak naturally. I'll respond when you pause.</>
           )}
-          {callState === "active" && isMuted && <>Unmute to continue talking.</>}
+          {callState === "active" && isMuted && (
+            <>Unmute to continue talking.</>
+          )}
           {callState === "processing" && <>Processing your message...</>}
           {callState === "speaking" && <>Listening to response...</>}
         </p>

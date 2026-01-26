@@ -7,8 +7,18 @@ export type Json =
   | Json[];
 
 // Subscription types
-export type SubscriptionType = "trial" | "monthly" | "annual" | "lifetime";
-export type SubscriptionStatus = "active" | "expired" | "cancelled";
+export type SubscriptionType =
+  | "pending"
+  | "trial"
+  | "monthly"
+  | "annual"
+  | "lifetime";
+export type SubscriptionStatus =
+  | "pending"
+  | "active"
+  | "trialing"
+  | "expired"
+  | "cancelled";
 
 export type Database = {
   public: {
@@ -390,10 +400,10 @@ export type Database = {
           profileUpdatedAt: string | null;
           deletedAt: string | null;
           isAdmin: boolean | null;
-          subscriptionType: "trial" | "monthly" | "annual" | "lifetime" | null;
+          subscriptionType: SubscriptionType | null;
           subscriptionStartDate: string | null;
           subscriptionEndDate: string | null;
-          subscriptionStatus: "active" | "trialing" | "expired" | "cancelled" | null;
+          subscriptionStatus: SubscriptionStatus | null;
           stripeCustomerId: string | null;
           stripeSubscriptionId: string | null;
         };
@@ -412,10 +422,10 @@ export type Database = {
           profileUpdatedAt?: string | null;
           deletedAt?: string | null;
           isAdmin?: boolean | null;
-          subscriptionType?: "trial" | "monthly" | "annual" | "lifetime" | null;
+          subscriptionType?: SubscriptionType | null;
           subscriptionStartDate?: string | null;
           subscriptionEndDate?: string | null;
-          subscriptionStatus?: "active" | "trialing" | "expired" | "cancelled" | null;
+          subscriptionStatus?: SubscriptionStatus | null;
           stripeCustomerId?: string | null;
           stripeSubscriptionId?: string | null;
         };
@@ -434,10 +444,10 @@ export type Database = {
           profileUpdatedAt?: string | null;
           deletedAt?: string | null;
           isAdmin?: boolean | null;
-          subscriptionType?: "trial" | "monthly" | "annual" | "lifetime" | null;
+          subscriptionType?: SubscriptionType | null;
           subscriptionStartDate?: string | null;
           subscriptionEndDate?: string | null;
-          subscriptionStatus?: "active" | "trialing" | "expired" | "cancelled" | null;
+          subscriptionStatus?: SubscriptionStatus | null;
           stripeCustomerId?: string | null;
           stripeSubscriptionId?: string | null;
         };
@@ -928,8 +938,20 @@ export type SupportTicketMessageInsert =
   Database["public"]["Tables"]["SupportTicketMessage"]["Insert"];
 
 // Landing Page CMS types
-export type LandingPageContentType = "text" | "textarea" | "url" | "color" | "list";
-export type LandingPageSection = "hero" | "executives" | "benefits" | "cta" | "theme" | "header" | "footer";
+export type LandingPageContentType =
+  | "text"
+  | "textarea"
+  | "url"
+  | "color"
+  | "list";
+export type LandingPageSection =
+  | "hero"
+  | "executives"
+  | "benefits"
+  | "cta"
+  | "theme"
+  | "header"
+  | "footer";
 
 export interface LandingPageContent {
   id: string;

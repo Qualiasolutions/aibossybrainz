@@ -74,7 +74,10 @@ export function SupportTicketsTable({
     ticketId: string,
     priority: TicketPriority,
   ) => Promise<void>;
-  onUpdateTimeSpent: (ticketId: string, timeSpentMinutes: number) => Promise<void>;
+  onUpdateTimeSpent: (
+    ticketId: string,
+    timeSpentMinutes: number,
+  ) => Promise<void>;
 }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -236,7 +239,8 @@ export function SupportTicketsTable({
                             onChange={(e) => setTimeValue(e.target.value)}
                             className="h-7 w-16 text-xs"
                             onKeyDown={(e) => {
-                              if (e.key === "Enter") handleTimeSpentSave(ticket.id);
+                              if (e.key === "Enter")
+                                handleTimeSpentSave(ticket.id);
                               if (e.key === "Escape") {
                                 setEditingTimeId(null);
                                 setTimeValue("");
@@ -258,7 +262,9 @@ export function SupportTicketsTable({
                           type="button"
                           onClick={() => {
                             setEditingTimeId(ticket.id);
-                            setTimeValue(ticket.timeSpentMinutes?.toString() || "0");
+                            setTimeValue(
+                              ticket.timeSpentMinutes?.toString() || "0",
+                            );
                           }}
                           className="flex items-center gap-1 text-sm text-neutral-600 hover:text-rose-600"
                         >

@@ -1,5 +1,4 @@
 import { geolocation } from "@vercel/functions";
-import { logger } from "@/lib/logger";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -52,6 +51,7 @@ import {
   updateChatTopic,
 } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
+import { logger } from "@/lib/logger";
 import {
   checkRateLimit,
   getRateLimitHeaders,
@@ -177,7 +177,8 @@ export const POST = withCsrf(async (request: Request) => {
     // Get entitlements based on subscription type
     const userType: UserType =
       (subscriptionStatus.subscriptionType as UserType) || "trial";
-    const maxMessages = entitlementsByUserType[userType]?.maxMessagesPerDay ?? 100;
+    const maxMessages =
+      entitlementsByUserType[userType]?.maxMessagesPerDay ?? 100;
 
     // Try Redis-based rate limiting first (faster)
     const rateLimitResult = await checkRateLimit(user.id, maxMessages);

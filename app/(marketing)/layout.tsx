@@ -11,7 +11,9 @@ export default async function MarketingLayout({
 
   // Check if user is logged in
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <MarketingLayoutClient content={content} isLoggedIn={!!user}>

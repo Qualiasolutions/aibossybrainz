@@ -2,11 +2,11 @@
 
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useState,
-  type ReactNode,
 } from "react";
 import { PaywallModal } from "./paywall-modal";
 
@@ -25,7 +25,9 @@ interface SubscriptionContextValue {
   refreshStatus: () => Promise<void>;
 }
 
-const SubscriptionContext = createContext<SubscriptionContextValue | null>(null);
+const SubscriptionContext = createContext<SubscriptionContextValue | null>(
+  null,
+);
 
 export function useSubscription() {
   const context = useContext(SubscriptionContext);

@@ -1,10 +1,18 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowRight,
+  Calendar,
+  Check,
+  Crown,
+  Sparkles,
+  Star,
+  X,
+} from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Calendar, Check, Crown, Sparkles, Star, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/toast";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface PaywallModalProps {
@@ -125,9 +133,7 @@ export function PaywallModal({
               <h2 className="mt-4 font-bold text-2xl text-stone-900 sm:text-3xl">
                 {title}
               </h2>
-              <p className="mx-auto mt-2 max-w-md text-stone-600">
-                {message}
-              </p>
+              <p className="mx-auto mt-2 max-w-md text-stone-600">{message}</p>
             </div>
 
             {/* Plans */}
@@ -139,7 +145,7 @@ export function PaywallModal({
                     "relative rounded-xl border p-5 transition-all",
                     plan.popular
                       ? "border-red-200 bg-gradient-to-br from-red-50/50 to-rose-50/50 shadow-lg"
-                      : "border-stone-200 hover:border-stone-300"
+                      : "border-stone-200 hover:border-stone-300",
                   )}
                 >
                   {plan.popular && (
@@ -157,7 +163,9 @@ export function PaywallModal({
                     ) : (
                       <Calendar className="size-5 text-stone-500" />
                     )}
-                    <span className="font-semibold text-stone-900">{plan.name}</span>
+                    <span className="font-semibold text-stone-900">
+                      {plan.name}
+                    </span>
                   </div>
 
                   <div className="mt-3">
@@ -166,15 +174,20 @@ export function PaywallModal({
                     </span>
                     <span className="text-stone-500"> {plan.period}</span>
                   </div>
-                  <p className="mt-1 text-sm text-stone-500">{plan.description}</p>
+                  <p className="mt-1 text-sm text-stone-500">
+                    {plan.description}
+                  </p>
 
                   <ul className="mt-4 space-y-2">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2 text-sm">
+                      <li
+                        key={feature}
+                        className="flex items-start gap-2 text-sm"
+                      >
                         <Check
                           className={cn(
                             "mt-0.5 size-4 shrink-0",
-                            plan.popular ? "text-red-600" : "text-stone-400"
+                            plan.popular ? "text-red-600" : "text-stone-400",
                           )}
                         />
                         <span className="text-stone-600">{feature}</span>
@@ -187,7 +200,7 @@ export function PaywallModal({
                       "mt-5 w-full gap-2",
                       plan.popular
                         ? "shadow-lg shadow-red-500/20"
-                        : "bg-stone-900 hover:bg-stone-800"
+                        : "bg-stone-900 hover:bg-stone-800",
                     )}
                     variant={plan.popular ? "default" : "secondary"}
                     onClick={() => handleSelectPlan(plan.id)}

@@ -25,7 +25,9 @@ export async function sendWelcomeEmail({
 }): Promise<{ success: boolean; error?: unknown }> {
   const resend = getResendClient();
   if (!resend) {
-    console.warn("[Email] RESEND_API_KEY not configured, skipping welcome email");
+    console.warn(
+      "[Email] RESEND_API_KEY not configured, skipping welcome email",
+    );
     return { success: false, error: "API key not configured" };
   }
 
@@ -98,7 +100,9 @@ export async function sendCancellationEmail({
 }): Promise<{ success: boolean; error?: unknown }> {
   const resend = getResendClient();
   if (!resend) {
-    console.warn("[Email] RESEND_API_KEY not configured, skipping cancellation email");
+    console.warn(
+      "[Email] RESEND_API_KEY not configured, skipping cancellation email",
+    );
     return { success: false, error: "API key not configured" };
   }
 

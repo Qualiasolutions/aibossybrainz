@@ -66,7 +66,8 @@ export const defaultLandingPageContent: LandingPageCMSContent = {
   hero: {
     title_main: "AI Boss Brainz",
     title_highlight: "Your Sales & Marketing Experts 24/7",
-    subtitle: "AI-powered. Expert-led. Get high-level sales and marketing strategy built to grow your brand, results-obsessed, and ready to drop strategies that work.",
+    subtitle:
+      "AI-powered. Expert-led. Get high-level sales and marketing strategy built to grow your brand, results-obsessed, and ready to drop strategies that work.",
     cta_primary_text: "Sign In",
     cta_primary_link: "/login",
     cta_secondary_text: "View Pricing",
@@ -75,10 +76,12 @@ export const defaultLandingPageContent: LandingPageCMSContent = {
   executives: {
     section_title: "Meet Your",
     section_title_highlight: "Sales and Marketing Masterminds",
-    section_subtitle: "40+ years bringing Fortune 500 strategy to founders to the next level. Now laser-focused on scaling your brand with strategy that actually sells.",
+    section_subtitle:
+      "40+ years bringing Fortune 500 strategy to founders to the next level. Now laser-focused on scaling your brand with strategy that actually sells.",
     alex_name: "Alexandria Alecci",
     alex_role: "Chief Marketing Officer",
-    alex_image: "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png",
+    alex_image:
+      "https://i.ibb.co/39XxGyN1/Chat-GPT-Image-Oct-22-2025-04-39-58-AM.png",
     alex_expertise: "Brand Strategy,Go-to-Market,Digital Campaigns",
     kim_name: "Kim Mylls",
     kim_role: "Chief Sales Officer",
@@ -89,21 +92,25 @@ export const defaultLandingPageContent: LandingPageCMSContent = {
     section_title: "Get the Move-the-Needle Strategies Now",
     section_subtitle: "Watch your business grow with expert guidance on demand",
     benefit_1_title: "Rapid-Fire Strategy",
-    benefit_1_desc: "At your fingertips so you never stall on sales or marketing again",
+    benefit_1_desc:
+      "At your fingertips so you never stall on sales or marketing again",
     benefit_1_icon: "Zap",
     benefit_2_title: "Talk It Out or Type It In",
-    benefit_2_desc: "'Live' call feature - hear our voices in real-time. Feel like you're talking to Alexandria and Kim.",
+    benefit_2_desc:
+      "'Live' call feature - hear our voices in real-time. Feel like you're talking to Alexandria and Kim.",
     benefit_2_icon: "Mic",
     benefit_3_title: "Plug-and-Play Plans",
     benefit_3_desc: "Sales and marketing plans built to convert, no generic BS",
     benefit_3_icon: "Target",
     benefit_4_title: "40+ Years of Proof",
-    benefit_4_desc: "Fortune 500 and founder success - proven strategies from hundreds of brands and teams",
+    benefit_4_desc:
+      "Fortune 500 and founder success - proven strategies from hundreds of brands and teams",
     benefit_4_icon: "TrendingUp",
   },
   cta: {
     title: "This Is How You Grow Without Being Great at Sales or Marketing",
-    subtitle: "You don't need to be a sales expert or marketing genius to grow - you just need the right messaging and strategy. Thousands of entrepreneurs are using our proven tools to scale. Stop second-guessing every move. Start dominating.",
+    subtitle:
+      "You don't need to be a sales expert or marketing genius to grow - you just need the right messaging and strategy. Thousands of entrepreneurs are using our proven tools to scale. Stop second-guessing every move. Start dominating.",
     cta_primary_text: "Sign In",
     cta_primary_link: "/login",
     cta_secondary_text: "View Pricing",
@@ -116,10 +123,12 @@ export const defaultLandingPageContent: LandingPageCMSContent = {
     background_color: "white",
   },
   header: {
-    logo_url: "https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w",
+    logo_url:
+      "https://images.squarespace-cdn.com/content/v1/5ea759fa9e5575487ad28cd0/1591228238957-80Y8AGN1M9TTXTYNJ5QK/AM_Logo_Horizontal_4C+%281%29.jpg?format=500w",
   },
   footer: {
-    tagline: "Executive consulting for sales and marketing strategy. Available 24/7.",
+    tagline:
+      "Executive consulting for sales and marketing strategy. Available 24/7.",
     email: "ai.bossbrainz@aleccimedia.com",
     copyright: "AI Boss Brainz. All rights reserved.",
   },
@@ -138,7 +147,7 @@ export function getGradientStyle(from: string, to: string): string {
     "blue-500": "#3b82f6",
     "emerald-500": "#10b981",
     "stone-900": "#1c1917",
-    "white": "#ffffff",
+    white: "#ffffff",
   };
 
   const fromHex = colorMap[from] || "#ef4444";

@@ -3,13 +3,13 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getUserFullProfile } from "@/lib/db/queries";
 import { sendTrialStartedEmail } from "@/lib/email/subscription-emails";
-import { getStripe, PLAN_DETAILS } from "@/lib/stripe/config";
 import {
   activateSubscription,
-  renewSubscription,
   expireSubscription,
+  renewSubscription,
   startTrial,
 } from "@/lib/stripe/actions";
+import { getStripe, PLAN_DETAILS } from "@/lib/stripe/config";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     console.error("[Stripe Webhook] Missing STRIPE_WEBHOOK_SECRET");
     return NextResponse.json(
       { error: "Webhook secret not configured" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   if (!signature) {
     return NextResponse.json(
       { error: "Missing stripe-signature header" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -39,10 +39,7 @@ export async function POST(request: Request) {
     event = getStripe().webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
     console.error("[Stripe Webhook] Signature verification failed:", err);
-    return NextResponse.json(
-      { error: "Invalid signature" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
   console.log(`[Stripe Webhook] Processing event: ${event.type}`);
@@ -70,7 +67,7 @@ export async function POST(request: Request) {
               trialEndDate,
             });
             console.log(
-              `[Stripe Webhook] Started 7-day trial for ${subscriptionType} subscription for user ${userId}`
+              `[Stripe Webhook] Started 7-day trial for ${subscriptionType} subscription for user ${userId}`,
             );
 
             // Send trial started email
@@ -86,7 +83,10 @@ export async function POST(request: Request) {
                 });
               }
             } catch (emailError) {
-              console.error("[Stripe Webhook] Failed to send trial email:", emailError);
+              console.error(
+                "[Stripe Webhook] Failed to send trial email:",
+                emailError,
+              );
             }
           } else {
             await activateSubscription({
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
               stripeSubscriptionId: subscription.id,
             });
             console.log(
-              `[Stripe Webhook] Activated ${subscriptionType} subscription for user ${userId}`
+              `[Stripe Webhook] Activated ${subscriptionType} subscription for user ${userId}`,
             );
           }
         }
@@ -112,12 +112,14 @@ export async function POST(request: Request) {
           typeof invoiceAny.subscription === "string"
             ? invoiceAny.subscription
             : (invoiceAny.subscription as { id?: string })?.id ||
-              (typeof invoice.parent?.subscription_details?.subscription === "string"
+              (typeof invoice.parent?.subscription_details?.subscription ===
+              "string"
                 ? invoice.parent.subscription_details.subscription
                 : null);
 
         if (subscriptionId) {
-          const subscriptionResponse = await getStripe().subscriptions.retrieve(subscriptionId);
+          const subscriptionResponse =
+            await getStripe().subscriptions.retrieve(subscriptionId);
           // Cast to access properties
           const subscription = subscriptionResponse as unknown as {
             id: string;
@@ -139,17 +141,20 @@ export async function POST(request: Request) {
               stripeSubscriptionId: subscription.id,
             });
             console.log(
-              `[Stripe Webhook] Payment received, activated ${subscriptionType} subscription for user ${userId}`
+              `[Stripe Webhook] Payment received, activated ${subscriptionType} subscription for user ${userId}`,
             );
 
             // For annual and lifetime plans, cancel after first payment
             // so they don't get charged again
-            if (subscriptionType === "annual" || subscriptionType === "lifetime") {
+            if (
+              subscriptionType === "annual" ||
+              subscriptionType === "lifetime"
+            ) {
               await getStripe().subscriptions.update(subscription.id, {
                 cancel_at_period_end: true,
               });
               console.log(
-                `[Stripe Webhook] Set ${subscriptionType} subscription to cancel at period end`
+                `[Stripe Webhook] Set ${subscriptionType} subscription to cancel at period end`,
               );
             }
           } else {
@@ -158,7 +163,9 @@ export async function POST(request: Request) {
               stripeSubscriptionId: subscription.id,
               periodEnd: new Date(subscription.current_period_end * 1000),
             });
-            console.log(`[Stripe Webhook] Renewed subscription ${subscription.id}`);
+            console.log(
+              `[Stripe Webhook] Renewed subscription ${subscription.id}`,
+            );
           }
         }
         break;
@@ -172,11 +179,13 @@ export async function POST(request: Request) {
         // Don't expire lifetime/annual subscriptions when they "end" - they're still valid
         if (subscriptionType === "lifetime" || subscriptionType === "annual") {
           console.log(
-            `[Stripe Webhook] ${subscriptionType} subscription ${subscription.id} ended (user retains access)`
+            `[Stripe Webhook] ${subscriptionType} subscription ${subscription.id} ended (user retains access)`,
           );
         } else {
           await expireSubscription(subscription.id);
-          console.log(`[Stripe Webhook] Expired subscription ${subscription.id}`);
+          console.log(
+            `[Stripe Webhook] Expired subscription ${subscription.id}`,
+          );
         }
         break;
       }
@@ -185,7 +194,7 @@ export async function POST(request: Request) {
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
         console.warn(
-          `[Stripe Webhook] Payment failed for invoice ${invoice.id}`
+          `[Stripe Webhook] Payment failed for invoice ${invoice.id}`,
         );
         // Could send email notification here
         break;
@@ -200,7 +209,7 @@ export async function POST(request: Request) {
     console.error("[Stripe Webhook] Error processing event:", error);
     return NextResponse.json(
       { error: "Webhook handler failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -2,10 +2,7 @@ import { ensureUserExists, getUserFullProfile } from "@/lib/db/queries";
 import { sendCancellationEmail } from "@/lib/email/subscription-emails";
 import { ChatSDKError } from "@/lib/errors";
 import { withCsrf } from "@/lib/security/with-csrf";
-import {
-  cancelSubscription,
-  createPortalSession,
-} from "@/lib/stripe/actions";
+import { cancelSubscription, createPortalSession } from "@/lib/stripe/actions";
 import { createClient } from "@/lib/supabase/server";
 
 // GET - Fetch user subscription info

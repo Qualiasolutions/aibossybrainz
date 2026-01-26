@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { ArrowRight, Target, TrendingUp, Zap, Mic } from "lucide-react";
+import { ArrowRight, Mic, Target, TrendingUp, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -35,7 +35,7 @@ function HeroSection({ content }: { content: LandingPageCMSContent }) {
 
   const gradientStyle = getGradientStyle(
     content.theme.primary_gradient_from,
-    content.theme.primary_gradient_to
+    content.theme.primary_gradient_to,
   );
 
   return (
@@ -250,22 +250,28 @@ function BenefitsGrid({ content }: { content: LandingPageCMSContent }) {
 
   const benefits = [
     {
-      icon: IconMap[content.benefits.benefit_1_icon as keyof typeof IconMap] || Zap,
+      icon:
+        IconMap[content.benefits.benefit_1_icon as keyof typeof IconMap] || Zap,
       title: content.benefits.benefit_1_title,
       desc: content.benefits.benefit_1_desc,
     },
     {
-      icon: IconMap[content.benefits.benefit_2_icon as keyof typeof IconMap] || Mic,
+      icon:
+        IconMap[content.benefits.benefit_2_icon as keyof typeof IconMap] || Mic,
       title: content.benefits.benefit_2_title,
       desc: content.benefits.benefit_2_desc,
     },
     {
-      icon: IconMap[content.benefits.benefit_3_icon as keyof typeof IconMap] || Target,
+      icon:
+        IconMap[content.benefits.benefit_3_icon as keyof typeof IconMap] ||
+        Target,
       title: content.benefits.benefit_3_title,
       desc: content.benefits.benefit_3_desc,
     },
     {
-      icon: IconMap[content.benefits.benefit_4_icon as keyof typeof IconMap] || TrendingUp,
+      icon:
+        IconMap[content.benefits.benefit_4_icon as keyof typeof IconMap] ||
+        TrendingUp,
       title: content.benefits.benefit_4_title,
       desc: content.benefits.benefit_4_desc,
     },

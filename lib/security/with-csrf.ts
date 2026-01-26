@@ -1,9 +1,9 @@
-import { validateCsrfRequest } from "@/lib/security/csrf";
 import { ChatSDKError } from "@/lib/errors";
+import { validateCsrfRequest } from "@/lib/security/csrf";
 
 type RouteHandler<TContext = unknown> = (
-	request: Request,
-	context?: TContext,
+  request: Request,
+  context?: TContext,
 ) => Promise<Response>;
 
 /**
@@ -17,15 +17,15 @@ type RouteHandler<TContext = unknown> = (
  * });
  */
 export function withCsrf<TContext = unknown>(
-	handler: RouteHandler<TContext>,
+  handler: RouteHandler<TContext>,
 ): RouteHandler<TContext> {
-	return async (request: Request, context?: TContext): Promise<Response> => {
-		const csrf = await validateCsrfRequest(request);
+  return async (request: Request, context?: TContext): Promise<Response> => {
+    const csrf = await validateCsrfRequest(request);
 
-		if (!csrf.valid) {
-			return new ChatSDKError("forbidden:api", csrf.error).toResponse();
-		}
+    if (!csrf.valid) {
+      return new ChatSDKError("forbidden:api", csrf.error).toResponse();
+    }
 
-		return handler(request, context);
-	};
+    return handler(request, context);
+  };
 }

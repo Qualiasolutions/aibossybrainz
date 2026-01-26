@@ -153,7 +153,8 @@ export async function createUser({
 
 /**
  * Ensures a User record exists for the authenticated Supabase Auth user.
- * Creates one with 7-day trial subscription if it doesn't exist.
+ * Creates one with "pending" subscription status - user must complete
+ * Stripe checkout to get trial access.
  * This syncs Supabase Auth users with our custom User table.
  */
 export async function ensureUserExists({
@@ -178,20 +179,17 @@ export async function ensureUserExists({
       return existingUser;
     }
 
-    // New user - create with 7-day trial subscription
-    const now = new Date();
-    const trialEndDate = new Date(now);
-    trialEndDate.setDate(trialEndDate.getDate() + 7);
-
+    // New user - create with "pending" status
+    // User must complete Stripe checkout to get trial access
     const { data, error } = await supabase
       .from("User")
       .insert({
         id,
         email,
-        subscriptionType: "trial",
-        subscriptionStartDate: now.toISOString(),
-        subscriptionEndDate: trialEndDate.toISOString(),
-        subscriptionStatus: "active",
+        subscriptionType: "pending",
+        subscriptionStartDate: null,
+        subscriptionEndDate: null,
+        subscriptionStatus: "pending",
       })
       .select("id")
       .single();
@@ -253,7 +251,10 @@ export async function checkUserSubscription(userId: string): Promise<{
     }
 
     // Check if subscription is active (including trialing)
-    if (user.subscriptionStatus !== "active" && user.subscriptionStatus !== "trialing") {
+    if (
+      user.subscriptionStatus !== "active" &&
+      user.subscriptionStatus !== "trialing"
+    ) {
       return {
         isActive: false,
         subscriptionType: user.subscriptionType,

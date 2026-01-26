@@ -18,8 +18,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/toast";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface PricingFeature {
@@ -491,7 +491,8 @@ export default function PricingPage() {
       console.error("Checkout error:", error);
       toast({
         type: "error",
-        description: "Network error. Please check your connection and try again.",
+        description:
+          "Network error. Please check your connection and try again.",
       });
       setLoading(null);
     }

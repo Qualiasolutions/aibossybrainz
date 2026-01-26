@@ -36,7 +36,9 @@ const steps = [
                   {exec.name[0]}
                 </span>
               </div>
-              <p className="font-medium text-neutral-900 text-sm">{exec.name}</p>
+              <p className="font-medium text-neutral-900 text-sm">
+                {exec.name}
+              </p>
               <p className="text-neutral-500 text-xs">{exec.role}</p>
             </motion.div>
           ))}
@@ -49,7 +51,8 @@ const steps = [
   },
   {
     title: "Choose Your Executive",
-    description: "Work with one expert or get collaborative insights from both.",
+    description:
+      "Work with one expert or get collaborative insights from both.",
     content: (
       <div className="grid grid-cols-3 gap-3">
         {[
@@ -78,7 +81,8 @@ const steps = [
   },
   {
     title: "Better Prompts, Better Results",
-    description: "The more context you provide, the more targeted the strategy.",
+    description:
+      "The more context you provide, the more targeted the strategy.",
     content: (
       <div className="space-y-4">
         <motion.div
@@ -103,8 +107,8 @@ const steps = [
             Specific
           </p>
           <p className="text-neutral-700 text-sm leading-relaxed">
-            "I run a B2B SaaS with 500 users targeting small businesses. How do I
-            reach 2,000 users in 6 months?"
+            "I run a B2B SaaS with 500 users targeting small businesses. How do
+            I reach 2,000 users in 6 months?"
           </p>
         </motion.div>
       </div>
@@ -112,7 +116,8 @@ const steps = [
   },
   {
     title: "Take Action",
-    description: "Strategy without execution is just planning. Pick one thing and implement it.",
+    description:
+      "Strategy without execution is just planning. Pick one thing and implement it.",
     content: (
       <div className="grid grid-cols-2 gap-4">
         {[
@@ -129,7 +134,9 @@ const steps = [
             <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100">
               <div className="h-2 w-2 rounded-full bg-neutral-400" />
             </div>
-            <p className="font-medium text-neutral-900 text-sm">{feature.label}</p>
+            <p className="font-medium text-neutral-900 text-sm">
+              {feature.label}
+            </p>
             <p className="mt-0.5 text-neutral-500 text-xs">{feature.desc}</p>
           </motion.div>
         ))}
@@ -226,11 +233,12 @@ export function WelcomeModal({ forceOpen, onClose }: WelcomeModalProps) {
                   onClick={() => handleStepClick(index)}
                   className={`
                     h-2 rounded-full transition-all duration-300 cursor-pointer
-                    ${index === currentStep
-                      ? "w-6 bg-neutral-900"
-                      : index < currentStep
-                        ? "w-2 bg-neutral-400 hover:bg-neutral-500"
-                        : "w-2 bg-neutral-200 hover:bg-neutral-300"
+                    ${
+                      index === currentStep
+                        ? "w-6 bg-neutral-900"
+                        : index < currentStep
+                          ? "w-2 bg-neutral-400 hover:bg-neutral-500"
+                          : "w-2 bg-neutral-200 hover:bg-neutral-300"
                     }
                   `}
                   aria-label={`Go to step ${index + 1}`}

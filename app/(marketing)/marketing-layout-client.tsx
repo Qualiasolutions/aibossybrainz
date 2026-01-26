@@ -21,7 +21,13 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-function Header({ content, isLoggedIn }: { content: LandingPageCMSContent; isLoggedIn?: boolean }) {
+function Header({
+  content,
+  isLoggedIn,
+}: {
+  content: LandingPageCMSContent;
+  isLoggedIn?: boolean;
+}) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

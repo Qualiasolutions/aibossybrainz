@@ -29,7 +29,8 @@ export function SupportNewTicket({
   const { csrfFetch, isLoading: isCsrfLoading } = useCsrf();
 
   const handleSubmit = async () => {
-    if (!subject.trim() || !message.trim() || isSubmitting || isCsrfLoading) return;
+    if (!subject.trim() || !message.trim() || isSubmitting || isCsrfLoading)
+      return;
 
     setIsSubmitting(true);
     setError(null);
@@ -124,7 +125,9 @@ export function SupportNewTicket({
       <div className="pt-4">
         <Button
           onClick={handleSubmit}
-          disabled={!subject.trim() || !message.trim() || isSubmitting || isCsrfLoading}
+          disabled={
+            !subject.trim() || !message.trim() || isSubmitting || isCsrfLoading
+          }
           className="w-full bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700"
         >
           {isSubmitting ? (

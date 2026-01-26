@@ -26,7 +26,10 @@ async function updateTicketPriority(
   revalidatePath("/admin/support-tickets");
 }
 
-async function updateTicketTimeSpent(ticketId: string, timeSpentMinutes: number) {
+async function updateTicketTimeSpent(
+  ticketId: string,
+  timeSpentMinutes: number,
+) {
   "use server";
   await updateTicketAdmin({ ticketId, timeSpentMinutes });
   revalidatePath("/admin/support-tickets");

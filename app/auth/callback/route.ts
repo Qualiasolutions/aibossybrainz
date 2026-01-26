@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { ensureUserExists, getUserProfile } from "@/lib/db/queries";
+import {
+  checkUserSubscription,
+  ensureUserExists,
+  getUserProfile,
+} from "@/lib/db/queries";
 import { sendWelcomeEmail } from "@/lib/email/subscription-emails";
 import { createClient } from "@/lib/supabase/server";
 
@@ -32,7 +36,10 @@ export async function GET(request: Request) {
               email: user.email,
               displayName: profile?.displayName,
             }).catch((err) => {
-              console.error("[Auth Callback] Failed to send welcome email:", err);
+              console.error(
+                "[Auth Callback] Failed to send welcome email:",
+                err,
+              );
             });
           }
         } catch (err) {
@@ -40,12 +47,20 @@ export async function GET(request: Request) {
         }
       }
 
-      // If there's a plan, redirect to subscribe page (they'll enter payment info)
+      // Check subscription status to determine redirect
+      const subscription = await checkUserSubscription(user.id);
+
+      // If plan specified or user doesn't have active subscription, go to subscribe page
       if (plan) {
         return NextResponse.redirect(`${origin}/subscribe?plan=${plan}`);
       }
 
-      // Otherwise redirect to the app (user is now logged in)
+      if (!subscription.isActive) {
+        // User needs to complete payment first
+        return NextResponse.redirect(`${origin}/subscribe`);
+      }
+
+      // User has active subscription, redirect to the app
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

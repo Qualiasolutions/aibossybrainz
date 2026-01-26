@@ -138,14 +138,7 @@ export async function exportConversationToPDF(
     let position = marginTop;
 
     // First page
-    pdf.addImage(
-      imgData,
-      "PNG",
-      marginLeft,
-      position,
-      contentWidth,
-      imgHeight,
-    );
+    pdf.addImage(imgData, "PNG", marginLeft, position, contentWidth, imgHeight);
     heightLeft -= contentHeight;
 
     // Additional pages
@@ -283,44 +276,80 @@ export function markdownToHtml(text: string): string {
   // Convert markdown to HTML (order matters - process more specific patterns first)
 
   // Headers (h1-h3) - must be at start of line
-  result = result.replace(/^### (.+)$/gm, '<h3 style="font-size: 16px; font-weight: 600; margin: 12px 0 8px 0;">$1</h3>');
-  result = result.replace(/^## (.+)$/gm, '<h2 style="font-size: 18px; font-weight: 600; margin: 16px 0 8px 0;">$1</h2>');
-  result = result.replace(/^# (.+)$/gm, '<h1 style="font-size: 20px; font-weight: 700; margin: 20px 0 10px 0;">$1</h1>');
+  result = result.replace(
+    /^### (.+)$/gm,
+    '<h3 style="font-size: 16px; font-weight: 600; margin: 12px 0 8px 0;">$1</h3>',
+  );
+  result = result.replace(
+    /^## (.+)$/gm,
+    '<h2 style="font-size: 18px; font-weight: 600; margin: 16px 0 8px 0;">$1</h2>',
+  );
+  result = result.replace(
+    /^# (.+)$/gm,
+    '<h1 style="font-size: 20px; font-weight: 700; margin: 20px 0 10px 0;">$1</h1>',
+  );
 
   // Bold + Italic (***text*** or ___text___)
-  result = result.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
-  result = result.replace(/___([^_]+)___/g, '<strong><em>$1</em></strong>');
+  result = result.replace(
+    /\*\*\*([^*]+)\*\*\*/g,
+    "<strong><em>$1</em></strong>",
+  );
+  result = result.replace(/___([^_]+)___/g, "<strong><em>$1</em></strong>");
 
   // Bold (**text** or __text__)
-  result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  result = result.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+  result = result.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  result = result.replace(/__([^_]+)__/g, "<strong>$1</strong>");
 
   // Italic (*text* or _text_) - be careful not to match underscores in words
-  result = result.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
-  result = result.replace(/(?<![a-zA-Z0-9])_([^_\n]+)_(?![a-zA-Z0-9])/g, '<em>$1</em>');
+  result = result.replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+  result = result.replace(
+    /(?<![a-zA-Z0-9])_([^_\n]+)_(?![a-zA-Z0-9])/g,
+    "<em>$1</em>",
+  );
 
   // Strikethrough (~~text~~)
-  result = result.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+  result = result.replace(/~~([^~]+)~~/g, "<del>$1</del>");
 
   // Inline code (`code`) - use escaped backticks since we already escaped HTML
-  result = result.replace(/`([^`]+)`/g, '<code style="background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px;">$1</code>');
+  result = result.replace(
+    /`([^`]+)`/g,
+    '<code style="background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px;">$1</code>',
+  );
 
   // Links [text](url) - URL is already HTML-escaped
-  result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #2563eb; text-decoration: underline;">$1</a>');
+  result = result.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    '<a href="$2" style="color: #2563eb; text-decoration: underline;">$1</a>',
+  );
 
   // Bullet lists (- item or * item) - only match if not part of a table separator
-  result = result.replace(/^[\-\*] (.+)$/gm, '<li style="margin-left: 20px;">$1</li>');
+  result = result.replace(
+    /^[-*] (.+)$/gm,
+    '<li style="margin-left: 20px;">$1</li>',
+  );
 
   // Numbered lists (1. item)
-  result = result.replace(/^\d+\. (.+)$/gm, '<li style="margin-left: 20px;">$1</li>');
+  result = result.replace(
+    /^\d+\. (.+)$/gm,
+    '<li style="margin-left: 20px;">$1</li>',
+  );
 
   // Blockquotes (> text)
-  result = result.replace(/^&gt; (.+)$/gm, '<blockquote style="border-left: 3px solid #d1d5db; padding-left: 12px; color: #6b7280; margin: 8px 0;">$1</blockquote>');
+  result = result.replace(
+    /^&gt; (.+)$/gm,
+    '<blockquote style="border-left: 3px solid #d1d5db; padding-left: 12px; color: #6b7280; margin: 8px 0;">$1</blockquote>',
+  );
 
   // Horizontal rules (--- or ***) - only standalone lines with just dashes/asterisks
   // This regex ensures we don't match table separators or content with dashes
-  result = result.replace(/^-{3,}$/gm, '<hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">');
-  result = result.replace(/^\*{3,}$/gm, '<hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">');
+  result = result.replace(
+    /^-{3,}$/gm,
+    '<hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">',
+  );
+  result = result.replace(
+    /^\*{3,}$/gm,
+    '<hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">',
+  );
 
   return result;
 }
@@ -341,7 +370,11 @@ function processMarkdownTables(text: string): string {
       const nextLine = lines[i + 1];
 
       // Check if next line is a separator row (contains | and -)
-      if (nextLine && /^\|?[\s\-:|]+\|?$/.test(nextLine) && nextLine.includes("-")) {
+      if (
+        nextLine &&
+        /^\|?[\s\-:|]+\|?$/.test(nextLine) &&
+        nextLine.includes("-")
+      ) {
         // This is likely a table, collect all table rows
         const tableLines: string[] = [line];
         let j = i + 1;
@@ -381,7 +414,9 @@ function convertTableToHtml(lines: string[]): string {
     width: 100%;
     margin: 16px 0;
     font-size: 14px;
-  `.replace(/\s+/g, " ").trim();
+  `
+    .replace(/\s+/g, " ")
+    .trim();
 
   const headerCellStyle = `
     border: 1px solid #d1d5db;
@@ -389,13 +424,17 @@ function convertTableToHtml(lines: string[]): string {
     background: #f3f4f6;
     font-weight: 600;
     text-align: left;
-  `.replace(/\s+/g, " ").trim();
+  `
+    .replace(/\s+/g, " ")
+    .trim();
 
   const cellStyle = `
     border: 1px solid #d1d5db;
     padding: 10px 12px;
     text-align: left;
-  `.replace(/\s+/g, " ").trim();
+  `
+    .replace(/\s+/g, " ")
+    .trim();
 
   // Parse header row
   const headerCells = parseTableRow(lines[0]);

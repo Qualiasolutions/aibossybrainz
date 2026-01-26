@@ -6,10 +6,10 @@ import {
 } from "ai";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { myProvider } from "@/lib/ai/providers";
 import type { BotType } from "@/lib/bot-personalities";
 import { getSystemPrompt } from "@/lib/bot-personalities";
 import { isProductionEnvironment } from "@/lib/constants";
-import { myProvider } from "@/lib/ai/providers";
 import { generateUUID } from "@/lib/utils";
 import { checkDemoRateLimit } from "./rate-limit";
 
@@ -38,7 +38,9 @@ const demoRequestSchema = z.object({
       }),
     ]),
   ),
-  botType: z.enum(["alexandria", "kim", "collaborative"]).default("collaborative"),
+  botType: z
+    .enum(["alexandria", "kim", "collaborative"])
+    .default("collaborative"),
 });
 
 // Simplified demo prompt - no tools, no artifacts, just personality

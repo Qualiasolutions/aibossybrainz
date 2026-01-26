@@ -15,10 +15,10 @@
       "!**/public",
       "!**/*.min.js",
       "!**/*.d.ts",
-      "!**/_bmad/**",
-      "!**/.bmad-core/**",
-      "!**/.beads/**",
-      "!**/Knowledge Base/**"
+      "!**/_bmad",
+      "!**/.bmad-core",
+      "!**/.beads",
+      "!**/Knowledge Base"
     ]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },

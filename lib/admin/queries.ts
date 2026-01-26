@@ -25,7 +25,9 @@ export async function getAllUsers(): Promise<AdminUser[]> {
   // Use RPC function to get all users with stats in a single query
   // This eliminates N+1 query pattern (previously 4 queries per user)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase.rpc as any)("get_admin_users_with_stats");
+  const { data, error } = await (supabase.rpc as any)(
+    "get_admin_users_with_stats",
+  );
 
   if (error) throw error;
 
@@ -149,9 +151,7 @@ export async function createUserByAdmin({
     // If user already exists in auth, try to get their ID
     if (authError.message.includes("already been registered")) {
       const { data: existingUsers } = await supabase.auth.admin.listUsers();
-      const existingUser = existingUsers?.users?.find(
-        (u) => u.email === email,
-      );
+      const existingUser = existingUsers?.users?.find((u) => u.email === email);
       if (existingUser) {
         throw new Error(
           `User with email ${email} already exists. You can update their profile instead.`,
@@ -454,25 +454,29 @@ export async function getAllChats(limit = 50): Promise<AdminChat[]> {
   // Use RPC function to get all chats with stats in a single query
   // This eliminates N+1 query pattern (previously 2 queries per chat)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase.rpc as any)("get_admin_chats_with_stats");
+  const { data, error } = await (supabase.rpc as any)(
+    "get_admin_chats_with_stats",
+  );
 
   if (error) throw error;
 
   // Map RPC result to AdminChat type (apply limit client-side for now)
-  return ((data || []) as Record<string, unknown>[]).slice(0, limit).map((row) => ({
-    id: row.id as string,
-    userId: row.userId as string,
-    title: row.title as string,
-    topic: row.topic as string | null,
-    topicColor: row.topicColor as string | null,
-    visibility: row.visibility as string,
-    isPinned: row.isPinned as boolean,
-    createdAt: row.createdAt as string,
-    deletedAt: row.deletedAt as string | null,
-    lastContext: row.lastContext ?? null,
-    userEmail: (row.userEmail as string) || "Unknown",
-    messageCount: Number(row.messageCount) || 0,
-  })) as AdminChat[];
+  return ((data || []) as Record<string, unknown>[])
+    .slice(0, limit)
+    .map((row) => ({
+      id: row.id as string,
+      userId: row.userId as string,
+      title: row.title as string,
+      topic: row.topic as string | null,
+      topicColor: row.topicColor as string | null,
+      visibility: row.visibility as string,
+      isPinned: row.isPinned as boolean,
+      createdAt: row.createdAt as string,
+      deletedAt: row.deletedAt as string | null,
+      lastContext: row.lastContext ?? null,
+      userEmail: (row.userEmail as string) || "Unknown",
+      messageCount: Number(row.messageCount) || 0,
+    })) as AdminChat[];
 }
 
 export async function getChatWithMessages(chatId: string): Promise<{
@@ -704,9 +708,12 @@ export async function getRecentConversations(
   // Use RPC function to get recent conversations with stats in a single query
   // This eliminates N+1 query pattern (previously 2 queries per chat)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase.rpc as any)("get_recent_conversations", {
-    p_limit: limit,
-  });
+  const { data, error } = await (supabase.rpc as any)(
+    "get_recent_conversations",
+    {
+      p_limit: limit,
+    },
+  );
 
   if (error) throw error;
 
