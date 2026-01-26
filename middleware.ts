@@ -14,9 +14,10 @@ export const config = {
      * Match all request paths except for the ones starting with:
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     * - favicon.ico, sitemap.xml, robots.txt, manifest.webmanifest (metadata files)
+     * - icon-*, apple-icon, opengraph-image, twitter-image (image assets)
      * - /login, /signup, /register, and /demo (allow access without authentication)
      */
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|login|signup|register|demo).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|icon-|apple-icon|opengraph-image|twitter-image|login|signup|register|demo).*)",
   ],
 };

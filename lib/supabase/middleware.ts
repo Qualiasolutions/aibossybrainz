@@ -75,6 +75,7 @@ export async function updateSession(request: NextRequest) {
     "/contact",
     "/terms",
     "/privacy",
+    "/subscribe",
   ];
   const isPublicRoute =
     request.nextUrl.pathname === "/" ||
