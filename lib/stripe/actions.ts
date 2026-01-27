@@ -174,6 +174,13 @@ export async function activateSubscription({
 }): Promise<void> {
   const supabase = createServiceClient();
 
+  // Check if user already has onboardedAt set
+  const { data: user } = await supabase
+    .from("User")
+    .select("onboardedAt")
+    .eq("id", userId)
+    .single();
+
   // Calculate duration: monthly=1, annual=12, lifetime=9999
   const durationMonths =
     subscriptionType === "monthly"
@@ -184,16 +191,20 @@ export async function activateSubscription({
   const endDate = new Date();
   endDate.setMonth(endDate.getMonth() + durationMonths);
 
-  await supabase
-    .from("User")
-    .update({
-      subscriptionType,
-      subscriptionStatus: "active",
-      subscriptionStartDate: new Date().toISOString(),
-      subscriptionEndDate: endDate.toISOString(),
-      stripeSubscriptionId: stripeSubscriptionId || null,
-    })
-    .eq("id", userId);
+  const updateData: Record<string, unknown> = {
+    subscriptionType,
+    subscriptionStatus: "active",
+    subscriptionStartDate: new Date().toISOString(),
+    subscriptionEndDate: endDate.toISOString(),
+    stripeSubscriptionId: stripeSubscriptionId || null,
+  };
+
+  // Set onboardedAt if not already set (fallback for direct activations)
+  if (!user?.onboardedAt) {
+    updateData.onboardedAt = new Date().toISOString();
+  }
+
+  await supabase.from("User").update(updateData).eq("id", userId);
 }
 
 /**
